@@ -22,7 +22,7 @@ def auto_response(request):
     print post
     addr = '127.0.0.1'
     port = '8080'
-    emotion = 'anger'
+    emotion = 'joy'
     url = 'http://%s:%s/cakechat_api/v1/actions/get_response' % (addr, port)
     body = {'context': [post], 'emotion': emotion}
 
