@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
+import os
 
 
 def index(request):
@@ -16,6 +17,10 @@ def index(request):
 def auto_response(request):
     template = loader.get_template('main/index.html')
     post = request.POST['post']
-    print post
-    autoresponse = post + ' Yes, you are right!'
+
+    post_to_be_send = 'python3 ../../cakechat/tools/test_api.py -c' + '\''+ post + '\'''
+    print post_to_be_send
+    autoresponse = os.system(post_to_be_send)
+    print autoresponse
+
     return HttpResponse(autoresponse)
