@@ -7,6 +7,7 @@ from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 import os
 import json
+import requests
 
 
 def index(request):
@@ -19,11 +20,12 @@ def auto_response(request):
     template = loader.get_template('main/index.html')
     post = request.POST['post']
 
-    post_to_be_send = 'python3 ../../cakechat/tools/test_api.py -c' + '\''+ post + '\''
-    print post_to_be_send
-    autoresponse = os.system(post_to_be_send)
-    print type(autoresponse)
-    autoresponse = json.loads(autoresponse)
-    print autoresponse['response']
+    addr = '127.0.0.1'
+    port = '8080'
+    emotion = 'anger'
+    url = 'http://%s:%s/cakechat_api/v1/actions/get_response' % (addr, port)
+    body = {'context': post, 'emotion': emotion}
+    response = requests.post(url, json=body)
+    print response.json()['response']
 
-    return HttpResponse(autoresponse['response'])
+    return HttpResponse(response.json()['response'])
