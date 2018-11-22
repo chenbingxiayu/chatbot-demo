@@ -21,6 +21,6 @@ def auto_response(request):
     post_to_be_send = 'python3 ../../cakechat/tools/test_api.py -c' + '\''+ post + '\''
     print post_to_be_send
     autoresponse = os.system(post_to_be_send)
-    print autoresponse
+    print autoresponse['response']
 
-    return HttpResponse(autoresponse)
+    return HttpResponse(autoresponse['response'])
