@@ -18,7 +18,7 @@ def auto_response(request):
     template = loader.get_template('main/index.html')
     post = request.POST['post']
 
-    post_to_be_send = 'python3 ../../cakechat/tools/test_api.py -c' + '\''+ post + '\'''
+    post_to_be_send = 'python3 ../../cakechat/tools/test_api.py -c' + '\''+ post + '\''
     print post_to_be_send
     autoresponse = os.system(post_to_be_send)
     print autoresponse
