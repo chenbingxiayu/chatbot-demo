@@ -26,6 +26,7 @@ def auto_response(request):
     url = 'http://%s:%s/cakechat_api/v1/actions/get_response' % (addr, port)
     body = {'context': post, 'emotion': emotion}
     response = requests.post(url, json=body)
-    print response.json()['response']
+    print response.json()
+    # print response.json()['response']
 
     return HttpResponse(response.json()['response'])
