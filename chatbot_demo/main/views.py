@@ -36,7 +36,7 @@ def auto_response(request):
 @csrf_exempt
 def response_api(request):
     template = loader.get_template('main/index.html')
-    post = request.POST['query']
+    post = request.POST['info']
     print post
     addr = '127.0.0.1'
     port = '8080'
