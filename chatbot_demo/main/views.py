@@ -31,3 +31,23 @@ def auto_response(request):
     # print response.json()['response']
 
     return HttpResponse(response.json()['response'])
+
+
+@csrf_exempt
+def response_api(request):
+    template = loader.get_template('main/index.html')
+    post = request.POST['query']
+    print post
+    addr = '127.0.0.1'
+    port = '8080'
+    emotion = 'joy'
+    url = 'http://%s:%s/cakechat_api/v1/actions/get_response' % (addr, port)
+    body = {'context': [post], 'emotion': emotion}
+
+    response = requests.post(url, json=body)
+    print response.json()
+    # print response.json()['response']
+
+    return HttpResponse(response.json()['response'])
+
+
