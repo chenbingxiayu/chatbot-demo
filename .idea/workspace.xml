@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3956c8a0-bbf9-4c31-bbc1-eb6b019d6234" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/templates/main/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/views.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -86,8 +84,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="225">
-                <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+              <first_editor relative-caret-position="165">
+                <caret line="11" column="50" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
               </first_editor>
               <second_editor />
             </state>
@@ -259,8 +257,8 @@
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="225">
-            <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+          <first_editor relative-caret-position="165">
+            <caret line="11" column="50" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
           </first_editor>
           <second_editor />
         </state>
