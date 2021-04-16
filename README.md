@@ -4,12 +4,16 @@
 
 
 
-A simple demo of chatbot.
-
-UI supported by [`Botui`](https://github.com/botui/botui)
+## 需求：
 
 
-![Interface](chatbot_demo/worklogs/screen_shot.png)
+
+### 添加头像
+
+https://github.com/botui/botui/issues/81
+
+
+### 前端统计分数
 
 
  
