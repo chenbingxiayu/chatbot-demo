@@ -316,10 +316,13 @@
                 content: 'We provide you several suggestions: <br/><br/> 1. Refer to [Mental Health 101](https://www.google.com/) <br/> 2. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)  <br/> 3. Call 2766 6800'
         })
     }
-    var office_hour = false;
+    var office_hour = true;
     function medium() {
         if (office_hour == true) {
-
+            botui.message.add({
+                content: 'We provide you several suggestions: <br/><br/> 1. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)   <br/> 2.  Refer to [Mental Health 101](https://www.google.com/) <br/> 3. Call the Community Helpline <br/> 4. Call 2766 6800'
+            });
+            confirm_chatting();
         }
         else {
             botui.message.add({
@@ -332,6 +335,46 @@
 
     }
 
+    function confirm_chatting () {
+        botui.message.add({
+                content: 'Or, you can also try our online chatting service'
+            }).then(function () {
+                return botui.action.button({
+                    addMessage: false,
+                      action: [{
+                        text: 'OK',
+                        value: 'yes'
+                      }, {
+                        text: 'No',
+                        value: 'no'
+                      }]
+                })
+            }).then(function(res) {
+                if(res.value == 'no') {
+                    botui.message.human({
+                      delay: 500,
+                      content: 'No'
+                    });
+                    botui.message.add({
+                        delay: 700,
+                        content: 'Bye bye!'
+                    });
+                    end();
+                } else {
+                    botui.message.human({
+                      content: res.text
+                    });
+                    online_chatting();
+                }
+            });
+
+    }
+
+    function online_chatting() {
+
+    }
+
+    /*
     function chatting () {
         botui.action.text({ // show 'text' action
                 action: {
@@ -359,7 +402,7 @@
             }
         });
     }
-
+    */
 
 
 
