@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Dialogggg</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="./botui-master/build/botui.min.css" />
+    <link rel="stylesheet" href="./botui-master/build/botui-theme-default.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css" />
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.css" rel="stylesheet">
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet"> -->
 </head>
-<body>
-{% block body %}
-<div class="container" style="background-color: #f7f8f8">
-    <div class="jumbotron"  style="background-color: #f7f8f8">
 
-        <br>
-        <br>
-    </div>
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
-            <div id="chatbox" style="height: 600px">
-                <bot-ui style="background-color: aliceblue;"></bot-ui>
-            </div>
+<body>
+    {% block body %}
+    <div class="container" style="background-color: #f7f8f8">
+        <div class="jumbotron" style="background-color: #f7f8f8">
+
+            <br>
+            <br>
         </div>
-        <div class="col-md-3"></div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <div id="chatbox" style="height: 600px">
+                    <bot-ui style="background-color: aliceblue;"></bot-ui>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="jumbotron" style="background-color: #f7f8f8">
+            <br>
+            <br>
+        </div>
     </div>
-    <div class="jumbotron"  style="background-color: #f7f8f8">
-        <br>
-        <br>
-    </div>
-</div>
 
 </body>
 {% endblock body %}
@@ -39,9 +43,11 @@
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="http://malsup.github.io/jquery.form.js"></script>
 <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
+<!-- <script src="./botui-master/build/botui.min.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>
 {% block javascript %}
 <script>
+    var office_hour = true;
     var botui = new BotUI('chatbox');
     var content = document.getElementsByTagName('chatbox');
     var user_input = 'default';
@@ -54,19 +60,19 @@
     }).then(function () {
         return botui.action.button({
             addMessage: false,
-              action: [{
+            action: [{
                 text: 'Yes',
                 value: 'yes'
-              }, {
+            }, {
                 text: 'No',
                 value: 'no'
-              }]
+            }]
         })
-    }).then(function(res) {
-        if(res.value == 'no') {
+    }).then(function (res) {
+        if (res.value == 'no') {
             botui.message.human({
-              delay: 500,
-              content: 'No'
+                delay: 500,
+                content: 'No'
             });
             botui.message.add({
                 delay: 600,
@@ -79,37 +85,37 @@
             end();
         } else {
             botui.message.human({
-              delay: 500,
-              content: res.text
+                delay: 500,
+                content: res.text
             });
             verification();
         }
 
     })
 
-    function verification () {
-      botui.message.bot({
-          delay: 500,
-          content: 'Please input your PolyU netid and Password:'
-        }).then (function () {
-          return botui.action.text({
-            addMessage: false,
-            action: {
-              size: 30,
-              placeholder: 'PolyU netid'
-            }
-          });
-        }).then(function(res) {
+    function verification() {
+        botui.message.bot({
+            delay: 500,
+            content: 'Please input your PolyU netid and Password:'
+        }).then(function () {
+            return botui.action.text({
+                addMessage: false,
+                action: {
+                    size: 30,
+                    placeholder: 'PolyU netid'
+                }
+            });
+        }).then(function (res) {
             netid = res.value;
             return botui.action.text({
                 addMessage: false,
                 action: {
-                  size: 30,
-                  sub_type: 'password',
-                  placeholder: 'passwd'
+                    size: 30,
+                    sub_type: 'password',
+                    placeholder: 'passwd'
                 }
             });
-        }).then(function(res) {
+        }).then(function (res) {
             passwd = res.value;
             /*
              ************************
@@ -120,10 +126,10 @@
         });
     }
 
-    function get_nickname () {
+    function get_nickname() {
         botui.message.add({
             content: 'Welcome! What would you like we call you?'
-        }).then(function() {
+        }).then(function () {
             return botui.action.text({
                 addMessage: false,
                 action: {
@@ -131,32 +137,32 @@
                     placeholder: 'Nickname'
                 }
             });
-        }).then(function(res) {
-           nickname = res.value;
-           T_and_C();
+        }).then(function (res) {
+            nickname = res.value;
+            T_and_C();
         });
     }
 
 
-    function T_and_C () {
+    function T_and_C() {
         botui.message.add({
             content: 'Hi ' + nickname + '! If you want to talk to the counselor, *[This is the T and C of our system]*, do you accept it?'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
-                  action: [{
+                action: [{
                     text: 'Yes',
                     value: 'yes'
-                  }, {
+                }, {
                     text: 'No',
                     value: 'no'
-                  }]
+                }]
             })
-        }).then(function(res) {
-            if(res.value == 'no') {
+        }).then(function (res) {
+            if (res.value == 'no') {
                 botui.message.human({
-                  delay: 500,
-                  content: 'No'
+                    delay: 500,
+                    content: 'No'
                 });
                 botui.message.add({
                     delay: 600,
@@ -169,7 +175,7 @@
                 end();
             } else {
                 botui.message.human({
-                  content: res.text
+                    content: res.text
                 });
                 botui.message.add({
                     content: 'If you want to talk to the counselor, take a quiz to get to know yourself, or talk to me after you know it.'
@@ -179,7 +185,7 @@
         });
     }
 
-    function questions () {
+    function questions() {
         botui.message.add({
             delay: 700,
             content: 'What\'s upsetting you recently?'
@@ -189,14 +195,14 @@
                     placeholder: "Select a option",
                     value: '0',
                     options: [
-                        {value: "0", text: "Studies"},
-                        {value: "1", text: "Interpersonal relationships"},
-                        {value: "2", text: "Work"},
-                        {value: "3", text: "Relationships"},
-                        {value: "4", text: "Family"},
-                        {value: "5", text: "Society"},
-                        {value: "6", text: "Other"},
-                        {value: "7", text: "None"},
+                        { value: "0", text: "Studies" },
+                        { value: "1", text: "Interpersonal relationships" },
+                        { value: "2", text: "Work" },
+                        { value: "3", text: "Relationships" },
+                        { value: "4", text: "Family" },
+                        { value: "5", text: "Society" },
+                        { value: "6", text: "Other" },
+                        { value: "7", text: "None" },
                     ],
                     button: {
                         icon: 'check',
@@ -209,11 +215,11 @@
                 content: 'Do you often feel depressed?'
             }).then(function () {
                 return botui.action.button({
-                    action: [{value: "1", text: "Very little"},
-                {value: "2", text: "Less"},
-                {value: "3", text: "Fair"},
-                {value: "4", text: "More"},
-                {value: "5", text: "Very much"}]
+                    action: [{ value: "1", text: "Very little" },
+                    { value: "2", text: "Less" },
+                    { value: "3", text: "Fair" },
+                    { value: "4", text: "More" },
+                    { value: "5", text: "Very much" }]
 
                 })
             }).then(function (res) {
@@ -221,11 +227,11 @@
                     content: 'How long does this low mood last?'
                 }).then(function () {
                     return botui.action.button({
-                        action:[{value: "1", text: "Very few"},
-                                {value: "2", text: "A few days"},
-                                {value: "3", text: "A week"},
-                                {value: "4", text: "More than a week"},
-                                {value: "5", text: "More than a month"}]
+                        action: [{ value: "1", text: "Very few" },
+                        { value: "2", text: "A few days" },
+                        { value: "3", text: "A week" },
+                        { value: "4", text: "More than a week" },
+                        { value: "5", text: "More than a month" }]
 
                     })
                 }).then(function (res) {
@@ -234,11 +240,11 @@
                     }).then(function () {
                         return botui.action.button({
                             action:
-                                [{value: "1", text: "Very little"},
-                                    {value: "2", text: "Less"},
-                                    {value: "3", text: "Fair"},
-                                    {value: "4", text: "More"},
-                                    {value: "5", text: "Very much"}]
+                                [{ value: "1", text: "Very little" },
+                                { value: "2", text: "Less" },
+                                { value: "3", text: "Fair" },
+                                { value: "4", text: "More" },
+                                { value: "5", text: "Very much" }]
 
                         })
                     }).then(function (res) {
@@ -246,14 +252,14 @@
                             content: 'Have you often felt helpless lately?'
                         }).then(function () {
                             return botui.action.button({
-                                action:[{value: "1", text: "Very little"},
-                                        {value: "2", text: "Less"},
-                                        {value: "3", text: "Fair"},
-                                        {value: "4", text: "More"},
-                                        {value: "5", text: "Very much"}]
+                                action: [{ value: "1", text: "Very little" },
+                                { value: "2", text: "Less" },
+                                { value: "3", text: "Fair" },
+                                { value: "4", text: "More" },
+                                { value: "5", text: "Very much" }]
 
                             })
-                        }).then(function(res) {
+                        }).then(function (res) {
                             confirm_answer();
                         })
                     })
@@ -268,19 +274,19 @@
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
-                  action: [{
+                action: [{
                     text: 'Yes',
                     value: 'yes'
-                  }, {
+                }, {
                     text: 'No',
                     value: 'no'
-                  }]
+                }]
             })
-        }).then(function(res) {
-            if(res.value == 'no') {
+        }).then(function (res) {
+            if (res.value == 'no') {
                 botui.message.human({
-                  delay: 500,
-                  content: 'No'
+                    delay: 500,
+                    content: 'No'
                 });
                 botui.message.add({
                     delay: 600,
@@ -289,7 +295,7 @@
                 questions();
             } else {
                 botui.message.human({
-                  content: res.text
+                    content: res.text
                 });
                 botui.message.add({
                     content: 'Ok, please wait, we are calculating your score...'
@@ -301,7 +307,7 @@
 
 
     var score = 6;
-    function dispatch () {
+    function dispatch() {
         if (score <= 5) {
             low();
         } else if (score <= 10) {
@@ -313,10 +319,9 @@
 
     function low() {
         botui.message.add({
-                content: 'We provide you several suggestions: <br/><br/> 1. Refer to [Mental Health 101](https://www.google.com/) <br/> 2. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)  <br/> 3. Call 2766 6800'
+            content: 'We provide you several suggestions: <br/><br/> 1. Refer to [Mental Health 101](https://www.google.com/) <br/> 2. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)  <br/> 3. Call 2766 6800'
         })
     }
-    var office_hour = true;
     function medium() {
         if (office_hour == true) {
             botui.message.add({
@@ -335,45 +340,146 @@
 
     }
 
-    function confirm_chatting () {
+    function confirm_chatting() {
         botui.message.add({
-                content: 'Or, you can also try our online chatting service'
-            }).then(function () {
-                return botui.action.button({
-                    addMessage: false,
-                      action: [{
-                        text: 'OK',
-                        value: 'yes'
-                      }, {
-                        text: 'No',
-                        value: 'no'
-                      }]
-                })
-            }).then(function(res) {
-                if(res.value == 'no') {
-                    botui.message.human({
-                      delay: 500,
-                      content: 'No'
-                    });
-                    botui.message.add({
-                        delay: 700,
-                        content: 'Bye bye!'
-                    });
-                    end();
-                } else {
-                    botui.message.human({
-                      content: res.text
-                    });
-                    online_chatting();
-                }
-            });
+            content: 'Or, you can also try our online chatting service'
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                action: [{
+                    text: 'OK',
+                    value: 'yes'
+                }, {
+                    text: 'No',
+                    value: 'no'
+                }]
+            })
+        }).then(function (res) {
+            if (res.value == 'no') {
+                botui.message.human({
+                    delay: 500,
+                    content: 'No'
+                });
+                botui.message.add({
+                    delay: 700,
+                    content: 'Bye bye!'
+                });
+                end();
+            } else {
+                botui.message.human({
+                    content: res.text
+                });
+                online_chatting();
+            }
+        });
 
     }
-
     function online_chatting() {
-
+        botui.message.add({
+            content: 'Hi ' + nickname + '! If you want to talk to the counselor, *[This is the T and C of our system]*, do you accept it?'
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                action: [{
+                    text: 'Yes',
+                    value: 'yes'
+                }, {
+                    text: 'No',
+                    value: 'no'
+                }]
+            })
+        }).then(function (res) {
+            if (res.value == 'no') {
+                botui.message.human({
+                    delay: 500,
+                    content: 'No'
+                });
+                botui.message.add({
+                    delay: 600,
+                    content: 'Sorry! You can still call 2766 6800 for conselling.'
+                });
+                botui.message.add({
+                    delay: 700,
+                    content: 'Bye bye!'
+                });
+                end();
+            } else {
+                botui.message.human({
+                    content: res.text
+                });
+                botui.message.add({
+                    content: 'Some questions before online chatting'
+                }).then(questions_before_online_chatting())
+            }
+        });
     }
 
+    function questions_before_online_chatting() {
+
+        botui.message.add({
+            delay: 700,
+            content: 'Is it an existing case?'
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                action: [{
+                    text: 'Yes',
+                    value: 'yes'
+                }, {
+                    text: 'No',
+                    value: 'no'
+                }]
+            })
+        }).then(function (res) {
+            if (res.value == 'yes') {
+                botui.message.add('We provide you several suggestions: <br/><br/> 1. Refer to [Mental Health 101](https://www.google.com/) <br/> 2. Make appointment with existing counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)')
+                // option 1
+                // option 2
+            } else {
+                botui.message.add({
+                    delay: 700,
+                    content: 'Do you have mental health history?'
+                }).then(function () {
+                    return botui.action.button({
+                        addMessage: false,
+                        action: [{
+                            text: 'Yes',
+                            value: 'yes'
+                        }, {
+                            text: 'No',
+                            value: 'no'
+                        }]
+                    })
+                }).then(function (res) {
+                    if (res.value == 'yes') {
+                        if (office_hour == true) {
+                            botui.message.add({
+                                content: 'We provide you several suggestions: <br/><br/> 1. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)   <br/> 2. Call 2766 6800'
+                            }).then(confirm_chatting())
+                        }
+                        else {
+                            botui.message.add({
+                                content: 'Sorry, currently it is not the office hour, we adive you to call PolyU LINE 8100 1583'
+                            })
+                        }
+                    } else {
+                        process_to_online_chat()
+                    }
+                })
+            }
+        })
+    }
+
+    function process_to_online_chat() {
+        var service_hour = false;
+        if (service_hour == false) {
+            botui.message.add({
+                content: 'No counsellor avaliable.'
+            })
+        } else {
+            // online_chatting_request
+        }
+    }
     /*
     function chatting () {
         botui.action.text({ // show 'text' action
@@ -412,4 +518,5 @@
 
 </script>
 {% endblock javascript %}
+
 </html>
