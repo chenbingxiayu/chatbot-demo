@@ -5,12 +5,30 @@
     <meta charset="utf-8">
     <title>Dialogggg</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="./botui-master/build/botui.min.css" />
-    <link rel="stylesheet" href="./botui-master/build/botui-theme-default.css" />
+
+
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>         old version-->
+    <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
+
+
+    {% load static %}
+    <script src="{% static 'botui-master/build/botui.js' %}"></script>
+    <!--<link rel="stylesheet" href="{% static 'botui-master/build/botui.min.css' %}" />-->
+    <!--<link rel="stylesheet" href="{% static 'botui-master/build/botui-theme-default.css' %}" />-->
+
+    <!--<script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css" />
-    <!-- <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.css" rel="stylesheet">
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet"> -->
+
+
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://malsup.github.io/jquery.form.js"></script>
+
+
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
+
+
 </head>
 
 <body>
@@ -39,13 +57,10 @@
 </body>
 {% endblock body %}
 
-{% load static %}
-<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="http://malsup.github.io/jquery.form.js"></script>
-<script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
-<!-- <script src="./botui-master/build/botui.min.js"></script> -->
-<script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>
+
+
 {% block javascript %}
+{% endblock javascript %}
 <script>
     var office_hour = true;
     var botui = new BotUI('chatbox');
@@ -323,11 +338,13 @@
         })
     }
     function medium() {
+
         if (office_hour == true) {
             botui.message.add({
                 content: 'We provide you several suggestions: <br/><br/> 1. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)   <br/> 2.  Refer to [Mental Health 101](https://www.google.com/) <br/> 3. Call the Community Helpline <br/> 4. Call 2766 6800'
             });
             confirm_chatting();
+
         }
         else {
             botui.message.add({
@@ -342,6 +359,7 @@
 
     function confirm_chatting() {
         botui.message.add({
+            delay: 1500,
             content: 'Or, you can also try our online chatting service'
         }).then(function () {
             return botui.action.button({
@@ -517,6 +535,5 @@
 
 
 </script>
-{% endblock javascript %}
 
 </html>
