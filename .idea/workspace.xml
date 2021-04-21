@@ -2,33 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3956c8a0-bbf9-4c31-bbc1-eb6b019d6234" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/chatbot_demo/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/chatbot_demo/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/.bumpedrc" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/.bumpedrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/.npmignore" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/.npmignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/CODE_OF_CONDUCT.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/CODE_OF_CONDUCT.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/CONTRIBUTING.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/CONTRIBUTING.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/Gulpfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/Gulpfile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/LICENSE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/Showcase.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/Showcase.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/build/botui-theme-default.css" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/build/botui-theme-default.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/build/botui.js" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/build/botui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/build/botui.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/build/botui.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/build/botui.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/build/botui.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/logo.svg" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/logo.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/newsletter.svg" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/newsletter.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/preview.png" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/preview.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/src/botui.html" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/src/botui.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/src/scripts/botui.js" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/src/scripts/botui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/src/styles/botui.scss" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/src/styles/botui.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/src/styles/normal.scss" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/src/styles/normal.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/src/styles/themes/default.scss" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/src/styles/themes/default.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/test.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/botui-master/typings/index.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/static/botui-master/typings/index.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot_demo/main/templates/main/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot_demo/main/templates/main/index.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -73,7 +46,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="html" value="2732" />
+          <entry key="html" value="2829" />
           <entry key="js" value="8" />
           <entry key="md" value="114" />
           <entry key="py" value="63" />
@@ -81,7 +54,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="2732" />
+          <entry key="HTML" value="2829" />
           <entry key="JavaScript" value="8" />
           <entry key="Markdown" value="114" />
           <entry key="PLAIN_TEXT" value="62" />
@@ -104,8 +77,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chatbot_demo/main/templates/main/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-5870">
-              <caret line="19" column="81" lean-forward="true" selection-start-line="19" selection-start-column="81" selection-end-line="19" selection-end-column="81" />
+            <state relative-caret-position="416">
+              <caret line="355" lean-forward="true" selection-start-line="355" selection-end-line="355" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -323,6 +296,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24954791" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -417,8 +391,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/chatbot_demo/main/templates/main/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5870">
-          <caret line="19" column="81" lean-forward="true" selection-start-line="19" selection-start-column="81" selection-end-line="19" selection-end-column="81" />
+        <state relative-caret-position="416">
+          <caret line="355" lean-forward="true" selection-start-line="355" selection-end-line="355" />
           <folding>
             <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />

@@ -338,7 +338,6 @@
         })
     }
     function medium() {
-
         if (office_hour == true) {
             botui.message.add({
                 content: 'We provide you several suggestions: <br/><br/> 1. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)   <br/> 2.  Refer to [Mental Health 101](https://www.google.com/) <br/> 3. Call the Community Helpline <br/> 4. Call 2766 6800'
@@ -449,8 +448,11 @@
                 }]
             })
         }).then(function (res) {
+            botui.message.human({
+                content: res.text
+            });
             if (res.value == 'yes') {
-                botui.message.add('We provide you several suggestions: <br/><br/> 1. Refer to [Mental Health 101](https://www.google.com/) <br/> 2. Make appointment with existing counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)')
+                botui.message.add('We provide you several suggestions: <br/><br/> 1. Make appointment with existing counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/) <br/> 2. Refer to [Mental Health 101](https://www.google.com/)')
                 // option 1
                 // option 2
             } else {
@@ -458,6 +460,7 @@
                     delay: 700,
                     content: 'Do you have mental health history?'
                 }).then(function () {
+
                     return botui.action.button({
                         addMessage: false,
                         action: [{
@@ -470,18 +473,21 @@
                     })
                 }).then(function (res) {
                     if (res.value == 'yes') {
+                        botui.message.human({
+                             content: res.text
+                        });
                         if (office_hour == true) {
                             botui.message.add({
-                                content: 'We provide you several suggestions: <br/><br/> 1. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)   <br/> 2. Call 2766 6800'
-                            }).then(confirm_chatting())
+                                content: 'We provide you several suggestions: <br/><br/> 1. Call 2766 6800 <br/> 2. Make appointment with counsellor in [POSS](https://www40.polyu.edu.hk/poss/secure/login/loginhome.do/)   <br/> '
+                            });
                         }
                         else {
                             botui.message.add({
-                                content: 'Sorry, currently it is not the office hour, we adive you to call PolyU LINE 8100 1583'
+                                content: 'Sorry, currently it is not the office hour, we advice you to call PolyU LINE 8100 1583'
                             })
                         }
                     } else {
-                        process_to_online_chat()
+                        process_to_online_chat();
                     }
                 })
             }
@@ -489,10 +495,10 @@
     }
 
     function process_to_online_chat() {
-        var service_hour = false;
+        var service_hour = true;
         if (service_hour == false) {
             botui.message.add({
-                content: 'No counsellor avaliable.'
+                content: 'Sorry, it is not service hour, no counsellor avaliable now.'
             })
         } else {
             // online_chatting_request
