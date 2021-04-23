@@ -7,18 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>         old version-->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.14/vue.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
 
 
     {% load static %}
     <script src="{% static 'botui-master/build/botui.js' %}"></script>
-    <!--<link rel="stylesheet" href="{% static 'botui-master/build/botui.min.css' %}" />-->
-    <!--<link rel="stylesheet" href="{% static 'botui-master/build/botui-theme-default.css' %}" />-->
+    <link rel="stylesheet" href="{% static 'botui-master/build/botui.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'botui-master/build/botui-theme-default.css' %}" />
 
     <!--<script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css" />
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" /> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css" /> -->
 
 
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -62,54 +62,70 @@
 {% block javascript %}
 {% endblock javascript %}
 <script>
+
     var office_hour = true;
     var botui = new BotUI('chatbox');
     var content = document.getElementsByTagName('chatbox');
     var user_input = 'default';
     var netid = 0;
     var passwd = 0;
-    var nickname = 'User';
+    var score = 0;
+    var name = 'User';
 
-    botui.message.add({
-        content: 'Hello (Greeting Message 1), Are you a student in PolyU?'
-    }).then(function () {
-        return botui.action.button({
-            addMessage: false,
-            action: [{
-                text: 'Yes',
-                value: 'yes'
-            }, {
-                text: 'No',
-                value: 'no'
-            }]
+    login().then(
+        verification
+    ).then(
+        select_language
+    ).then(
+        get_name
+    ).then(
+        T_and_C
+    ).then(
+        questions
+    ).then(
+        // confirm_answer
+    )
+
+    function login() {
+        return botui.message.add({
+            content: 'Hello (Greeting Message 1), Are you a student in PolyU?'
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                action: [{
+                    text: 'Yes',
+                    value: 'yes'
+                }, {
+                    text: 'No',
+                    value: 'no'
+                }]
+            })
+        }).then(function (res) {
+            if (res.value == 'no') {
+                botui.message.human({
+                    delay: 500,
+                    content: 'No'
+                });
+                botui.message.add({
+                    delay: 700,
+                    content: 'Sorry! We only server for PolyU students.'
+                });
+                botui.message.add({
+                    delay: 900,
+                    content: 'Bye bye!'
+                });
+                end();
+            } else {
+                botui.message.human({
+                    delay: 500,
+                    content: res.text
+                })
+            }
         })
-    }).then(function (res) {
-        if (res.value == 'no') {
-            botui.message.human({
-                delay: 500,
-                content: 'No'
-            });
-            botui.message.add({
-                delay: 600,
-                content: 'Sorry! We only server for PolyU students.'
-            });
-            botui.message.add({
-                delay: 700,
-                content: 'Bye bye!'
-            });
-            end();
-        } else {
-            botui.message.human({
-                delay: 500,
-                content: res.text
-            });
-            verification();
-        }
-
-    })
+    }
 
     function verification() {
-        botui.message.bot({
+        return botui.message.bot({
             delay: 500,
             content: 'Please input your PolyU netid and Password:'
         }).then(function () {
@@ -137,87 +153,22 @@
              ## netid & passwd has stored in variables.
              This part we need backend verification.
             */
-            get_nickname();
-        });
+        })
     }
 
-    function get_nickname() {
-        botui.message.add({
-            content: 'Welcome! What would you like we call you?'
-        }).then(function () {
-            return botui.action.text({
-                addMessage: false,
-                action: {
-                    size: 30,
-                    placeholder: 'Nickname'
-                }
-            });
-        }).then(function (res) {
-            nickname = res.value;
-            T_and_C();
-        });
-    }
-
-
-    function T_and_C() {
-        botui.message.add({
-            content: 'Hi ' + nickname + '! If you want to talk to the counselor, *[This is the T and C of our system]*, do you accept it?'
-        }).then(function () {
-            return botui.action.button({
-                addMessage: false,
-                action: [{
-                    text: 'Yes',
-                    value: 'yes'
-                }, {
-                    text: 'No',
-                    value: 'no'
-                }]
-            })
-        }).then(function (res) {
-            if (res.value == 'no') {
-                botui.message.human({
-                    delay: 500,
-                    content: 'No'
-                });
-                botui.message.add({
-                    delay: 600,
-                    content: 'Sorry! You can still call 2766 6800 for conselling.'
-                });
-                botui.message.add({
-                    delay: 700,
-                    content: 'Bye bye!'
-                });
-                end();
-            } else {
-                botui.message.human({
-                    content: res.text
-                });
-                botui.message.add({
-                    content: 'If you want to talk to the counselor, take a quiz to get to know yourself, or talk to me after you know it.'
-                });
-                questions();
-            }
-        });
-    }
-
-    function questions() {
-        botui.message.add({
-            delay: 700,
-            content: 'What\'s upsetting you recently?'
+    function select_language() {
+        return botui.message.bot({
+            delay: 100,
+            content: '請選擇語言 Please select your language'
         }).then(function () {
             return botui.action.select({
                 action: {
-                    placeholder: "Select a option",
-                    value: '0',
+                    placeholder: "Please select a language",
+                    value: '2',
                     options: [
-                        { value: "0", text: "Studies" },
-                        { value: "1", text: "Interpersonal relationships" },
-                        { value: "2", text: "Work" },
-                        { value: "3", text: "Relationships" },
-                        { value: "4", text: "Family" },
-                        { value: "5", text: "Society" },
-                        { value: "6", text: "Other" },
-                        { value: "7", text: "None" },
+                        { value: "0", text: "繁體中文" },
+                        { value: "1", text: "简体中文" },
+                        { value: "2", text: "English" },
                     ],
                     button: {
                         icon: 'check',
@@ -226,61 +177,251 @@
                 }
             })
         }).then(function (res) {
-            botui.message.add({
-                content: 'Do you often feel depressed?'
+            console.log(res.value)
+        })
+    }
+
+    function get_name() {
+        return botui.message.bot({
+            loading: true,
+            delay: 1000,
+            content: 'Hi there! I\'m Polly, your virtual Chatbot. My mission is to help identifying your service need and rendering you appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/> <br/>For enquiries about other SAO services, please visit the website:<br/>***[https://www.polyu.edu.hk/sao/](https://www.polyu.edu.hk/sao/)*** '
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                delay: 700,
+                content: 'May I know your name?'
+            })
+        }).then(function () {
+            return botui.action.text({
+                addMessage: true,
+                action: {
+                    size: 30,
+                    placeholder: 'Nickname'
+                }
+            });
+        }).then(function (res) {
+            name = res.value;
+        })
+    }
+
+
+    function T_and_C() {
+        return botui.message.bot({
+            loading: true,
+            delay: 500,
+            content: 'Hi ' + name + '. Before using \"My Polly\", you must read and accept the terms and conditions.',
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                action: [{
+                    text: 'Read the Terms and Conditions',
+                }]
+            }).then(function (res) {
+                // TODO  a new website about T&C
+            })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                delay: 500,
+                content: 'Important Notes:<br/>In case of emergency and when there is an imminent risk to the safety of the student or others, please call 999 or go th the nearest emergency service \/ A&E service. Please refer to the CWS website for more emergency support information.',
             }).then(function () {
                 return botui.action.button({
-                    action: [{ value: "1", text: "Very little" },
-                    { value: "2", text: "Less" },
-                    { value: "3", text: "Fair" },
-                    { value: "4", text: "More" },
-                    { value: "5", text: "Very much" }]
-
-                })
-            }).then(function (res) {
-                botui.message.add({
-                    content: 'How long does this low mood last?'
-                }).then(function () {
-                    return botui.action.button({
-                        action: [{ value: "1", text: "Very few" },
-                        { value: "2", text: "A few days" },
-                        { value: "3", text: "A week" },
-                        { value: "4", text: "More than a week" },
-                        { value: "5", text: "More than a month" }]
-
-                    })
+                    addMessage: false,
+                    action: [{
+                        text: 'Emergency support information',
+                    }]
                 }).then(function (res) {
-                    botui.message.add({
-                        content: 'Will this emotional state affect your life at this moment?'
-                    }).then(function () {
-                        return botui.action.button({
-                            action:
-                                [{ value: "1", text: "Very little" },
-                                { value: "2", text: "Less" },
-                                { value: "3", text: "Fair" },
-                                { value: "4", text: "More" },
-                                { value: "5", text: "Very much" }]
+                    // TODO  a new website about ESI
+                })
+            })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                delay: 500,
+                content: 'By clicking \"Hi, Polly\" to accept the above terms and conditions.'
+            }).then(function () {
+                return botui.action.button({
+                    addMessage: true,
+                    action: [
+                        { text: 'No, I stop here.', value: false },
+                        { text: 'Hi, Polly', value: true },
+                    ]
+                }).then(function (res) {
+                    if (res.value == false) {
+                        botui.message.bot({
+                            loading: true,
+                            delay: 500,
+                            content: 'You are always welcome to contact us at 27666800 for enquiries.',
+                        });
+                        end();
+                    }
+                })
+            })
+        });
+    }
 
-                        })
-                    }).then(function (res) {
-                        botui.message.add({
-                            content: 'Have you often felt helpless lately?'
-                        }).then(function () {
-                            return botui.action.button({
-                                action: [{ value: "1", text: "Very little" },
-                                { value: "2", text: "Less" },
-                                { value: "3", text: "Fair" },
-                                { value: "4", text: "More" },
-                                { value: "5", text: "Very much" }]
-
-                            })
-                        }).then(function (res) {
-                            confirm_answer();
-                        })
+    function questions() {
+        return botui.message.bot({
+            loading: true,
+            delay: 500,
+            content: 'To let me know your concern(s), mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> *The following questions are not supposed to treat as any formal psychological or diagnostic assessment.'
+        }).then(function () {
+            return botui.message.bot({
+                delay: 500,
+                content: 'Q1. What bring(s) you here to chat with us? (Can select more than one item)'
+            }).then(function () {
+                return botui.action.select({
+                    action: {
+                        placeholder: "Select a option",
+                        multipleselect: true,
+                        options: [
+                            { text: 'Academic' },
+                            { text: 'Relationship' },
+                            { text: 'Career' },
+                            { text: 'Family' },
+                            { text: 'Mental Health' },
+                            { text: 'Other' },
+                        ],
+                        button: {
+                            icon: 'check',
+                            label: 'OK'
+                        }
+                    }
+                }).then(function (res) {
+                    return botui.message.bot({
+                        loading: true,
+                        delay: 500,
+                        content: 'I see, you are now facing the issue(s) comprising(' + res.text + ')'
                     })
                 })
             })
-        })
+        }).then(function () {
+            return botui.message.bot({
+                delay: 500,
+                content: 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?'
+            }).then(function () {
+                return botui.action.button({
+                    action: [
+                        { text: 'Yes', value: 1 },
+                        { text: 'No', value: 0 }
+                    ]
+                }).then(function (res) {
+                    if (res.value == 0) {
+                        return botui.message.bot({
+                            loading: true,
+                            delay: 500,
+                            content: 'Keep it up! We encourage you to take a look at \"Mental Health 101\" to learn more tips for enhancing your psychological and mental wellness.'
+                        }).then(end()); //Mental Health 101
+
+                    }
+                    score += res.value;
+                    console.log(score);
+                    return botui.message.bot({
+                        loading: true,
+                        delay: 500,
+                        content: 'It is natural for us to experience these feelings in our daily life.'
+                    })
+                })
+            })
+        }).then(function () {
+            return botui.message.bot({
+                delay: 500,
+                content: 'Q3. How often do you experience the feeling of sadness, worry or tension?'
+            }).then(function () {
+                return botui.action.button({
+                    action: [
+                        { text: 'Rarely', value: 1 },
+                        { text: 'Seldom', value: 2 },
+                        { text: 'Sometimes', value: 3 },
+                        { text: 'Often', value: 4 },
+                        { text: 'Always', value: 5 },
+                    ]
+                }).then(function (res) {
+                    score += res.value;
+                    console.log(score);
+                    if (res.value > 3) {
+                        return botui.message.bot({
+                            delay: 500,
+                            loading: true,
+                            content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
+                        }).then(function () {
+                            return botui.message.bot({
+                                delay: 500,
+                                loading: true,
+                                content: 'You show aware of your feelings happening to you.'
+                            })
+                        })
+                    } else {
+                        return botui.message.bot({
+                            delay: 500,
+                            loading: true,
+                            content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
+                        })
+                    }
+                })
+            })
+        }).then(function () {
+            return botui.message.bot({
+                delay: 500,
+                content: 'Q4. How often is your daily life get affected by the feelings mentioned above?'
+            }).then(function () {
+                return botui.action.button({
+                    action: [
+                        { text: 'Rarely', value: 1 },
+                        { text: 'Seldom', value: 2 },
+                        { text: 'Sometimes', value: 3 },
+                        { text: 'Often', value: 4 },
+                        { text: 'Always', value: 5 },
+                    ]
+                }).then(function (res) {
+                    score += res.value;
+                    console.log(score);
+                    if (res.value > 3) {
+                        return botui.message.bot({
+                            loading: true,
+                            delay: 500,
+                            content: 'You are aware that your daily life is getting affected by these feelings.'
+                        })
+                    }
+                })
+            })
+        }).then(function () {
+            return botui.message.bot({
+                delay: 500,
+                content: 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)'
+            }).then(function () {
+                return botui.action.button({
+                    action: [
+                        { text: 'Yes', value: 0 },
+                        { text: 'No', value: 1 }
+                    ]
+                }).then(function (res) {
+                    score += res.value;
+                    console.log(score);
+                    return botui.message.bot({
+                        loading: true,
+                        delay: 500,
+                        content: 'It is crucial to find some positive coping strategies in dealing with the unsettled'
+                    })
+                })
+            })
+        }).then(function () {
+            return botui.message.bot({
+                delay: 500,
+                content: 'Q6. Do you feel effective when using these coping strategies?'
+            }).then(function () {
+                return botui.action.button({
+                    action: [
+                        { text: 'Yes', value: 0 },
+                        { text: 'No', value: 1 }
+                    ]
+                }).then(function (res) {
+                    score += res.value;
+                    console.log(score);
+                })
+            })
+        });
     }
 
     function confirm_answer() {
@@ -321,7 +462,6 @@
     }
 
 
-    var score = 6;
     function dispatch() {
         if (score <= 5) {
             low();
@@ -393,7 +533,7 @@
     }
     function online_chatting() {
         botui.message.add({
-            content: 'Hi ' + nickname + '! If you want to talk to the counselor, *[This is the T and C of our system]*, do you accept it?'
+            content: 'Hi ' + name + '! If you want to talk to the counselor, *[This is the T and C of our system]*, do you accept it?'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -474,7 +614,7 @@
                 }).then(function (res) {
                     if (res.value == 'yes') {
                         botui.message.human({
-                             content: res.text
+                            content: res.text
                         });
                         if (office_hour == true) {
                             botui.message.add({
