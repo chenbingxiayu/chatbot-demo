@@ -183,7 +183,7 @@
         return botui.message.bot({
             loading: true,
             delay: 1000,
-            content: 'Hi there! I\'m Polly, your virtual Chatbot. My mission is to help identifying your service need and rendering you appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/> <br/>For enquiries about other SAO services, please visit the website:<br/>***[https://www.polyu.edu.hk/sao/](https://www.polyu.edu.hk/sao/)*** '
+            content: 'Hi there! I\'m Polly, your virtual Chatbot. My mission is to help identifying your service need and rendering you appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/> <br/>For enquiries about other SAO services, please visit the website:<br/>***<a href="https://www.polyu.edu.hk/sao/" target ="_blank">https://www.polyu.edu.hk/sao/</a>*** '
         }).then(function () {
             return botui.message.bot({
                 loading: true,
@@ -247,12 +247,11 @@
                     ]
                 }).then(function (res) {
                     if (res.value == false) {
-                        botui.message.bot({
+                        return botui.message.bot({
                             loading: true,
                             delay: 500,
                             content: 'You are always welcome to contact us at 27666800 for enquiries.',
-                        });
-                        end();
+                        }).then(end);
                     }
                 })
             })
@@ -309,11 +308,7 @@
                 }).then(function (res) {
                     answers[2] = 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?<pre>&#9;</pre>' + res.text + '<pre>&#9;</pre>'
                     if (res.value == 0) {
-                        return botui.message.bot({
-                            loading: true,
-                            delay: 500,
-                            content: 'Keep it up! We encourage you to take a look at \"Mental Health 101\" to learn more tips for enhancing your psychological and mental wellness.'
-                        }).then(mental_health_101).then(end);
+                        mental_health_101().then(_close);
                     }
                     score += res.value;
                     console.log(score);
@@ -328,39 +323,39 @@
             return botui.message.bot({
                 delay: 500,
                 content: 'Q3. How often do you experience the feeling of sadness, worry or tension?'
-            }).then(function () {
-                return botui.action.button({
-                    action: [
-                        { text: 'Rarely', value: 1 },
-                        { text: 'Seldom', value: 2 },
-                        { text: 'Sometimes', value: 3 },
-                        { text: 'Often', value: 4 },
-                        { text: 'Always', value: 5 },
-                    ]
-                }).then(function (res) {
-                    answers[3] = 'Q3. How often do you experience the feeling of sadness, worry or tension?<pre>&#9;</pre>' + res.text + '<pre>&#9;</pre>'
-                    score += res.value;
-                    console.log(score);
-                    if (res.value > 3) {
+            })
+        }).then(function () {
+            return botui.action.button({
+                action: [
+                    { text: 'Rarely', value: 1 },
+                    { text: 'Seldom', value: 2 },
+                    { text: 'Sometimes', value: 3 },
+                    { text: 'Often', value: 4 },
+                    { text: 'Always', value: 5 },
+                ]
+            }).then(function (res) {
+                answers[3] = 'Q3. How often do you experience the feeling of sadness, worry or tension?<pre>&#9;</pre>' + res.text + '<pre>&#9;</pre>'
+                score += res.value;
+                console.log(score);
+                if (res.value > 3) {
+                    return botui.message.bot({
+                        delay: 500,
+                        loading: true,
+                        content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
+                    }).then(function () {
                         return botui.message.bot({
                             delay: 500,
                             loading: true,
-                            content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
-                        }).then(function () {
-                            return botui.message.bot({
-                                delay: 500,
-                                loading: true,
-                                content: 'You show aware of your feelings happening to you.'
-                            })
+                            content: 'You show aware of your feelings happening to you.'
                         })
-                    } else {
-                        return botui.message.bot({
-                            delay: 500,
-                            loading: true,
-                            content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
-                        })
-                    }
-                })
+                    })
+                } else {
+                    return botui.message.bot({
+                        delay: 500,
+                        loading: true,
+                        content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
+                    })
+                }
             })
         }).then(function () {
             return botui.message.bot({
@@ -549,7 +544,7 @@
             return botui.message.bot({
                 loading: true,
                 delay: 500,
-                content: 'Please do not hestitate to seek for professional help.<br/><br/>1. Immediate Contact with Counsellor/PolyU-Line<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Making Appointment with Counsellors at POSS<br/>3. Community Helpline'
+                content: 'Please do not hestitate to seek for professional help.<br/><br/>1. Immediate Contact with Counsellor/PolyU-Line<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Making Appointment with Counsellors at <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a><br/>3. Community Helpline'
             })
         }).then(function () {
             if (office_hour) {
@@ -589,7 +584,7 @@
         return botui.message.bot({
             loading: true,
             delay: 500,
-            content: '...xxx...'//没太看明白
+            content: '1. <a href="http://www.google.com" target ="_blank">Academic</a><br/>2. <a href="http://www.google.com" target ="_blank">Interpersonal Relationship</a><br/>3. <a href="http://www.google.com" target ="_blank">Career</a><br/>4. <a href="http://www.google.com" target ="_blank">Family</a><br/>5. <a href="http://www.google.com" target ="_blank">Mental Health</a><br/>6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">SAO workshop</a><br/><br/>*We are inviting you for giving your feedback at the end of service.Please come back after reading psychoeducation materials.'
         }).then(function () {
             return botui.message.bot({
                 loading: true,
@@ -599,7 +594,7 @@
         }).then(function () {
             return botui.message.bot({
                 loading: true,
-                delay: 500,
+                delay: 5000,
                 content: 'Thank you for using \"My Polly\". May I assist you with anything further?'
             })
         }).then(function () {
@@ -657,7 +652,7 @@
         return botui.message.bot({
             loading: true,
             delay: 500,
-            content: 'Accept T&CC of Online Chat Service'
+            content: 'Accept T&C of Online Chat Service'
         }).then(function () {
             return botui.action.button({
                 action: [
@@ -699,7 +694,7 @@
                     return botui.message.bot({
                         loading: true,
                         delay: 500,
-                        content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone 2766 6800, email or POSS.'
+                        content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone 2766 6800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.'
                     }).then(function () {
                         return botui.message.bot({
                             loading: true,
@@ -749,13 +744,13 @@
                                     return botui.message.bot({
                                         loading: true,
                                         delay: 500,
-                                        content: '1. Call 27666800<br/>2. Walk in QT308<br/>3. Email: stud.counselling@polyu.edu.hk<br/>4. Online Booking: Direct to POSS</br>'
+                                        content: '1. Call 27666800<br/>2. Walk in QT308<br/>3. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>'
                                     })
                                 } else {
                                     return botui.message.bot({
                                         loading: true,
                                         delay: 500,
-                                        content: '1. Email: stud.counselling@polyu.edu.hk<br/>2. Online Booking: Direct to POSS</br>'
+                                        content: '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>'
                                     })
                                 }
                             })
@@ -770,7 +765,7 @@
         return botui.message.bot({
             loading: true,
             delay: 500,
-            content: '1. Email: stud.counselling@polyu.edu.hk<br/>2. Online Booking: Direct to POSS</br>'
+            content: '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>'
         }).then(end)
     }
 
@@ -794,7 +789,7 @@
         return botui.message.bot({
             loading: true,
             delay: 500,
-            content: '- Emergency Call: 999<br/>- Social Welfare Department: 23432255<br/>- Caritas Family Crisis Support Centre: 18288<br/>- Suicide Prevention Services: 23820000<br/>- The Samaritans Multi-lingual Suicide Prevention(852)2896-0000<br/>- The Hong Kong Jockey Club Charities Trust, Open Up-24-hour online chat platform: www.openup.hk<br/>'
+            content: '- Emergency Call: 999<br/>- Social Welfare Department: 23432255<br/>- Caritas Family Crisis Support Centre: 18288<br/>- Suicide Prevention Services: 23820000<br/>- The Samaritans Multi-lingual Suicide Prevention(852)2896-0000<br/>- The Hong Kong Jockey Club Charities Trust, Open Up-24-hour online chat platform: <a href="www.openup.hk" target ="_blank">www.openup.hk</a><br/>'
         }).then(end)
     }
 
