@@ -87,7 +87,9 @@
 
     function login() {
         return botui.message.add({
+            photo: '{% static "Polly-graphics/general/general-polly.png" %}',
             content: 'Hello (Greeting Message 1), Are you a student in PolyU?'
+
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -103,6 +105,7 @@
             if (res.value == 'no') {
                 return botui.message.human({
                     delay: 500,
+                    photo: '{% static "Polly-graphics/general/general-client.png" %}',
                     content: 'No'
                 }).then(function () {
                     return botui.message.add({
@@ -119,6 +122,7 @@
                 }).then(end);
             } else {
                 return botui.message.human({
+                    photo: '{% static "Polly-graphics/general/general-client.png" %}',
                     delay: 500,
                     content: res.text
                 })
