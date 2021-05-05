@@ -188,7 +188,7 @@
     function get_name() {
         return botui.message.bot({
             loading: true,
-            delay: 7000,
+            delay: 3000,
             content: 'Hi there! I\'m Polly, your virtual Chatbot. My mission is to help identifying your service need and rendering you appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/> <br/>For enquiries about other SAO services, please visit the website:<br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">https://www.polyu.edu.hk/sao/</a> '
         }).then(function () {
             return botui.message.bot({
@@ -227,7 +227,7 @@
         }).then(function () {
             return botui.message.bot({
                 loading: true,
-                delay: 6000,
+                delay: 2000,
                 content: 'Important Notes:<br/>In case of emergency and when there is an imminent risk to the safety of the student or others, please call 999 or go th the nearest emergency service \/ A&E service. Please refer to the CWS website for more emergency support information.',
             }).then(function () {
                 return botui.action.button({
@@ -267,7 +267,7 @@
     function questions() {
         return botui.message.bot({
             loading: true,
-            delay: 6000,
+            delay: 3000,
             content: 'To let me know your concern(s), mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> The following questions are not supposed to treat as any formal psychological or diagnostic assessment.'
         }).then(function () {
             return botui.message.bot({
