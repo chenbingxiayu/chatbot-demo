@@ -14,7 +14,6 @@ def index(request):
     return render(request, 'main/index.html')
 
 
-
 @csrf_exempt
 def auto_response(request):
     template = loader.get_template('main/index.html')
@@ -51,5 +50,3 @@ def response_api(request):
     # print response.json()['response']
 
     return HttpResponse(response.json()['response'])
-
-
