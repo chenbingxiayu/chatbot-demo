@@ -4,57 +4,41 @@ from __future__ import unicode_literals
 from django.db import models
 
 ROLE = [
-    ('online_triage', 'ONLINE TRIAGE'),
+    ('online_triage', 'Online Triage'),
     ('do', 'DO'),
-    ('counsellor', 'COUNSELLOR'),
-    ('online_triage', 'ONLINE TRIAGE')
+    ('counsellor', 'Counsellor'),
+    ('supervisor', 'Supervisor'),
+    ('admin', 'Admin')
 ]
 
-STATUS = [
+STAFF_STATUS = [
     ('available', 'Available'),
-    ('away', 'Away'),
-    ('chatting', 'Chatting')
+    ('chatting', 'Chatting'),
+    ('offline', 'Offline')
 ]
 
 CHAT_STATUS = [
     ('waiting', 'Waiting'),
     ('chatting', 'Chatting'),
-    ('ended', 'Ended')
+    ('end', 'End')
 ]
 
 
-class User(models.Model):
-    net_id = models.CharField(max_length=64, unique=True)
-    role = models.CharField(max_length=32, choices=ROLE)
-    status = models.CharField(max_length=32, choices=STATUS)
-    last_update = models.DateTimeField()
+class StaffStatus(models.Model):
+    staff_name = models.CharField(max_length=64)
+    staff_net_id = models.CharField(max_length=64, unique=True)
+    staff_role = models.CharField(max_length=32, choices=ROLE)
+    staff_chat_status = models.CharField(max_length=32, choices=STAFF_STATUS)
+    status_change_time = models.DateTimeField()
 
     def __str__(self):
-        return f"User({self.net_id}: {self.role})"
-
-    def to_dict(self):
-        return {
-            "net_id": self.net_id,
-            "role": self.role,
-            "status": self.status,
-            "last_update": str(self.last_update)
-        }
+        return f"Staff({self.staff_net_id}: {self.staff_role})"
 
 
-class Chat(models.Model):
+class StudentChatStatus(models.Model):
     student_netid = models.CharField(max_length=64)
-    request_time = models.DateTimeField(default=None, null=True)
-    chat_status = models.CharField(max_length=32, choices=CHAT_STATUS)
-    start_time = models.DateTimeField(default=None, null=True)
-    end_time = models.DateTimeField(default=None, null=True)
-    counsellor = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-
-    def to_dict(self):
-        return {
-            "student_netid": self.student_netid,
-            "request_time": self.request_time,
-            "chat_status": self.chat_status,
-            "start_time": self.start_time,
-            "end_time": self.end_time,
-            "counsellor": self.counsellor.to_dict()
-        }
+    chat_request_time = models.DateTimeField(default=None, null=True)
+    student_chat_status = models.CharField(max_length=32, choices=CHAT_STATUS)
+    chat_start_time = models.DateTimeField(default=None, null=True)
+    chat_end_time = models.DateTimeField(default=None, null=True)
+    assigned_counsellor_id = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)
