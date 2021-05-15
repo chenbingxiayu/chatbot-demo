@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>-->
 <html>
 
 <head>
@@ -15,6 +15,7 @@
     <script src="{% static 'botui-master/build/botui.js' %}"></script>
     <link rel="stylesheet" href="{% static 'botui-master/build/botui.min.css' %}" />
     <link rel="stylesheet" href="{% static 'botui-master/build/botui-theme-default.css' %}" />
+    <link href="{% static 'fontawesome-free-5.15.3-web/css/all.css' %}"  rel="stylesheet">
 
     <!--<script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>-->
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" /> -->
@@ -31,11 +32,118 @@
 
 </head>
 
+
+<style type="text/css">
+
+    body {
+        background: #ebefff;
+    }
+
+    .wrap {
+        width: 200px;
+        height: 25px;
+        /*background: #ebefff;*/
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        border-radius: 10px;
+    }
+    .stars {
+        width: fit-content;
+        margin: 0 auto;
+        cursor: pointer;
+    }
+    .star {
+        color: #91a6ff !important;
+    }
+    .rate {
+        height: 50px;
+        margin-left: -5px;
+        padding: 5px;
+        font-size: 25px;
+        position: relative;
+        cursor: pointer;
+    }
+    .rate input[type="radio"] {
+        opacity: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,0%);
+        pointer-events: none;
+    }
+    .star-over::after {
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        font-size: 19px;
+        content: "\f005";
+        display: inline-block;
+        color: #91a6ff;
+        z-index: 1;
+        position: absolute;
+        top: 14px;
+        left: 8.5px;
+    }
+
+    .rate:nth-child(1) .face::after {
+        content: "\f119"; /* ☹ */
+    }
+    .rate:nth-child(2) .face::after {
+        content: "\f11a"; /* 😐 */
+    }
+    .rate:nth-child(3) .face::after {
+        content: "\f118"; /* 🙂 */
+    }
+    .rate:nth-child(4) .face::after {
+        content: "\f580"; /* 😊 */
+    }
+    .rate:nth-child(5) .face::after {
+        content: "\f59a"; /* 😄 */
+    }
+    .face {
+        opacity: 0;
+        position: absolute;
+        width: 35px;
+        height: 35px;
+        background: #91a6ff;
+        border-radius: 4px;
+        top: -40px;
+        left: 2px;
+        transition: 0.2s;
+        pointer-events: none;
+    }
+    .face::before {
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        content: "\f0dd";
+        display: inline-block;
+        color: #91a6ff;
+        z-index: 1;
+        position: absolute;
+        left: 9px;
+        bottom: -15px;
+    }
+    .face::after {
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        display: inline-block;
+        color: #fff;
+        z-index: 1;
+        position: absolute;
+        left: 6px;
+        top: -1px;
+    }
+
+    .rate:hover .face {
+        opacity: 1;
+    }
+</style>
+
+{% block body %}
 <body>
-    {% block body %}
     <div class="container" style="background-color: #f7f8f8">
         <div class="jumbotron" style="background-color: #f7f8f8">
-
             <br>
             <br>
         </div>
@@ -59,10 +167,10 @@
 
 
 
-{% block javascript %}
-{% endblock javascript %}
-<script>
 
+{% load static %}
+{% block javascript %}
+<script>
     var office_hour = false;
     var botui = new BotUI('chatbox');
     var content = document.getElementsByTagName('chatbox');
@@ -72,6 +180,8 @@
     var score = 0;
     var answers = {};
     var name = 'User';
+    var polly = '{% static "Polly-graphics/summer/summer-polly.png" %}';
+    var client = '{% static "Polly-graphics/general/general-client.png" %}';
 
     login().then(
             verification
@@ -87,7 +197,7 @@
 
     function login() {
         return botui.message.add({
-            photo: '{% static "Polly-graphics/general/general-polly.png" %}',
+            photo: polly,
             content: 'Hello (Greeting Message 1), Are you a student in PolyU?'
 
         }).then(function () {
@@ -105,7 +215,7 @@
             if (res.value == 'no') {
                 return botui.message.human({
                     delay: 500,
-                    photo: '{% static "Polly-graphics/general/general-client.png" %}',
+                    photo: client,
                     content: 'No'
                 }).then(function () {
                     return botui.message.add({
@@ -833,17 +943,57 @@
             loading: true,
             delay: 1500,
             content: 'Thank you for using \"My Polly\".'
-        }).then(function () {
-            return botui.message.bot({
+        }).then(rating
+
+            /* function () {
+             return botui.message.bot({
                 loading: true,
                 delay: 1000,
                 content: 'Please rate your experience'
             }).then(function () {
                 // survery
             }).then(_close)
-        })
+            }*/
+        )
     }
 
+
+    function rating() {
+        return botui.message.add({
+                    type: 'html',
+                    delay: 1000,
+                    content: '<p>Please rate this service:</p>' +
+                        '<div class="wrap">\n' +
+                        '  <div class="stars">\n' +
+                        '    <label class="rate">\n' +
+                        '      <input type="radio" name="radio1" id="star1" value="star1">\n' +
+                        '      <div class="face"></div>\n' +
+                        '      <i class="far fa-star star one-star"></i>\n' +
+                        '    </label>\n' +
+                        '    <label class="rate">\n' +
+                        '      <input type="radio" name="radio1" id="star2" value="star2">\n' +
+                        '      <div class="face"></div>\n' +
+                        '      <i class="far fa-star star two-star"></i>\n' +
+                        '    </label>\n' +
+                        '    <label class="rate">\n' +
+                        '      <input type="radio" name="radio1" id="star3" value="star3">\n' +
+                        '      <div class="face"></div>\n' +
+                        '      <i class="far fa-star star three-star"></i>\n' +
+                        '    </label>\n' +
+                        '    <label class="rate">\n' +
+                        '      <input type="radio" name="radio1" id="star4" value="star4">\n' +
+                        '      <div class="face"></div>\n' +
+                        '      <i class="far fa-star star four-star"></i>\n' +
+                        '    </label>\n' +
+                        '    <label class="rate">\n' +
+                        '      <input type="radio" name="radio1" id="star5" value="star5">\n' +
+                        '      <div class="face"></div>\n' +
+                        '      <i class="far fa-star star five-star"></i>\n' +
+                        '    </label>\n' +
+                        '  </div>\n' +
+                        '</div>'
+                }).then(_close)
+    }
 
     /*
     function chatting () {
@@ -874,13 +1024,33 @@
         });
     }
     */
-
-
-
-
-
-
-
 </script>
 
+<script type="text/javascript">
+    $(function() {
+        $(document).on({
+            mouseover: function(event) {
+                $(this).find('.far').addClass('star-over');
+                $(this).prevAll().find('.far').addClass('star-over');
+            },
+            mouseleave: function(event) {
+                $(this).find('.far').removeClass('star-over');
+                $(this).prevAll().find('.far').removeClass('star-over');
+            }
+        }, '.rate');
+
+
+        $(document).on('click', '.rate', function() {
+            if ( !$(this).find('.star').hasClass('rate-active') ) {
+                $(this).siblings().find('.star').addClass('far').removeClass('fas rate-active');
+                $(this).find('.star').addClass('rate-active fas').removeClass('far star-over');
+                $(this).prevAll().find('.star').addClass('fas').removeClass('far star-over');
+            } else {
+                console.log('has');
+            }
+        });
+
+    });
+</script>
+{% endblock javascript %}
 </html>
