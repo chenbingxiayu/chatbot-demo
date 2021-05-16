@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Chat Console</title>
+  <link 
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    crossorigin="anonymous"
+  >
+  <style>
+    .table th.fit,
+    .table td.fit {
+      white-space: nowrap;
+      width: 1%;
+    }
+    
+    .form-group label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="contatiner-fluid p-3">
+    <div class="form-group">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Welcome:</label>
+          <span>{{ staff.staff_netid }}</span>
+        </div>
+        <div class="col-md-4">
+          <label>Role:</label>
+          <span>{{ staff.get_staff_role_display }}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Date:</label>
+          <span class="date"></span>
+        </div>
+        <div class="col-md-4">
+          <label>Time:</label>
+          <span class="time"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Status:</label>
+          <span>{{ staff.get_staff_chat_status_display }}</span>
+        </div>
+      </div>
+      <hr>
+      {% block content %}
+      {% endblock %}
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script>
+    $('span.date').text(new Date().toLocaleDateString('en-HK', {year: 'numeric', month: 'long', day: 'numeric'}));
+    
+    ;(function updateTime(){
+      $('span.time').text(new Date().toLocaleTimeString('en-HK', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false}));
+      setTimeout(() => {
+        updateTime();
+      }, 1000);
+    })();
+    
+    $(document).ready(() => {
+    })
+  </script>
+</body>
+</html>
