@@ -18,12 +18,12 @@
     <session id="-547668439">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="13" />
+          <entry key="project.closed" value="15" />
           <entry key="project.open.time.0" value="2" />
-          <entry key="project.open.time.3" value="4" />
+          <entry key="project.open.time.3" value="5" />
           <entry key="project.open.time.4" value="5" />
           <entry key="project.open.time.5" value="2" />
-          <entry key="project.opened" value="13" />
+          <entry key="project.opened" value="14" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -50,7 +50,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="html" value="3461" />
+          <entry key="html" value="3463" />
           <entry key="js" value="8" />
           <entry key="md" value="354" />
           <entry key="py" value="76" />
@@ -58,7 +58,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="3461" />
+          <entry key="HTML" value="3463" />
           <entry key="JavaScript" value="8" />
           <entry key="Markdown" value="354" />
           <entry key="PLAIN_TEXT" value="62" />
@@ -77,8 +77,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chatbot_demo/main/templates/main/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="417">
-              <caret line="846" lean-forward="true" selection-start-line="846" selection-end-line="846" />
+            <state relative-caret-position="269">
+              <caret line="664" column="52" selection-start-line="664" selection-start-column="52" selection-end-line="664" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -271,6 +271,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2477396" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -429,8 +430,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/chatbot_demo/main/templates/main/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="417">
-          <caret line="846" lean-forward="true" selection-start-line="846" selection-end-line="846" />
+        <state relative-caret-position="269">
+          <caret line="664" column="52" selection-start-line="664" selection-start-column="52" selection-end-line="664" selection-end-column="52" />
         </state>
       </provider>
     </entry>
