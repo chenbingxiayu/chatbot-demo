@@ -12,8 +12,8 @@
     crossorigin="anonymous"
   >
   <style>
-    .table th.fit,
-    .table td.fit {
+    .table th.seq-no,
+    .table td.seq-no {
       white-space: nowrap;
       width: 1%;
     }
@@ -73,6 +73,8 @@
     
     $(document).ready(() => {
     })
+
   </script>
+  {% block extra_js %}{% endblock extra_js %}
 </body>
 </html>

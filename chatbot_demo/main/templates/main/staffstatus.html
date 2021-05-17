@@ -1,10 +1,10 @@
 {% extends 'main/chatConsole.html' %}
 {% block content %}
 <div class="table-container">
-  <table class="table table-striped table-bordered table-responsive-md">
+  <table id="staffStatus" class="table table-striped table-bordered table-responsive-md">
     <thead>
       <tr>
-        <th scope="col" class="fit">Counsellor</th>
+        <th scope="col">Counsellor</th>
         <th scope="col">Role</th>
         <th scope="col">Status</th>
         <th scope="col">Duration</th>
@@ -12,7 +12,7 @@
     </thead>
     <tbody>
       {% for staff in staff_list %}
-      <tr>
+      <tr data-stud-key="{{ student.pk }}">
         <td>{{ staff.staff_netid }}</td>
         <td>{{ staff.get_staff_role_display }}</td>
         <td>{{ staff.get_staff_chat_status_display }}</td>
