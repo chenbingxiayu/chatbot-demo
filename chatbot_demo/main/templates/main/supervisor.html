@@ -34,7 +34,7 @@
 <script>
   $('#chat-status-table tbody > tr').each((i,row) => {
     const $row = $(row)
-    const is_counsellor = !!($row.find('td.counsellor').text())
+    const is_counsellor = !!($row.find('td.counsellor').text()) 
     is_counsellor ? $row.find('td.join-session').append('<span>Join</span>') : null
   })
 </script>
