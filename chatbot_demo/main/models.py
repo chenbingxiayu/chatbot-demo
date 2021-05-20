@@ -15,6 +15,8 @@ class StaffStatus(models.Model):
 
     class ChatStatus(models.TextChoices):
         AVAILABLE = 'available', _('Available'),
+        AWAY = 'away', _('Away'),
+        ASSIGNED = 'assigned', _('Assigned'),
         CHATTING = 'chatting', _('Chatting'),
         OFFLINE = 'offline', _('Offline')
 
@@ -32,10 +34,11 @@ class StudentChatStatus(models.Model):
     class ChatStatus(models.TextChoices):
         WAITING = 'waiting', _('Waiting'),
         CHATTING = 'chatting', _('Chatting'),
+        ASSIGNED = 'assigned', _('Assigned'),
         END = 'end', _('End')
 
     student_netid = models.CharField(max_length=64, unique=True)
-    chat_request_time = models.DateTimeField(default=None, null=True)
+    chat_request_time = models.DateTimeField(auto_now=True, null=True)
     student_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices)
     chat_start_time = models.DateTimeField(default=None, null=True)
     chat_end_time = models.DateTimeField(default=None, null=True)

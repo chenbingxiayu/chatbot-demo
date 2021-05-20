@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db import IntegrityError
 from django.core import serializers
+from django.db.models import Q
 
 from main.models import StaffStatus, StudentChatStatus
 
@@ -68,6 +69,8 @@ def response_api(request):
 @require_http_methods(['GET'])
 def counsellor(request):
     staff_netid = request.COOKIES.get('staff_netid')
+    now = timezone.now()
+    today = now.date()
     offset = request.GET.get('offset', 0)
     limit = request.GET.get('limit', 20)
 
@@ -76,8 +79,11 @@ def counsellor(request):
     except StaffStatus.DoesNotExist as e:
         return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
 
-    students = StudentChatStatus.objects.order_by('chat_request_time')[offset:offset + limit]
-    now = timezone.now()
+    students = StudentChatStatus.objects \
+                   .filter(chat_request_time__date=today) \
+                   .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
+                           Q(assigned_counsellor=staff)) \
+                   .order_by('chat_request_time')[offset:offset + limit]  # need to load timezone table for mysql
     return render(request, 'main/counsellor.html',
                   {'staff': staff, 'students': students, 'now': now})
 
@@ -86,6 +92,8 @@ def counsellor(request):
 @require_http_methods(['GET'])
 def supervisor(request):
     staff_netid = request.COOKIES.get('staff_netid')
+    now = timezone.now()
+    today = now.date()
     offset = request.GET.get('offset', 0)
     limit = request.GET.get('limit', 20)
 
@@ -94,8 +102,9 @@ def supervisor(request):
     except StaffStatus.DoesNotExist as e:
         return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
 
-    students = StudentChatStatus.objects.order_by('chat_request_time')[offset:offset + limit]
-    now = timezone.now()
+    students = StudentChatStatus.objects \
+                   .filter(chat_request_time__date=today) \
+                   .order_by('chat_request_time')[offset:offset + limit]
     return render(request, 'main/supervisor.html',
                   {'staff': staff, 'students': students, 'now': now})
 
@@ -104,6 +113,8 @@ def supervisor(request):
 @require_http_methods(['GET'])
 def administrator(request):
     staff_netid = request.COOKIES.get('staff_netid')
+    now = timezone.now()
+    today = now.date()
     offset = request.GET.get('offset', 0)
     limit = request.GET.get('limit', 20)
 
@@ -112,8 +123,9 @@ def administrator(request):
     except StaffStatus.DoesNotExist as e:
         return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
 
-    students = StudentChatStatus.objects.order_by('chat_request_time')[offset:offset + limit]
-    now = timezone.now()
+    students = StudentChatStatus.objects \
+                   .filter(chat_request_time__date=today) \
+                   .order_by('chat_request_time')[offset:offset + limit]
     return render(request, 'main/administrator.html',
                   {'staff': staff, 'students': students, 'now': now})
 
@@ -153,10 +165,8 @@ def addstud(request):
     if not student_netid:
         return JsonResponse({"error": "Invalid student ID"}, status=400)
 
-    now = timezone.now()
     student_status = StudentChatStatus(
         student_netid=student_netid.upper(),
-        chat_request_time=now,
         student_chat_status=StudentChatStatus.ChatStatus.WAITING,
     )
     try:
@@ -287,10 +297,48 @@ def assignstaff(request):
     staff = StaffStatus.objects.get(staff_netid=staff_netid)
     student = StudentChatStatus.objects.get(student_netid=student_netid)
 
+    student.student_chat_status = StudentChatStatus.ChatStatus.ASSIGNED
+    student.assigned_counsellor_id = staff
+    staff.staff_chat_status = StaffStatus.ChatStatus.ASSIGNED
+    staff.status_change_time = now
+    student.save()
+    staff.save()
+
+    return JsonResponse({'status': 'success'}, status=200)
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def startchat(request):
+    student_netid = request.POST.get('student_netid')
+    staff_netid = request.POST.get('staff_netid')
+    now = timezone.now()
+    staff = StaffStatus.objects.get(staff_netid=staff_netid)
+    student = StudentChatStatus.objects.get(student_netid=student_netid)
+    student.chat_start_time = now
+
     student.student_chat_status = StudentChatStatus.ChatStatus.CHATTING
     student.chat_start_time = now
-    student.assigned_counsellor_id = staff
     staff.staff_chat_status = StaffStatus.ChatStatus.CHATTING
+    staff.status_change_time = now
+    student.save()
+    staff.save()
+
+    return JsonResponse({'status': 'success'}, status=200)
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def endchat(request):
+    student_netid = request.POST.get('student_netid')
+    staff_netid = request.POST.get('staff_netid')
+    now = timezone.now()
+    staff = StaffStatus.objects.get(staff_netid=staff_netid)
+    student = StudentChatStatus.objects.get(student_netid=student_netid)
+
+    student.student_chat_status = StudentChatStatus.ChatStatus.END
+    student.chat_end_time = now
+    staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
     staff.status_change_time = now
     student.save()
     staff.save()
