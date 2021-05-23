@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>Dialogggg</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -188,7 +188,9 @@
 {% load static %}
 {% block javascript %}
 <script>
+    // set date and time
     var office_hour = false;
+
     var botui = new BotUI('chatbox');
     var content = document.getElementsByTagName('chatbox');
     var user_input = 'default';
@@ -201,7 +203,8 @@
     var client = '{% static "Polly-graphics/general/general-client.png" %}';
 
     login().then(
-             verification
+
+         /*    verification
          ).then(
              select_language
          ).then(
@@ -210,10 +213,11 @@
              T_and_C_split
          ).then(
             questions
-
+         */
+        // T_and_C_of_OCS
         // low
         // medium
-        // high
+        high
     )
 
     function login() {
@@ -1175,14 +1179,29 @@
     }
 
     function T_and_C_of_OCS() { //Online Chat Services
-        return botui.message.bot({
-            loading: true,
-            delay: 1500,
-            photo: polly,
-            content: 'Online Chat<br/>' +
-                'Service hours: 0900 - 1200 & 1400 - 1600(HKT), Monday through Friday non-service hours: 1200 - 1400 & 1800 - 1900(HKT)'
-        }).then(function () {
-            return botui.message.bot({
+        var myDate = new Date();
+        pop_msg = "";
+
+        if (myDate.getDay() >=1 && myDate.getDay() <=5) {
+            if (myDate.getHours() >=12 && myDate.getHours() <=14) {
+                pop_msg = 'We\'ll be back in service at 1400(HKT). We look forward to meeting you !'
+            } else if (myDate.getHours() >=18 && myDate.getHours() <=19) {
+                pop_msg = 'We\'ll be back during service hours: 0900-1200 & 1400 - 1800 (HKT) , Monday through Friday. We look forward to meeting you !'
+            }
+        } else {
+            pop_msg = 'We\'ll be back at 0900(HKT) in the following working day. We look forward to meeting you !'
+        }
+
+        if (pop_msg != "") {
+            botui.message.bot({
+                loading: true,
+                delay: 1500,
+                photo: polly,
+                content: pop_msg
+            }).then(end).then(_close)
+        }
+
+        botui.message.bot({
                 loading: true,
                 delay: 1000,
                 photo: polly,
@@ -1191,7 +1210,6 @@
                         'there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.<br/><br/>' +
                         '2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>' +
                         '3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>'
-            })
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -1292,7 +1310,7 @@
                         loading: true,
                         photo: polly,
                         delay: 3000,
-                        content: 'Q2.Do you have a history of any of the following:<br/>' +
+                        content: 'Q2.Do you have a history of any of the following:<br/><br/>' +
                             '- Having thoughts of hurting yourself or others, or engaging in self-harming or violent behaviors<br/><br/>' +
                             '- Being admitted to a psychiatric ward, or hospitalized due to a psychiatric condition<br/><br/>' +
                             '- Being diagnosed of mental health problem or illness by psychologists, psychiatrists or doctors, e.g. Major Depressive Disorder, Anxiety Disorder, Schizophrenia, and any Personality Disorders etc <br/><br/>' +
@@ -1437,7 +1455,7 @@
             loading: true,
             photo: polly,
             delay: 1000,
-            content: 'Thank you for using \"My Polly\".May I assist you with anything further?'
+            content: 'May I assist you with anything further?'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -1473,7 +1491,7 @@
     function end() {
         return botui.message.bot({
             loading: true,
-            delay: 1500,
+            delay: 3500,
             photo: polly,
             content: 'Thank you for using \"My Polly\".'
         }).then(rating
@@ -1500,27 +1518,27 @@
                 '  <div class="stars">\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star1" value="star1">\n' +
-                '      <div class="face"></div>\n' +
+
                 '      <i class="far fa-star star one-star"></i>\n' +
                 '    </label>\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star2" value="star2">\n' +
-                '      <div class="face"></div>\n' +
+
                 '      <i class="far fa-star star two-star"></i>\n' +
                 '    </label>\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star3" value="star3">\n' +
-                '      <div class="face"></div>\n' +
+
                 '      <i class="far fa-star star three-star"></i>\n' +
                 '    </label>\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star4" value="star4">\n' +
-                '      <div class="face"></div>\n' +
+
                 '      <i class="far fa-star star four-star"></i>\n' +
                 '    </label>\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star5" value="star5">\n' +
-                '      <div class="face"></div>\n' +
+
                 '      <i class="far fa-star star five-star"></i>\n' +
                 '    </label>\n' +
                 '  </div>\n' +
