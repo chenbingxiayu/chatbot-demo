@@ -2,5 +2,44 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-# Create your models here.
+
+class StaffStatus(models.Model):
+    class Role(models.TextChoices):
+        ONLINETRIAGE = 'online_triage', _('Online Triage')
+        DO = 'do', _('DO')
+        COUNSELLOR = 'counsellor', _('Counsellor')
+        SUPERVISOR = 'supervisor', _('Supervisor')
+        ADMIN = 'admin', _('Admin')
+
+    class ChatStatus(models.TextChoices):
+        AVAILABLE = 'available', _('Available'),
+        AWAY = 'away', _('Away'),
+        ASSIGNED = 'assigned', _('Assigned'),
+        CHATTING = 'chatting', _('Chatting'),
+        OFFLINE = 'offline', _('Offline')
+
+    staff_name = models.CharField(max_length=64)
+    staff_netid = models.CharField(max_length=64, unique=True)
+    staff_role = models.CharField(max_length=32, choices=Role.choices)
+    staff_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices)
+    status_change_time = models.DateTimeField()
+
+    def __str__(self):
+        return f"Staff({self.staff_netid}: {self.staff_role})"
+
+
+class StudentChatStatus(models.Model):
+    class ChatStatus(models.TextChoices):
+        WAITING = 'waiting', _('Waiting'),
+        CHATTING = 'chatting', _('Chatting'),
+        ASSIGNED = 'assigned', _('Assigned'),
+        END = 'end', _('End')
+
+    student_netid = models.CharField(max_length=64, unique=True)
+    chat_request_time = models.DateTimeField(auto_now=True, null=True)
+    student_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices)
+    chat_start_time = models.DateTimeField(default=None, null=True)
+    chat_end_time = models.DateTimeField(default=None, null=True)
+    assigned_counsellor = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)

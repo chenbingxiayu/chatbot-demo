@@ -1,0 +1,41 @@
+{% extends 'main/chatConsole.html' %}
+{% block content %}
+{% load template_filter %}
+<div class="table-container">
+  <table id="chat-status-table" class="table table-striped table-bordered table-responsive-md">
+    <thead>
+      <tr>
+        <th scope="col" class="seq-no">Waiting Sequence</th>
+        <th scope="col">Student ID</th>
+        <th scope="col">Time (request time)</th>
+        <th scope="col">Status</th>
+        <th scope="col">Duration</th>
+        <th scope="col">Counsellor</th>
+        <th scope="col">Join Session</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+      <tr data-stud-key="{{ student.pk }}">
+        <th scope="row" class="seq-no"></th>
+        <td>{{ student.student_netid|mask }}</td>
+        <td>{{ student.chat_request_time|time:'H:i:s' }}</td>
+        <td>{{ student.get_student_chat_status_display }}</td>
+        <td>{{ student.chat_request_time|timesince:now }}</td>
+        <td class="counsellor">{{ student.assigned_counsellor.staff_netid }}</td>
+        <td class="join-session"></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+  $('#chat-status-table tbody > tr').each((i,row) => {
+    const $row = $(row)
+    const is_counsellor = !!($row.find('td.counsellor').text()) 
+    is_counsellor ? $row.find('td.join-session').append('<span>Join</span>') : null
+  })
+</script>
+{% endblock %}
