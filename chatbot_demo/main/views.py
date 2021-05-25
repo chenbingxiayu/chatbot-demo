@@ -10,7 +10,7 @@ import json
 import requests
 
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
@@ -19,6 +19,7 @@ from django.db import IntegrityError
 from django.core import serializers
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.urls import reverse
 
 from main.models import StaffStatus, StudentChatStatus
 from main.forms import LoginForm
