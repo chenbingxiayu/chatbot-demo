@@ -28,7 +28,7 @@ class LoginForm(forms.Form):
     def clean_netid(self):
         cleaned_data = super().clean()
         try:
-            staff = StaffStatus.objects.get(staff_netid=cleaned_data['netid'])
+            staff = StaffStatus.objects.get(staff_netid=cleaned_data['netid'].upper())
         except StaffStatus.DoesNotExist as e:
             raise ValidationError("netid or password is incorrect.")
 
