@@ -10,17 +10,21 @@ import json
 import requests
 
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
-from django.core.serializers.json import DjangoJSONEncoder
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db import IntegrityError
 from django.core import serializers
 from django.db.models import Q
+from django.shortcuts import redirect
+from django.urls import reverse
 
 from main.models import StaffStatus, StudentChatStatus
+from main.forms import LoginForm
+
+COOKIE_MAX_AGE = 8 * 60 * 60
 
 
 def index(request):
@@ -63,6 +67,37 @@ def response_api(request):
     # print response.json()['response']
 
     return HttpResponse(response.json()['response'])
+
+
+@require_http_methods(['GET', 'POST'])
+def login_page(request):
+    if request.method == "GET":
+        form = LoginForm(auto_id=True)
+        return render(request, 'main/login.html', {'form': form})
+    elif request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            staff = form.cleaned_data['netid']  # this return StaffStatus object
+            password = form.cleaned_data['password']
+            role = form.cleaned_data['role']
+            status = form.cleaned_data['status']
+
+            if staff.staff_role in ('online_triage', 'do', 'counsellor'):
+                staff.staff_role = role
+            staff.status = status
+            staff.save()
+
+        else:
+            return render(request, 'main/login.html', {'form': form})
+
+        if staff.staff_role in ('online_triage', 'do', 'counsellor'):
+            response = redirect('counsellor')
+        elif staff.staff_role == 'supervisor':
+            response = redirect('supervisor')
+        else:
+            response = redirect('administrator')
+        response.set_cookie("staff_netid", staff.staff_netid, max_age=COOKIE_MAX_AGE)
+        return response
 
 
 @csrf_exempt
