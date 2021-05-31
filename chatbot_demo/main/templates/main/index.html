@@ -154,6 +154,60 @@
     .rate:hover .face {
         opacity: 1;
     }
+
+    .botui {
+        height: 600px;
+        background: url('../static/Polly-graphics/general/general-bg.png') no-repeat center center #eff7d7;
+        background-size: cover;
+        -o-background-size: cover;
+        -moz-background-size: cover;
+        -webkit-background-size: cover;
+    }
+
+    .botui-header {
+        height: 150px;
+        background: url('../static/Polly-graphics/general/general-top.png') no-repeat ;
+        background-size: contain;
+        -o-background-size: contain;
+        -moz-background-size: contain;
+        -webkit-background-size: contain;
+
+    }
+
+    .botui-message-content {
+        background-color: #c2c890;
+        border-radius: 10px 10px 10px 5px;
+        overflow-wrap: break-word;
+    }
+
+    .botui-message-content.human {
+        background-color: #fccca5;
+        border-radius: 10px 10px 10px 5px;
+    }
+
+    @media only screen and (max-width: 991px) {
+        .botui-header {
+            height: 98px;
+        }
+    }
+
+    @media only screen and (max-width: 767px) {
+        .botui-header {
+            height: 150px;
+        }
+    }
+
+    @media only screen and (max-width: 425px) {
+        .botui-header {
+            height: 120px;
+        }
+    }
+
+    @media only screen and (max-width: 320px) {
+        .botui-header {
+            height: 98px;
+        }
+    }
 </style>
 
 {% block body %}
@@ -167,8 +221,9 @@
         <div class="row">
             <div class="col-md-3"></div>
             <div class="col-md-6">
-                <div id="chatbox" style="height: 600px">
-                    <bot-ui style="background-color: aliceblue;"></bot-ui>
+                <div id="chatbox" class="botui">
+                    <div class="botui-header"></div>
+                    <bot-ui ></bot-ui>
                 </div>
             </div>
             <div class="col-md-3"></div>
