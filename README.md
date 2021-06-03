@@ -31,15 +31,18 @@ Cross-Origin Read Blocking (CORB) 头像的问题可以参考一下这个
 
 ## 更新:
 
-- 采用新flow，未使用Pop-up message
-- 重新调整响应时间
+- 把按钮文字submit替换成confirm
+- rating五个可选项不要emoji
+- Thanks for using "MyPoly" 弹出慢一点
+- 删除 May I assist 之前的句子
+- 解决了第一个polly-agent头像不能正确显示的bug
+
 
 
 ## 需求：
 
 
 
-- 添加头像 参考：https://github.com/botui/botui/issues/81
 - 登录信息传回后台，发送请求给ITS认证
 - 选择语言（ENG/繁/简体）（是否能够提前为第一个逻辑？）
   
