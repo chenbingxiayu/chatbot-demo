@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:5-alpine
+    ports:
+      - 6379:6379
+
+  celery:
+    build: ./chatbot_demo
+    command: celery -A chatbot_demo worker -l info -P gevent
+    volumes:
+      - ./chatbot_demo:/app
+    env_file:
+      - ./chatbot_demo/.env.docker
+    depends_on:
+      - redis
+
+  celery_beat:
+    build: ./chatbot_demo
+    command: celery -A chatbot_demo beat -l info
+    volumes:
+      - ./chatbot_demo:/app
+    env_file:
+      - ./chatbot_demo/.env.docker
+    depends_on:
+      - redis
+
+  dashboard:
+    build: ./chatbot_demo
+    command: flower -A chatbot_demo --port=5555 --broker=redis://redis:6379/0
+    ports:
+      - 5555:5555
+    env_file:
+      - ./chatbot_demo/.env.docker
+    depends_on:
+      - redis
+
+  web:
+    build: ./chatbot_demo
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./chatbot_demo:/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./chatbot_demo/.env.docker
+    depends_on:
+      - redis

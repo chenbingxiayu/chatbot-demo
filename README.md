@@ -52,4 +52,17 @@ Cross-Origin Read Blocking (CORB) 头像的问题可以参考一下这个
 - 登录信息传回后台，发送请求给ITS认证
 - 选择语言（ENG/繁/简体）（是否能够提前为第一个逻辑？）
   
+# Start Django Backend
+
+1. Create a virtual environment and install python packages with `requirements.txt`.
+2. Set up a MYSQL server in your local machine.
+3. Compose a `.env` and a `.env.dokcer` file that contains all environment variables. You can take `.env.sample` as reference.
+4. Start the redis database container only with the help in `docker-compose.yml`.
+5. Start Django server with 
+```python
+python manage.py migrate
+python manage.py runserver "port_no" # default port is 8000
+```
+6. Run `run_celery.sh` and `run_celery_beat.sh` in terminal to run scheduled tasks.
+7. (Optional) Run `run_flower.sh` or build up the `dashboard` container to monitor task status with flower UI.
 

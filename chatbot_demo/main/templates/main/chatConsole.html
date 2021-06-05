@@ -52,6 +52,7 @@
       {% endblock %}
       </div>
     </div>
+    <div id="msg"></div>
   </div>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
@@ -64,6 +65,30 @@
     
     $(document).ready(() => {
     })
+
+    function openWebSocket() {
+      const ws = new WebSocket(`ws://${window.location.host}/ws/notify_assignment/`)
+      ws.onopen = function(event) {
+        console.debug('websocket opened')
+      }
+      ws.onclose = function(event) {
+        console.debug('websocket closed')
+      }
+      const $this = $
+      ws.onmessage = function(event) {
+        let data = JSON.parse(event.data)
+        if (data.type === 'assignment')
+        $this('#msg').text(data.student_pk)
+      }
+      return ws
+    }
+    
+    var ws = openWebSocket()
+    setInterval(() => {
+      if (ws.readyState !== ws.OPEN) {
+        ws = openWebSocket()
+      }
+    }, 5000)
 
   </script>
   {% block extra_js %}{% endblock extra_js %}

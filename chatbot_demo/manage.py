@@ -2,7 +2,8 @@
 import os
 import sys
 
-if __name__ == "__main__":
+
+def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "chatbot_demo.settings")
     try:
         from django.core.management import execute_from_command_line
@@ -20,3 +21,7 @@ if __name__ == "__main__":
             )
         raise
     execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()
