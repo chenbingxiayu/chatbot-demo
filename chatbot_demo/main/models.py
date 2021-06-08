@@ -51,6 +51,7 @@ class StaffStatus(models.Model):
         student.student_chat_status = StudentChatStatus.ChatStatus.ASSIGNED
         self.staff_chat_status = StaffStatus.ChatStatus.ASSIGNED
         self.status_change_time = timezone.now()
+        student.chat_request_time = timezone.now()
         student.save()
         self.save()
         logger.info(f"{self} assigned to {student}")

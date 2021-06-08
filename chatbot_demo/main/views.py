@@ -117,7 +117,12 @@ def counsellor(request):
                            Q(assigned_counsellor=staff)) \
                    .order_by('chat_request_time')[offset:offset + limit]  # need to load timezone table for mysql
     return render(request, 'main/counsellor.html',
-                  {'staff': staff, 'students': students, 'now': now})
+                  {'staff': staff, 'students': students, 'now': now, 'selectable_status':
+                      {StaffStatus.ChatStatus.AVAILABLE: [StaffStatus.ChatStatus.AVAILABLE,
+                                                          StaffStatus.ChatStatus.ASSIGNED,
+                                                          StaffStatus.ChatStatus.CHATTING],
+                       StaffStatus.ChatStatus.AWAY: [StaffStatus.ChatStatus.AWAY]}
+                   })
 
 
 @require_http_methods(['GET'])
@@ -186,7 +191,7 @@ def staffstatus(request):
 def getseq(request):
     res = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
-        .order_by('-chat_request_time')
+        .order_by('chat_request_time')
     serialized_data = serializers.serialize('python', res)
 
     return JsonResponse(serialized_data, safe=False, status=200)
@@ -214,7 +219,7 @@ def addstud(request):
 def getstud(request):
     res = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
-        .order_by('-chat_request_time') \
+        .order_by('chat_request_time') \
         .first()
     serialized_data = serializers.serialize('python', [res])
     return JsonResponse(serialized_data[0], safe=False, status=200)
@@ -410,9 +415,30 @@ def find_counsellor(request):
             .first()
         if staff:
             staff.assign_to(student)
-            assignment.send(sender=staff)
             return JsonResponse({'assignment': 'success'}, status=200)
 
     student.add_to_queue()
 
     return JsonResponse({'assignment': 'fail'}, status=400)
+
+
+@require_http_methods(['POST'])
+def changestatus(request):
+    status = request.POST.get('status')
+    staff_netid = request.COOKIES.get('staff_netid')
+    try:
+        staff = StaffStatus.objects.get(staff_netid=staff_netid)
+    except StaffStatus.DoesNotExist as e:
+        logger.warning("Staff does not exist.")
+        return JsonResponse({"status": "status update fail"}, status=400)
+
+    if staff.staff_chat_status == StaffStatus.ChatStatus.ASSIGNED and status == StaffStatus.ChatStatus.AWAY:
+        student = StudentChatStatus.objects \
+            .filter(student_chat_status=StudentChatStatus.ChatStatus.ASSIGNED,
+                    assigned_counsellor=staff.id) \
+            .first()
+        student.add_to_queue()
+
+    staff.staff_chat_status = status
+    staff.save()
+    return JsonResponse({"status": "update fail success"}, status=200)

@@ -80,7 +80,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://redis:6379/0')]
+            "hosts": [os.getenv('REDIS_URL', 'redis://redis:6379/0')]
         },
     },
 }
@@ -91,11 +91,11 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASS'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASS'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -143,18 +143,18 @@ STATICFILES_DIRS = (
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis://redis:6379/0")
+CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://redis:6379/0")
 
 CELERY_BEAT_SCHEDULE = {
     # Re-assign counsellor if the student has waited to long
     "reassign_counsellor": {
         "task": "tasks.tasks.reassign_counsellor",
-        "schedule": timedelta(seconds=30),
+        "schedule": timedelta(seconds=29),
     },
     # Move student from waiting list to assigned state
     "dequeue_student": {
         "task": "tasks.tasks.dequeue_student",
-        "schedule": timedelta(seconds=30),
+        "schedule": timedelta(seconds=31),
     },
 }

@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^api/assignstaff/$', views.assignstaff, name='assignstaff'),
     url(r'^api/startchat/$', views.startchat, name='stratchat'),
     url(r'^api/endchat/$', views.endchat, name='endchat'),
+    url(r'^api/changeStatus/$', views.changestatus, name='changestatus'),
 ]

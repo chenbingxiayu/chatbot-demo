@@ -21,7 +21,8 @@ def dequeue_student():
     students = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING,
                 chat_request_time__lt=now - timedelta(minutes=5)) \
-        .all()
+        .order_by('chat_request_time') \
+        .values_list('id', flat=True)
 
     for student in students:
         for role in STAFF_ORDER:
@@ -43,6 +44,7 @@ def reassign_counsellor():
     students = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.ASSIGNED,
                 chat_request_time__lt=now - timedelta(minutes=5)) \
+        .order_by('chat_request_time') \
         .all()
 
     for student in students:
