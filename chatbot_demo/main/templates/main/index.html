@@ -475,14 +475,18 @@
     }
 
     function T_and_C_split() {
+        var ESI = "";
+        if (office_hour == false) {
+            ESI = '<a href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/non-office-hours/" target ="_blank">Emergency support information</a>'
+        } else {
+            ESI = '<a href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/office-hours/" target ="_blank">Emergency support information</a>'
+        }
         return botui.message.bot({
             loading: true,
             photo: polly,
             delay: 2000,
             content: 'Hi ' + name + ', you need to note the followings prior using \"My Polly\":</br></br>Important Notes:</br>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.' +
-                '</br></br>Please visit the SAO/CWS website for more emergency support information.</br></br>Emergency support information</br>' +
-                '(Office Hours : <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/office-hours/" target ="_blank">https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/office-hours/</a><br/>' +
-                'Non-office hours: <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/non-office-hours/" target ="_blank">https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/non-office-hours/</a> )',
+                '</br></br>Please visit the SAO/CWS website for more emergency support information.</br></br>' + ESI + '</br>'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
