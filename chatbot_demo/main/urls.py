@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^response$', views.auto_response, name='auto_response'),
     url(r'^response_api$', views.response_api, name='response_api'),
+    url(r'^login/staff/$', views.login_page, name='login_page'),
     url(r'^page/counsellor/$', views.counsellor, name='counsellor'),
     url(r'^page/supervisor/$', views.supervisor, name='supervisor'),
     url(r'^page/administrator/$', views.administrator, name='administrator'),
