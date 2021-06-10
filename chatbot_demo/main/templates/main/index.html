@@ -1373,7 +1373,19 @@
                                     photo: polly,
                                     content: 'Proceeding to Online Chat Service'
                                 })
-                            }).then(end)
+                            }).then(function () {
+                                return botui.message.add({
+                                    delay: 1000,
+                                    photo: polly,
+                                    content: 'Please wait, I am now finding a counsellor to chat with you.'
+                                });
+                            }).then(function () {
+                                return botui.message.add({
+                                    delay: 3000,
+                                    photo: polly,
+                                    content: 'You have incoming online chat request, please <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">click</a> the link to enter the chat room.'
+                                });
+                            });
                         } else {
                             return botui.message.human({
                                 delay: 500,
