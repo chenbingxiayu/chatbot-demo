@@ -52,7 +52,7 @@ class StaffStatus(models.Model):
         return f"Staff({self.staff_netid}: {self.staff_role})"
 
     @classmethod
-    def get_random_staff_by_role(cls, role: StaffStatus.Role):
+    def get_random_staff_by_role(cls, role: StaffStatus.Role) -> StaffStatus:
         staff = cls.objects \
             .select_for_update() \
             .filter(staff_chat_status=cls.ChatStatus.AVAILABLE,
@@ -90,6 +90,7 @@ class StaffStatus(models.Model):
                     'student_pk': student_id
                 }
             })
+        # TODO: send email
 
 
 class StudentChatStatus(models.Model):

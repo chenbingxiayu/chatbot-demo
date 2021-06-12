@@ -1,5 +1,5 @@
 celery==4.4.6
-Django==3.2.2
+Django==3.2.4
 flower==0.9.5
 gevent==21.1.2
 mysqlclient==2.0.3
