@@ -16,7 +16,6 @@ from datetime import timedelta
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -147,14 +146,8 @@ CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://redis:6379/0")
 
 CELERY_BEAT_SCHEDULE = {
-    # Re-assign counsellor if the student has waited to long
-    "reassign_counsellor": {
-        "task": "tasks.tasks.reassign_counsellor",
-        "schedule": timedelta(seconds=29),
-    },
-    # Move student from waiting list to assigned state
-    "dequeue_student": {
-        "task": "tasks.tasks.dequeue_student",
-        "schedule": timedelta(seconds=31),
-    },
+    "assignment_tasks": {
+        "task": "tasks.tasks.assignment_tasks",
+        "schedule": timedelta(seconds=60),
+    }
 }

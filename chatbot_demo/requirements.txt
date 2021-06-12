@@ -10,3 +10,4 @@ channels==3.0.3
 django-celery-results==2.0.1
 channels-redis==3.2.0
 asgiref~=3.3.4
+pendulum~=2.0
