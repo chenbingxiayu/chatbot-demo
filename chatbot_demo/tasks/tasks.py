@@ -6,6 +6,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 
 from main.models import StaffStatus, StudentChatStatus, STAFF_ORDER
+from main.signals import update_queue
 
 logger = get_task_logger(__name__)
 
@@ -36,15 +37,39 @@ def reassign_counsellor():
                     if staff:
                         staff.assign_to(student)
                         logger.info(f"{staff} assigned to {student}")
-                        staff.notify_assignment(student_id=student.id)
+                        staff.notify_assignment()
             except Exception as e:
                 logger.warning(e)
                 raise
 
 
+def assign_staff(student: StudentChatStatus) -> bool:
+    """
+    Check if any available staff.
+    If yes, assign the staff to a new coming student or the students in the waiting queue.
+
+    :param student:
+    :return: whether the student is assigned to a staff
+    """
+    for role in STAFF_ORDER:
+        with transaction.atomic():
+            try:
+                staff = StaffStatus.get_random_staff_by_role(role)
+                if staff:
+                    staff.assign_to(student)
+                    logger.info(f"{staff} assigned to {student}")
+                    staff.notify_assignment()
+                    return True
+            except Exception as e:
+                logger.warning(e)
+                raise
+
+    return False
+
+
 def dequeue_student():
     """
-    Check if any available staff. If yes, assign the staff to a student in the waiting queue
+    Get the long-awaited student in the waiting queue and assign them to available staff.
 
     :return:
     """
@@ -56,21 +81,11 @@ def dequeue_student():
         .all()
 
     for student in students:
-        for role in STAFF_ORDER:
-            with transaction.atomic():
-                try:
-                    staff = StaffStatus.get_random_staff_by_role(role)
-                    if staff:
-                        staff.assign_to(student)
-                        logger.info(f"{staff} assigned to {student}")
-                        staff.notify_assignment(student_id=student.id)
-                        break
-                except Exception as e:
-                    logger.warning(e)
-                    raise
+        assign_staff(student)
 
 
 @shared_task
 def assignment_tasks():
     reassign_counsellor()
     dequeue_student()
+    update_queue.send(sender=None)

@@ -24,6 +24,10 @@ class AssignmentConsumer(AsyncJsonWebsocketConsumer):
             self.groupname,
             self.channel_name
         )
+        await self.channel_layer.group_add(
+            'staff',
+            self.channel_name
+        )
         await self.accept()
 
     async def disconnect(self, code):
@@ -37,5 +41,10 @@ class AssignmentConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_assignment_alert(self, event):
         logger.info('send assignment alert to frontend')
+        if event.get('content'):
+            await self.send_json(event['content'])
+
+    async def refresh_chat_queue(self, event):
+        logger.info('waiting queue updated')
         if event.get('content'):
             await self.send_json(event['content'])

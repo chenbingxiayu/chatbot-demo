@@ -6,8 +6,10 @@ from datetime import datetime
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
 
 logger = logging.getLogger(__name__)
 channel_layer = get_channel_layer()
@@ -80,14 +82,13 @@ class StaffStatus(models.Model):
         student.save()
         self.save()
 
-    def notify_assignment(self, student_id: str):
+    def notify_assignment(self):
         logger.info("notify staff")
         async_to_sync(channel_layer.group_send)(
             f'staff_{self.staff_netid}', {
                 'type': 'send_assignment_alert',
                 'content': {
-                    'type': 'assignment',
-                    'student_pk': student_id
+                    'type': 'assignment'
                 }
             })
         # TODO: send email
@@ -168,3 +169,5 @@ class StudentChatHistory(models.Model):
 STAFF_ORDER = [StaffStatus.Role.ONLINETRIAGE,
                StaffStatus.Role.DO,
                StaffStatus.Role.COUNSELLOR]
+
+

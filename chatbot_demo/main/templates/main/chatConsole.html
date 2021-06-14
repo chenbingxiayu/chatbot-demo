@@ -79,16 +79,6 @@
       return  `<a href="/main/createRoom/" target="_blank">${student_id}</a>`
     }
 
-    /**
-     * Add the room creation link to the student netid of the assigned student
-     * @param student_pk
-     */
-    function enterChatRoom(student_pk) {
-      const el = `#chat-status-table tr[data-stud-key=${student_pk}] > td:first`
-      const student_id = $(el).text()
-      $(el).html(createRoomEl(student_id))
-    }
-
     $('#staff-status-select').on('change', (e) => {
       const status = e.target.value
       $.ajax({
@@ -108,7 +98,8 @@
      * @returns {WebSocket}
      */
     function openWebSocket() {
-      const ws = new WebSocket(`ws://${host}/ws/notify_assignment/`)
+      let protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+      const ws = new WebSocket(`${protocol}://${host}/ws/notify_assignment/`)
       ws.onopen = function(event) {
         console.debug('websocket opened')
       }
@@ -118,9 +109,11 @@
       const $this = $
       ws.onmessage = function(event) {
         let data = JSON.parse(event.data)
-        if (data.type === 'assignment') {
-          enterChatRoom(data.student_pk)
+        if (data.type === 'update_queue') {
+          location.reload()
+        } else if (data.type === 'assignment') {
           alert('You have an incoming chat request, please click the link to enter the chat room.')
+          location.reload()
         }
       }
       return ws

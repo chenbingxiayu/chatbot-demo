@@ -13,6 +13,7 @@ urlpatterns = [
     path('page/staffstatus/', views.staffstatus, name='staffstatus'),
     path('api/findstaff/', views.findstaff, name='findstaff'),
     path('api/updatestaff/', views.updatestaff, name='updatestaff'),
+    path('api/addstud/', views.addstud, name='addstud')
 ]
 
 debug_urls = [

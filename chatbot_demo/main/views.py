@@ -16,6 +16,8 @@ from django.shortcuts import redirect
 from main.models import StaffStatus, StudentChatStatus, StudentChatHistory
 from main.forms import LoginForm
 from main.utils import today_start
+from main.signals import update_queue
+from tasks.tasks import assign_staff
 
 logger = logging.getLogger(__name__)
 COOKIE_MAX_AGE = 8 * 60 * 60
@@ -229,7 +231,7 @@ def findstaff(request):
                         StaffStatus.Role.DO,
                         StaffStatus.Role.COUNSELLOR]
     try:
-        student = StudentChatStatus.objects.get(id=request.GET.get('student_netid'))
+        student = StudentChatStatus.objects.get(student_netid=request.GET.get('student_netid'))
     except StudentChatStatus.DoesNotExist as e:
         logger.warning("Student does not exist.")
         return JsonResponse({'assignment': 'fail'}, status=400)
@@ -242,6 +244,7 @@ def findstaff(request):
             .first()
         if staff:
             staff.assign_to(student)
+            staff.notify_assignment()
             return JsonResponse({'assignment': 'success'}, status=200)
 
     student.add_to_queue()
@@ -276,3 +279,38 @@ def updatestaff(request):
     staff.save()
 
     return JsonResponse({"status": "update fail success"}, status=200)
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def addstud(request):
+    """
+    Assign staff to new coming student.
+    Or add student to waiting queue.
+
+    :param request:
+    :return:
+    """
+    student_netid = request.POST.get('student_netid')
+
+    # TODO validate studentID
+    if not student_netid:
+        return JsonResponse({"error": "Invalid student ID"}, status=400)
+
+    student, created = StudentChatStatus.objects \
+        .update_or_create(student_netid=student_netid.upper(),
+                          defaults={"student_chat_status": None,
+                                    "chat_request_time": timezone.now(),
+                                    "last_assign_time": None,
+                                    "chat_start_time": None,
+                                    "assigned_counsellor": None})
+    msg = f"Student is {'created' if created else 'updated'}."
+
+    if assign_staff(student):
+        msg += f" Student is assigned to a staff."
+        return JsonResponse({'status': 'success', 'message': msg}, status=201)
+    else:
+        student.add_to_queue()
+        update_queue.send(sender=None)
+        msg += f" No staff available, added student to queue."
+        return JsonResponse({'status': 'success', 'message': msg}, status=201)
