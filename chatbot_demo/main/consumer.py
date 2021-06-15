@@ -19,11 +19,15 @@ class AssignmentConsumer(AsyncJsonWebsocketConsumer):
         staff_id = self.scope['cookies'].get('staff_netid')
         if not staff_id:
             return
+
+        # This is a staff specific group
         self.groupname = f"staff_{staff_id}"
         await self.channel_layer.group_add(
             self.groupname,
             self.channel_name
         )
+
+        # This is an universal group
         await self.channel_layer.group_add(
             'staff',
             self.channel_name

@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, STAFF_ORDER
+from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, ROLE_RANKING
 from tasks.tasks import reassign_counsellor, dequeue_student
 
 logger = logging.getLogger(__name__)
@@ -236,7 +236,7 @@ def assignstaff(request):
         try:
             staff = StaffStatus.objects.select_for_update() \
                 .filter(staff_chat_status=StaffStatus.ChatStatus.AVAILABLE,
-                        staff_role__in=STAFF_ORDER) \
+                        staff_role__in=ROLE_RANKING) \
                 .order_by('?') \
                 .first()
             student = StudentChatStatus.objects \

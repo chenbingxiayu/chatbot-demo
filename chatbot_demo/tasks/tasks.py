@@ -5,7 +5,7 @@ from django.db import transaction
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
-from main.models import StaffStatus, StudentChatStatus, STAFF_ORDER
+from main.models import StaffStatus, StudentChatStatus, ROLE_RANKING
 from main.signals import update_queue
 
 logger = get_task_logger(__name__)
@@ -18,7 +18,7 @@ def reassign_counsellor():
     :return:
     """
     now = timezone.now()
-    staff_order = STAFF_ORDER + [None]
+    role_ranking = ROLE_RANKING + [None]
 
     students = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.ASSIGNED,
@@ -31,7 +31,7 @@ def reassign_counsellor():
             try:
                 assigned_staff = student.assigned_counsellor
                 role = assigned_staff.staff_role
-                escalated_role = staff_order[staff_order.index(role) + 1]
+                escalated_role = role_ranking[role_ranking.index(role) + 1]
                 if escalated_role:
                     staff = StaffStatus.get_random_staff_by_role(escalated_role)
                     if staff:
@@ -51,7 +51,7 @@ def assign_staff(student: StudentChatStatus) -> bool:
     :param student:
     :return: whether the student is assigned to a staff
     """
-    for role in STAFF_ORDER:
+    for role in ROLE_RANKING:
         with transaction.atomic():
             try:
                 staff = StaffStatus.get_random_staff_by_role(role)
@@ -81,7 +81,9 @@ def dequeue_student():
         .all()
 
     for student in students:
-        assign_staff(student)
+        if not assign_staff(student):
+            # there is no available staff, we can stop looping
+            break
 
 
 @shared_task

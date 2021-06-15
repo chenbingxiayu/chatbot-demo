@@ -166,8 +166,8 @@ class StudentChatHistory(models.Model):
             assigned_counsellor=student.assigned_counsellor).save()
 
 
-STAFF_ORDER = [StaffStatus.Role.ONLINETRIAGE,
-               StaffStatus.Role.DO,
-               StaffStatus.Role.COUNSELLOR]
+ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,
+                StaffStatus.Role.DO,
+                StaffStatus.Role.COUNSELLOR]
 
 
