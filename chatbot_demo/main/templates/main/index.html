@@ -169,7 +169,7 @@
     }
 
     .botui-header {
-        padding-top: 27.5%; 
+        padding-top: 30%; 
         background: url('../static/Polly-graphics/general/general-top.png') no-repeat ;
         background-size: contain;
         -o-background-size: contain;
@@ -223,10 +223,35 @@
 {% block javascript %}
 <script>
     // set date and time
-    var office_hour = false;
+    {% comment %} var office_hour = true; {% endcomment %}
+
+    function isSAOWorkingHours(now) {
+        var weekday = now.getDay()
+        var hours = now.getHours();
+        // Mon - Fri
+        if (weekday >= 1 && weekday <=5) {
+            // 9:00-19:00
+            if (hours >= 9 && hours < 19) {
+                return true;
+            }
+        }
+
+        // Sat
+        if (weekday == 6) {
+            // 9:00 - 12:00
+            if(hours >=9 && hours < 12) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // scroll to top
+    $(".container").scrollTop();
 
     var botui = new BotUI('chatbox');
     var content = document.getElementsByTagName('chatbox');
+    $(".botui-container").animate({ scrollTop: 0}, 1000);
     var user_input = 'default';
     var netid = 0;
     var passwd = 0;
@@ -235,6 +260,11 @@
     var name = 'User';
     var polly = '{% static "Polly-graphics/general/general-polly.png" %}';
     var client = '{% static "Polly-graphics/general/general-client.png" %}';
+
+    $("body").on('click', '.dropdown', function() {
+        $(".botui-container").animate({ scrollTop: $('.botui-container').prop("scrollHeight")}, 1000);
+    });
+
 
     login().then(
 
@@ -442,9 +472,9 @@
                              '<br/>\n' +
                              '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
                              '<br/>\n' +
-                             '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/">HERE</a>. </p>\n' +
+                             '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
                              '<br/>\n' +
-                             '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html">HERE</a>.</p>'
+                             '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>'
             })
         }).then(function () {
             return botui.message.bot({
@@ -476,6 +506,7 @@
 
     function T_and_C_split() {
         var ESI = "";
+        var office_hour = isSAOWorkingHours(new Date());
         if (office_hour == false) {
             ESI = '<a href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/non-office-hours/" target ="_blank">Emergency support information</a>'
         } else {
@@ -531,9 +562,9 @@
                             '<br/>\n' +
                             '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
                             '<br/>\n' +
-                            '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/">HERE</a>. </p>\n' +
+                            '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
                             '<br/>\n' +
-                            '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html">HERE</a>.</p>'
+                            '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>'
                     })
                 }).then(function () {
                     return botui.message.bot({
@@ -579,6 +610,8 @@
                 photo: polly,
                 content: 'Q1. What bring(s) you here to chat with us? (Can select more than one item)'
             }).then(function () {
+                $(".botui-container").animate({ scrollTop: $('.botui-container').prop("scrollHeight")}, 1000);
+
                 return botui.action.select({
                     addMessage: false,
                     action: {
@@ -631,7 +664,18 @@
                 }).then(function (res) {
                     answers[2] = 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                     if (res.value == 0) {
-                        mental_health_101().then(_close);
+                        return botui.message.human({
+                            photo: client,
+                            delay: 500,
+                            content: res.text,
+                        }).then(function (res) {
+                            return botui.message.bot({
+                                loading: true,
+                                delay: 1500,
+                                photo: polly,
+                                content: 'Keep it up! We encourage you to take a look at the "Mental Health 101" to learn more tips for enhancing your psychological and mental wellness.'
+                            }).then(mental_health_101)
+                        });
                     }
                     score += res.value;
                     console.log(score);
@@ -670,19 +714,17 @@
                 answers[3] = 'Q3. How often do you experience the feeling of sadness, worry or tension?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                 score += res.value;
                 console.log(score);
-                if (res.value > 3) {
 
-                    return botui.message.human({
-                        photo: client,
-                        delay: 500,
-                        content: res.text
-                    }).then(function () {
-                        return botui.message.bot({
-                            delay: 2500,
-                            loading: true,
-                            photo: polly,
-                            content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
-                        })
+                return botui.message.human({
+                    photo: client,
+                    delay: 500,
+                    content: res.text
+                }).then(function () {
+                    return botui.message.bot({
+                        delay: 2500,
+                        loading: true,
+                        photo: polly,
+                        content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
                     }).then(function () {
                         return botui.message.bot({
                             delay: 1000,
@@ -691,21 +733,7 @@
                             content: 'You show aware of your feelings happening to you.'
                         })
                     })
-                } else {
-
-                    return botui.message.human({
-                        photo: client,
-                        delay: 500,
-                        content: res.text
-                    }).then(function () {
-                        return botui.message.bot({
-                            delay: 2500,
-                            loading: true,
-                            photo: polly,
-                            content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
-                        })
-                    })
-                }
+                })
             })
         }).then(function () {
             return botui.message.bot({
@@ -727,27 +755,18 @@
                     answers[4] = 'Q4. How often is your daily life get affected by the feelings mentioned above?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                     score += res.value;
                     console.log(score);
-                    if (res.value > 3) {
-                        return botui.message.human({
-                            photo: client,
-                            delay: 500,
-                            content: res.text
-                        }).then(function () {
-                            return botui.message.bot({
-                                loading: true,
-                                photo: polly,
-                                delay: 1500,
-                                content: 'You are aware that your daily life is getting affected by these feelings.'
-                            })
+                    return botui.message.human({
+                        photo: client,
+                        delay: 500,
+                        content: res.text
+                    }).then(function () {
+                        return botui.message.bot({
+                            loading: true,
+                            photo: polly,
+                            delay: 1500,
+                            content: 'You are aware that your daily life is getting affected by these feelings.'
                         })
-                    }
-                    else {
-                        return botui.message.human({
-                            photo: client,
-                            delay: 500,
-                            content: res.text
-                        })
-                    }
+                    })
                 })
             })
         }).then(function () {
@@ -923,6 +942,7 @@
 
 
     function medium() {
+        var office_hour = isSAOWorkingHours(new Date());
         return botui.message.bot({
             loading: true,
             delay: 2000,
@@ -1024,6 +1044,7 @@
     }
 
     function high_recommendations() {
+        var office_hour = isSAOWorkingHours(new Date());
         if (office_hour == true) {
             return botui.message.bot({
                 loading: true,
@@ -1122,6 +1143,7 @@
     }
 
     function mental_health_101() {
+        var office_hour = isSAOWorkingHours(new Date());
         return botui.message.bot({
             loading: true,
             delay: 1500,
@@ -1281,6 +1303,7 @@
     }
 
     function questions_before_OCS() {
+        var office_hour = isSAOWorkingHours(new Date());
         return botui.message.bot({
             loading: true,
             delay: 1500,
