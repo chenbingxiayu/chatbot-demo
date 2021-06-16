@@ -31,7 +31,7 @@ def reassign_counsellor():
             try:
                 assigned_staff = student.assigned_counsellor
                 role = assigned_staff.staff_role
-                escalated_role = role_ranking[role_ranking.index(role) + 1]
+                escalated_role = role_ranking[role_ranking.index(role) + 1] if role in role_ranking else None
                 if escalated_role:
                     staff = StaffStatus.get_random_staff_by_role(escalated_role)
                     if staff:

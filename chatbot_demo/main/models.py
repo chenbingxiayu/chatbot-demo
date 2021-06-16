@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
+from main.email_service import email_service
 
 logger = logging.getLogger(__name__)
 channel_layer = get_channel_layer()
@@ -92,6 +93,7 @@ class StaffStatus(models.Model):
                 }
             })
         # TODO: send email
+        email_service()
 
 
 class StudentChatStatus(models.Model):
@@ -169,5 +171,3 @@ class StudentChatHistory(models.Model):
 ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,
                 StaffStatus.Role.DO,
                 StaffStatus.Role.COUNSELLOR]
-
-
