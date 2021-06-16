@@ -257,6 +257,7 @@
     var passwd = 0;
     var score = 0;
     var answers = {};
+    var personalInfo = {};
     var name = 'User';
     var polly = '{% static "Polly-graphics/general/general-polly.png" %}';
     var client = '{% static "Polly-graphics/general/general-client.png" %}';
@@ -1390,7 +1391,83 @@
                                 delay: 500,
                                 photo: client,
                                 content: res.text
-                            }).then(function () {
+                            })
+                            .then(function() {
+                                return botui.message.bot({
+                                    delay: 1000,
+                                    photo: polly,
+                                    content: 'Please fill in the following information prior starting a conversation with SAO counsellor',
+                                });
+                            })
+                            .then(function () {
+                                return botui.action.text({
+                                    addMessage: false,
+                                    action: {
+                                        size: 30,
+                                        placeholder: 'Personal Contact Number:'
+                                    }
+                                });
+                            })
+                            .then(function (res) { 
+                                personalInfo['contactNumber'] = res.value;
+                                console.log(personalInfo);
+                                return botui.message.add({
+                                    human: true, 
+                                    content: 'Personal contact number is ' + res.value
+                                });
+                            })
+                            .then(function (res) {
+                                return botui.action.text({
+                                    addMessage: false,
+                                    action: {
+                                        size: 30,
+                                        placeholder: 'Emergency Contact Name'
+                                    }
+                                });
+                            })
+                            .then(function (res) { 
+                                personalInfo['emergencyContactName'] = res.value;
+                                console.log(personalInfo);
+                                return botui.message.add({
+                                    human: true,
+                                    content: 'Emergency contact name is ' + res.value
+                                });
+                            })
+                            .then(function (res) {
+                                return botui.action.text({
+                                    addMessage: false,
+                                    action: {
+                                        size: 30,
+                                        placeholder: 'Relationship',
+                                    }
+                                });
+                            })
+                            .then(function (res) { 
+                                personalInfo['relationship'] = res.value;
+                                console.log(personalInfo);
+                                return botui.message.add({
+                                    human: true, 
+                                    content: 'Relationship is ' + res.value
+                                });
+                            })
+                            .then(function (res) {
+                                return botui.action.text({
+                                    addMessage: false,
+                                    action: {
+                                        size: 30,
+                                        placeholder: 'Emergency Contact Number',
+                                    }
+                                });
+                            })
+                            .then(function (res) { 
+                                personalInfo['emergencyContactNumber'] = res.value;
+                                console.log(personalInfo);
+                                return botui.message.add({
+                                    human: true,
+                                    content: 'Emergency contact number is ' + res.value
+                                });
+                            })
+                            .then(function () {
                                 return botui.message.bot({
                                     delay: 1000,
                                     photo: polly,
