@@ -159,8 +159,28 @@
         opacity: 1;
     }
 
-    .botui {
-        height: 600px;
+    .max-width-2 {
+        max-width: 1230px;
+        margin: 0 auto;
+        padding: 0 2em;
+    }
+
+    .chatbox-wrapper {
+        background-color: #eff7d7;
+        position: relative;
+        height: 675px;
+        width: 100%;
+    }
+      
+    #chatbox {
+        height: 100%;
+        display: inline-flex;
+        flex-direction: column;
+    }
+
+
+    .botui-container {
+        {% comment %} height: calc(100% - ((100% - 4em - 60px) * 0.3)); {% endcomment %}
         background: url('../static/Polly-graphics/general/general-bg.png') no-repeat center center #eff7d7;
         background-size: cover;
         -o-background-size: cover;
@@ -170,11 +190,15 @@
 
     .botui-header {
         padding-top: 30%; 
+        width: 100%;
         background: url('../static/Polly-graphics/general/general-top.png') no-repeat ;
         background-size: contain;
         -o-background-size: contain;
         -moz-background-size: contain;
         -webkit-background-size: contain;
+        position: sticky;
+        z-index: 1;
+        top: 0;
     }
 
     .botui-message-content {
@@ -193,24 +217,22 @@
 
 <body>
     <div class="container" style="background-color: #f7f8f8">
-        <div class="jumbotron" style="background-color: #f7f8f8">
-            <br>
-            <br>
-        </div>
-        <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-                <div id="chatbox" class="botui">
-                    <div class="botui-header"></div>
-                    <bot-ui ></bot-ui>
+        <section id="top-section" style="height:1000px; background-color: white">
+        </section>
+        <section class="middle-section">
+            <div class="max-width-2">
+                <div class="row justify-content-center">
+                    <div class="col-sm col-md-8 col-lg-6">
+                        <div class="chatbox-wrapper">
+                            <div id="chatbox" class="botui">
+                                <div class="botui-header"></div>
+                                <bot-ui ></bot-ui>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3"></div>
-        </div>
-        <div class="jumbotron" style="background-color: #f7f8f8">
-            <br>
-            <br>
-        </div>
+        </section>
     </div>
 
 </body>
