@@ -12,16 +12,17 @@
       white-space: nowrap;
       width: 1%;
     }
-    
+
     .form-group label {
       font-weight: bold;
     }
   </style>
 </head>
 <body>
+  {% csrf_token %}
   <div class="contatiner-fluid p-3">
     <div class="form-group">
-      <div class="row">
+      <div class="row pb-2">
         <div class="col-md-4">
           <label>Welcome:</label>
           <span>{{ staff.staff_netid }}</span>
@@ -31,7 +32,7 @@
           <span>{{ staff.get_staff_role_display }}</span>
         </div>
       </div>
-      <div class="row">
+      <div class="row pb-2">
         <div class="col-md-4">
           <label>Date:</label>
           <span class="date"></span>
@@ -44,25 +45,109 @@
       <div class="row">
         <div class="col-md-4">
           <label>Status:</label>
-          <span>{{ staff.get_staff_chat_status_display }}</span>
+          <select id="staff-status-select" class="status-select custom-select" style="width:160px">
+            {% for status in selectable_status %}
+            <option value="{{status}}" {% if staff.staff_chat_status in status.options %} selected {% endif %}>{{status|capfirst}}</option>
+            {% endfor %}
+          </select>
+
         </div>
       </div>
       <hr>
       {% block content %}
       {% endblock %}
-      </div>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js' integrity='sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ==' crossorigin='anonymous'></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
   <script>
-    $('span.date').text(new Date().toLocaleDateString('en-HK', {year: 'numeric', month: 'long', day: 'numeric'}));
-    
-    setInterval(() => {
-      $('span.time').text(new Date().toLocaleTimeString('en-HK', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false}));
-    }, 1000)
-    
+
+    const host = window.location.host
+    const getCookie = (name) => (
+      document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+    )
+
     $(document).ready(() => {
+    })
+
+    /**
+     * Create the room creation link
+     * @param student_id
+     * @returns {string}
+     */
+    function createRoomEl(student_id) {
+      return  `<a href="/main/createRoom/" target="_blank">${student_id}</a>`
+    }
+
+    $('#staff-status-select').on('change', (e) => {
+      const status = e.target.value
+      $.ajax({
+        type: 'POST',
+        url: '/main/api/updatestaff/',
+        headers: { 'X-CSRFToken': getCookie('csrftoken')},
+        data: {'status': status},
+
+        error: function(data){
+          alert("Update status fail.")
+        }
+      })
+    })
+
+    /**
+     * Create a websocket for notifying staff of the chat assignment event
+     * @returns {WebSocket}
+     */
+    function openWebSocket() {
+      let protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+      const ws = new WebSocket(`${protocol}://${host}/ws/notify_assignment/`)
+      ws.onopen = function(event) {
+        console.debug('websocket opened')
+      }
+      ws.onclose = function(event) {
+        console.debug('websocket closed')
+      }
+      const $this = $
+      ws.onmessage = function(event) {
+        let data = JSON.parse(event.data)
+        if (data.type === 'update_queue') {
+          location.reload()
+        } else if (data.type === 'assignment') {
+          alert('You have an incoming chat request, please click the link to enter the chat room.')
+          location.reload()
+        }
+      }
+      return ws
+    }
+
+    var ws = openWebSocket()
+    setInterval(() => {
+      if (ws.readyState !== ws.OPEN) {
+        ws = openWebSocket()
+      }
+    }, 5000)
+
+    $('span.date').text(new Date()
+      .toLocaleDateString('en-HK', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    );
+
+    setInterval(() => {
+      $('span.time').text(new Date()
+      .toLocaleTimeString('en-HK', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }));
+    }, 1000)
+
+    $('.chat-status').each((idx, el) => {
+      if ($(el).text() !== 'Assigned') return
+      const student_id = $(el).parent().find('td:first').text()
+      $(el).parent().find('td:first').html(createRoomEl(student_id))
     })
 
   </script>

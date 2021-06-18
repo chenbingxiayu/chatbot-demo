@@ -14,15 +14,25 @@
     </thead>
     <tbody>
       {% for student in students %}
-      <tr data-stud-key="{{ student.pk }}">
-        <th scope="row" class="seq-no"></th>
+      <tr data-stud-key="{{ student.id }}">
+        <th scope="row" class="seq-no">{{ forloop.counter }}</th>
         <td>{{ student.student_netid|mask }}</td>
         <td>{{ student.chat_request_time|time:'H:i:s' }}</td>
         <td class="chat-status">{{ student.get_student_chat_status_display }}</td>
-        <td>{{ student.chat_request_time|timesince:now }}</td>
+        <td>{{ student.chat_request_time|duration:now }}</td>
+      </tr>
+      {% endfor %}
+      {% for history in histories %}
+      <tr>
+        <th scope="row" class="seq-no"></th>
+        <td>{{ history.student_netid|mask }}</td>
+        <td>{{ history.chat_request_time|time:'H:i:s' }}</td>
+        <td class="chat-status">End</td>
+        <td>{{ history.chat_request_time|duration:now }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
 {% endblock %}
+

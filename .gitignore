@@ -1,3 +1,7 @@
 .idea
 venv
-.env
+.env*
+!.env.sample
+
+**.sqlite3
+celerybeat*

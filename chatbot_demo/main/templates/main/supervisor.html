@@ -16,13 +16,24 @@
     </thead>
     <tbody>
       {% for student in students %}
-      <tr data-stud-key="{{ student.pk }}">
-        <th scope="row" class="seq-no"></th>
+      <tr class="chat-queue" data-stud-key="{{ student.id }}">
+        <th scope="row" class="seq-no">{{ forloop.counter }}</th>
         <td>{{ student.student_netid|mask }}</td>
         <td>{{ student.chat_request_time|time:'H:i:s' }}</td>
         <td>{{ student.get_student_chat_status_display }}</td>
-        <td>{{ student.chat_request_time|timesince:now }}</td>
+        <td>{{ student.chat_request_time|duration:now }}</td>
         <td class="counsellor">{{ student.assigned_counsellor.staff_netid }}</td>
+        <td class="join-session"></td>
+      </tr>
+      {% endfor %}
+      {% for history in histories %}
+      <tr>
+        <th scope="row" class="seq-no"></th>
+        <td>{{ history.student_netid|mask }}</td>
+        <td>{{ history.chat_request_time|time:'H:i:s' }}</td>
+        <td>{{ history.get_student_chat_status_display|default_if_none:"" }}</td>
+        <td>{{ history.chat_request_time|duration:now }}</td>
+        <td class="counsellor">{{ history.assigned_counsellor.staff_netid }}</td>
         <td class="join-session"></td>
       </tr>
       {% endfor %}
@@ -32,9 +43,9 @@
 {% endblock %}
 {% block extra_js %}
 <script>
-  $('#chat-status-table tbody > tr').each((i,row) => {
+  $('#chat-status-table tbody > .chat-queue').each((i,row) => {
     const $row = $(row)
-    const is_counsellor = !!($row.find('td.counsellor').text()) 
+    const is_counsellor = !!($row.find('td.counsellor').text())
     is_counsellor ? $row.find('td.join-session').append('<span>Join</span>') : null
   })
 </script>

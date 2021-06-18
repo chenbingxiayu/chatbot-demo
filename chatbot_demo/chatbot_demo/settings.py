@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'main',
+    'tasks',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -70,6 +73,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'chatbot_demo.wsgi.application'
+ASGI_APPLICATION = "chatbot_demo.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.getenv('REDIS_URL', 'redis://redis:6379/0')]
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -77,11 +90,11 @@ WSGI_APPLICATION = 'chatbot_demo.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASS'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASS'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -116,6 +129,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
@@ -126,3 +141,13 @@ STATICFILES_DIRS = (
 )
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://redis:6379/0")
+
+CELERY_BEAT_SCHEDULE = {
+    "assignment_tasks": {
+        "task": "tasks.tasks.assignment_tasks",
+        "schedule": timedelta(seconds=60),
+    }
+}
