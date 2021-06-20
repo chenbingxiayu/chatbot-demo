@@ -16,7 +16,7 @@ class AssignmentConsumer(AsyncJsonWebsocketConsumer):
 
         :return:
         """
-        staff_id = self.scope['cookies'].get('staff_netid')
+        staff_id = self.scope['user'].username
         if not staff_id:
             return
 

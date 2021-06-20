@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 import logging
 import requests
 
@@ -12,15 +13,17 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, permission_required
 
-from main.models import StaffStatus, StudentChatStatus, StudentChatHistory
+from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, SELECTABLE_STATUS
 from main.forms import LoginForm
 from main.utils import today_start
 from main.signals import update_queue
 from tasks.tasks import assign_staff
 
 logger = logging.getLogger(__name__)
-COOKIE_MAX_AGE = 8 * 60 * 60
 
 
 def index(request):
@@ -71,34 +74,65 @@ def login_page(request):
         form = LoginForm(auto_id=True)
         return render(request, 'main/login.html', {'form': form})
     elif request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            staff = form.cleaned_data['netid']  # this return StaffStatus object
-            password = form.cleaned_data['password']
-            role = form.cleaned_data['role']
-            status = form.cleaned_data['status']
 
-            if staff.staff_role in ('online_triage', 'do', 'counsellor'):
+        staff_netid = request.POST.get('netid')
+        role = request.POST.get('role')
+        status = request.POST.get('status')
+        password = os.getenv('USER_PW') + staff_netid
+
+        user = authenticate(username=staff_netid, password=password)
+        if user:
+            # update staff chat status
+            try:
+                staff = StaffStatus.objects.get(staff_netid=staff_netid)
+            except StaffStatus.DoesNotExist:
+                staff = StaffStatus(staff_netid=staff_netid)
+
+            # check which user group does the user belongs to
+            if 'counsellor' in [group.name for group in user.groups.all()]:
                 staff.staff_role = role
-            staff.status = status
+            elif 'app_admin' in [group.name for group in user.groups.all()]:
+                staff.staff_role = StaffStatus.Role.SUPERVISOR
+            else:
+                return redirect('login_page')
+            staff.staff_chat_status = status
+            staff.status_change_time = timezone.now()
             staff.save()
+            staff.refresh_from_db()
 
         else:
-            return render(request, 'main/login.html', {'form': form})
+            return redirect('login_page')
+        #     user = User.objects.create(username=staff_netid)
+        #     user.set_password(password)
+        #     user.save()
+        #     staff = StaffStatus(staff_netid=staff_netid, staff_role=role, staff_chat_status=status,
+        #                         status_change_time=timezone.now())
+        #     staff.save()
+
+        login(request, user)
 
         if staff.staff_role in ('online_triage', 'do', 'counsellor'):
-            response = redirect('counsellor')
+            return redirect('counsellor')
         elif staff.staff_role == 'supervisor':
-            response = redirect('supervisor')
+            return redirect('supervisor')
+        elif staff.staff_role == 'administrator':
+            return redirect('administrator')
         else:
-            response = redirect('administrator')
-        response.set_cookie("staff_netid", staff.staff_netid, max_age=COOKIE_MAX_AGE)
-        return response
+            return redirect('login_page')
 
 
+@login_required
+@require_http_methods(['GET'])
+def logout_view(request):
+    logout(request)
+
+    return redirect('login_page')
+
+
+@login_required
 @require_http_methods(['GET'])
 def counsellor(request):
-    staff_netid = request.COOKIES.get('staff_netid')
+    staff_netid = request.user.username
     now = timezone.now()
 
     try:
@@ -124,17 +158,13 @@ def counsellor(request):
                    'students': students,
                    'histories': histories,
                    'now': now,
-                   'selectable_status': {
-                       StaffStatus.ChatStatus.AVAILABLE: [StaffStatus.ChatStatus.AVAILABLE,
-                                                          StaffStatus.ChatStatus.ASSIGNED,
-                                                          StaffStatus.ChatStatus.CHATTING],
-                       StaffStatus.ChatStatus.AWAY: [StaffStatus.ChatStatus.AWAY]}
-                   })
+                   'selectable_status': SELECTABLE_STATUS})
 
 
+@login_required
 @require_http_methods(['GET'])
 def supervisor(request):
-    staff_netid = request.COOKIES.get('staff_netid')
+    staff_netid = request.user.username
     now = timezone.now()
 
     try:
@@ -159,20 +189,14 @@ def supervisor(request):
                    'students': students,
                    'histories': histories,
                    'now': now,
-                   'selectable_status': {
-                       StaffStatus.ChatStatus.AVAILABLE: [StaffStatus.ChatStatus.AVAILABLE,
-                                                          StaffStatus.ChatStatus.ASSIGNED,
-                                                          StaffStatus.ChatStatus.CHATTING],
-                       StaffStatus.ChatStatus.AWAY: [StaffStatus.ChatStatus.AWAY]}
-                   })
+                   'selectable_status': SELECTABLE_STATUS})
 
 
+@login_required
 @require_http_methods(['GET'])
 def administrator(request):
-    staff_netid = request.COOKIES.get('staff_netid')
+    staff_netid = request.user.username
     now = timezone.now()
-    offset = request.GET.get('offset', 0)
-    limit = request.GET.get('limit', 20)
 
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
@@ -195,18 +219,14 @@ def administrator(request):
                    'students': students,
                    'histories': histories,
                    'now': now,
-                   'selectable_status': {
-                       StaffStatus.ChatStatus.AVAILABLE: [StaffStatus.ChatStatus.AVAILABLE,
-                                                          StaffStatus.ChatStatus.ASSIGNED,
-                                                          StaffStatus.ChatStatus.CHATTING],
-                       StaffStatus.ChatStatus.AWAY: [StaffStatus.ChatStatus.AWAY]}
-                   })
+                   'selectable_status': SELECTABLE_STATUS})
 
 
-@csrf_exempt
+@login_required
+@permission_required('main.view_staffstatus', raise_exception=True)
 @require_http_methods(['GET'])
 def staffstatus(request):
-    staff_netid = request.COOKIES.get('staff_netid')
+    staff_netid = request.user.username
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist as e:
@@ -215,7 +235,8 @@ def staffstatus(request):
     staff_list = StaffStatus.objects.all()
     now = timezone.now()
     return render(request, 'main/staffstatus.html',
-                  {'staff': staff, 'staff_list': staff_list, 'now': now})
+                  {'staff': staff, 'staff_list': staff_list, 'now': now,
+                   'selectable_status': SELECTABLE_STATUS})
 
 
 @require_http_methods(['GET'])
@@ -252,6 +273,7 @@ def findstaff(request):
     return JsonResponse({'assignment': 'fail'}, status=400)
 
 
+@login_required
 @require_http_methods(['POST'])
 def updatestaff(request):
     """
@@ -262,7 +284,7 @@ def updatestaff(request):
     :return:
     """
     new_status = request.POST.get('status')
-    staff_netid = request.COOKIES.get('staff_netid')
+    staff_netid = request.user.username
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist:
@@ -278,7 +300,7 @@ def updatestaff(request):
     staff.staff_chat_status = new_status
     staff.save()
 
-    return JsonResponse({"status": "update fail success"}, status=200)
+    return JsonResponse({"status": "update success"}, status=200)
 
 
 @csrf_exempt

@@ -171,3 +171,12 @@ class StudentChatHistory(models.Model):
 ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,
                 StaffStatus.Role.DO,
                 StaffStatus.Role.COUNSELLOR]
+
+SELECTABLE_STATUS = {
+    StaffStatus.ChatStatus.AVAILABLE: [
+        StaffStatus.ChatStatus.AVAILABLE,
+        StaffStatus.ChatStatus.ASSIGNED,
+        StaffStatus.ChatStatus.CHATTING
+    ],
+    StaffStatus.ChatStatus.AWAY: [StaffStatus.ChatStatus.AWAY]
+}
