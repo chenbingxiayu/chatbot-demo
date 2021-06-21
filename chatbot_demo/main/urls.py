@@ -26,5 +26,5 @@ urlpatterns = [
     url(r'^api/endchat/$', views.endchat, name='endchat'),
     url(r'^user/login/$', views.login, name='login'),
     url(r'^user/login-sso/$', views.login_sso, name='login_sso'),
-    url(r'^user/login-sso/callback$', views.login_sso_callback, name='login_sso_callback'),
+    url(r'^user/login-sso/callback/$', views.login_sso_callback, name='login_sso_callback'),
 ]
