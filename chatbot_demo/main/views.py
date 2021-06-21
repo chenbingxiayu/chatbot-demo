@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 import os
 import json
 import requests
+import jwt
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -378,3 +379,22 @@ def endchat(request):
     staff.save()
 
     return JsonResponse({'status': 'success'}, status=200)
+
+
+
+def login(request):
+    return render(request, 'main/login_sso.html')
+
+
+@csrf_exempt
+def login_sso(request):
+    # TODO redirect to rapid connect server
+    return render(request, 'main/login_sso.html')
+
+
+def login_sso_callback(request):
+    encoded_jwt = jwt.encode({"hi": "payload"}, 'secret', algorithm='HS256')
+    decoded_jwt = jwt.decode(encoded_jwt, 'secret', algorithms="HS256")
+    print(decoded_jwt)
+    # TODO jwt decode
+    return render(request, 'main/login_sso.html')
