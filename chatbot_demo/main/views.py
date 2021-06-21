@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import os
 import logging
 import requests
+import jwt
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -166,15 +167,8 @@ def supervisor(request):
         return render(request, 'main/404.html')
 
     students = StudentChatStatus.objects \
-        .filter(chat_request_time__gte=today_start()) \
-        .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
-                Q(assigned_counsellor=staff)) \
-        .order_by('chat_request_time')
-
-    histories = StudentChatHistory.objects \
-        .filter(chat_request_time__gte=today_start()) \
-        .order_by('chat_request_time')
-
+                   .filter(chat_request_time__date=today) \
+                   .order_by('chat_request_time')[offset:offset + limit]
     return render(request, 'main/supervisor.html',
                   {'staff': staff,
                    'students': students,
@@ -327,3 +321,22 @@ def addstud(request):
         update_queue.send(sender=None)
         msg += f" No staff available, added student to queue."
         return JsonResponse({'status': 'success', 'message': msg}, status=201)
+
+
+
+def login_all(request):
+    return render(request, 'main/login_sso.html')
+
+
+@csrf_exempt
+def login_sso(request):
+    # TODO redirect to rapid connect server
+    return render(request, 'main/login_sso.html')
+
+
+def login_sso_callback(request):
+    encoded_jwt = jwt.encode({"hi": "payload"}, 'secret', algorithm='HS256')
+    decoded_jwt = jwt.decode(encoded_jwt, 'secret', algorithms="HS256")
+    print(decoded_jwt)
+    # TODO jwt decode
+    return render(request, 'main/login_sso.html')
