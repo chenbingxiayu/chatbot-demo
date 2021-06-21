@@ -16,6 +16,10 @@
     .form-group label {
       font-weight: bold;
     }
+
+    #assigned {
+      background-color: #c9ecd0
+    }
   </style>
 </head>
 <body>
@@ -165,8 +169,9 @@
 
     $('.chat-status').each((idx, el) => {
       if ($(el).text() !== 'Assigned') return
-      const student_id = $(el).parent().find('td:first').text()
-      $(el).parent().find('td:first').html(createRoomEl(student_id))
+      const assignRow = $(el).parent().attr('id', 'assigned')
+      const student_id = assignRow.find('td:first').text()
+      assignRow.find('td:first').html(createRoomEl(student_id))
     })
 
   </script>

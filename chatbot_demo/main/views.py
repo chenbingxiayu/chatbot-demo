@@ -13,7 +13,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 
@@ -78,36 +77,28 @@ def login_page(request):
         staff_netid = request.POST.get('netid')
         role = request.POST.get('role')
         status = request.POST.get('status')
-        password = os.getenv('USER_PW') + staff_netid
+        user = authenticate(requests, username=staff_netid)
 
-        user = authenticate(username=staff_netid, password=password)
-        if user:
-            # update staff chat status
-            try:
-                staff = StaffStatus.objects.get(staff_netid=staff_netid)
-            except StaffStatus.DoesNotExist:
-                staff = StaffStatus(staff_netid=staff_netid)
+        if not user:
+            return redirect('login_page')
 
-            # check which user group does the user belongs to
-            if 'counsellor' in [group.name for group in user.groups.all()]:
-                staff.staff_role = role
-            elif 'app_admin' in [group.name for group in user.groups.all()]:
-                staff.staff_role = StaffStatus.Role.SUPERVISOR
-            else:
-                return redirect('login_page')
-            staff.staff_chat_status = status
-            staff.status_change_time = timezone.now()
-            staff.save()
-            staff.refresh_from_db()
+        try:
+            staff = StaffStatus.objects.get(staff_netid=staff_netid)
+        except StaffStatus.DoesNotExist:
+            staff = StaffStatus(staff_netid=staff_netid)
 
+        # check which user group does the user belongs to
+        if 'counsellor' in [group.name for group in user.groups.all()]:
+            staff.staff_role = role
+        elif 'app_admin' in [group.name for group in user.groups.all()]:
+            staff.staff_role = StaffStatus.Role.SUPERVISOR
         else:
             return redirect('login_page')
-        #     user = User.objects.create(username=staff_netid)
-        #     user.set_password(password)
-        #     user.save()
-        #     staff = StaffStatus(staff_netid=staff_netid, staff_role=role, staff_chat_status=status,
-        #                         status_change_time=timezone.now())
-        #     staff.save()
+
+        staff.staff_chat_status = status
+        staff.status_change_time = timezone.now()
+        staff.save()
+        staff.refresh_from_db()
 
         login(request, user)
 
