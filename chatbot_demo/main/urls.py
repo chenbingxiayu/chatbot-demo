@@ -15,7 +15,7 @@ urlpatterns = [
     path('api/findstaff/', views.findstaff, name='findstaff'),
     path('api/updatestaff/', views.updatestaff, name='updatestaff'),
     path('api/addstud/', views.addstud, name='addstud'),
-    path('user/login/', , views.login, name='login'),
+    path('user/login/', , views.login_all, name='login'),
     path('user/login-sso/', , views.login_sso, name='login_sso'),
     path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback')
 ]
