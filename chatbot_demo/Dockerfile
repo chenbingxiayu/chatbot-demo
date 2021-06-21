@@ -1,11 +1,7 @@
-FROM python:3.8.2
+FROM python:3.8
 
 # set work directory
 WORKDIR /app
-
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
 
 # update vm
 RUN apt-get update
