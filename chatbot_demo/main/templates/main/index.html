@@ -1623,22 +1623,7 @@
     }
 
     function end() {
-        return botui.message.bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: 'Thank you for using \"My Polly\".'
-        }).then(rating
-
-            /* function () {
-             return botui.message.bot({
-                loading: true,
-                delay: 1000,
-                photo: polly,
-                content: 'Please rate your experience'
-            }).then(rating).then(_close)
-            }*/
-        )
+        rating();
     }
 
 
@@ -1647,7 +1632,7 @@
             type: 'html',
             delay: 1000,
             photo: polly,
-            content: '<p>Please rate your experience:</p>' +
+            content: '<p>Thank you for using \"My Polly\". Please rate your experience:</p >' +
                 '<div class="wrap">\n' +
                 '  <div class="stars">\n' +
                 '    <label class="rate">\n' +
@@ -1695,9 +1680,9 @@
                         photo: polly,
                         content: 'Thank you for your valuable feedback!'
                     });
-             })
+             });
 
-        })
+        }).then(_close);
     }
 
     /*
