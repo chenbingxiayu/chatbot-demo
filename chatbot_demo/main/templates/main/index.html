@@ -478,18 +478,20 @@
             content: 'Hi ' + name + ', you need to note the followings prior using \"My Polly\":</br></br>Important Notes:</br>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.' +
                 '</br></br>Please visit the SAO/CWS website for more emergency support information.</br></br>' + ESI + '</br>'
         }).then(function () {
-            botui.action.button({
+            return botui.action.button({
                 addMessage: false,
                 photo: client,
                 action: [{
                     text: 'Got it',
                 }]
-            }).then(function (res) {
-                botui.message.human({
-                    photo: client,
-                    delay: 500,
-                    content: res.text
-                })
+            })
+        }).then(function (res) {
+            return botui.message.human({
+                photo: client,
+                delay: 500,
+                content: res.text
+            })
+        }).then(function (res) {
             return botui.message.bot({
                     loading: true,
                     photo: polly,
@@ -502,80 +504,78 @@
                         '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n' +
                         '<br/>\n' +
                         '<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/ face-to- face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n'
-                })
-            }).then(function () {
-                botui.action.button({
+            })
+        }).then(function () {
+            return botui.action.button({
                     addMessage: false,
                     photo: client,
                     action: [{
                         text: 'Read more',
                     }]
-                }).then(function () {
-                    return botui.message.bot({
-                        loading: true,
-                        photo: polly,
-                        delay: 2000,
-                        content:
-                        '<br/>\n' +
-                        '<p>The Service intends to render \'remote\' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n' +
-                        '<br/>\n' +
-                        '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n'
-                    })
-                }).then(function () {
-                    botui.action.button({
-                        addMessage: false,
-                        photo: client,
-                        action: [{
-                            text: 'Read more',
-                        }]
-                    }).then(function () {
-                        return botui.message.bot({
-                            loading: true,
-                            photo: polly,
-                            delay: 2000,
-                            content:
-                            '<br/>\n' +
-                            '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
-                            '<br/>\n' +
-                            '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
-                            '<br/>\n' +
-                            '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
-                            '<br/>\n' +
-                            '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
-                            '<br/>\n' +
-                            '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>'
-                        })
-                }).then(function () {
-                    return botui.message.bot({
-                        loading: true,
-                        photo: polly,
-                        delay: 5000,
-                        content: 'By clicking \"Hi, Polly\" to accept the above terms and conditions.'
-                    })
-                }).then(function () {
-                    return botui.action.button({
-                        addMessage: false,
-                        photo: client,
-                        action: [
-                            {text: 'No, I stop here.', value: false},
-                            {text: 'Hi, Polly', value: true},
-                        ]
-                    }).then(function (res) {
-                        if (res.value == false) {
-                            return botui.message.bot({
-                                loading: true,
-                                photo: polly,
-                                delay: 2000,
-                                content: 'You are always welcome to contact SAO counsellors at (852)27666800 for enquiries.',
-                            }).then(end);
-                        }
-                    })
-                })
             })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                photo: polly,
+                delay: 2000,
+                content:
+                '<br/>\n' +
+                '<p>The Service intends to render \'remote\' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n' +
+                '<br/>\n' +
+                '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n'
+            })
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                photo: client,
+                action: [{
+                    text: 'Read more',
+                }]
+            })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                photo: polly,
+                delay: 2000,
+                content:
+                '<br/>\n' +
+                '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
+                '<br/>\n' +
+                '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                '<br/>\n' +
+                '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
+                '<br/>\n' +
+                '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
+                '<br/>\n' +
+                '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>'
+            })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                photo: polly,
+                delay: 5000,
+                content: 'By clicking \"Hi, Polly\" to accept the above terms and conditions.'
+            })
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                photo: client,
+                action: [
+                    {text: 'No, I stop here.', value: false},
+                    {text: 'Hi, Polly', value: true},
+                ]
+            })
+        }).then(function (res) {
+            if (res.value == false) {
+                return botui.message.bot({
+                    loading: true,
+                    photo: polly,
+                    delay: 2000,
+                    content: 'You are always welcome to contact SAO counsellors at (852)27666800 for enquiries.',
+                }).then(end);
+            }
         })
-    })
     }
-
 
     function questions() {
         return botui.message.bot({
