@@ -323,6 +323,20 @@ def addstud(request):
         return JsonResponse({'status': 'success', 'message': msg}, status=201)
 
 
+@csrf_exempt
+@require_http_methods(['GET'])
+def appointstaff(request):
+    from main.email_service import email_service
+
+    email_service.send('appointment_request', '12345678A', {
+        'appointment_date': '2020-06-25',
+        'appointment_time': '09:00',
+        'requester_name': 'Chris Wong'
+    })
+
+    return JsonResponse({'status': 'success'}, status=200)
+
+
 def login_all(request):
     return render(request, 'main/login_sso.html')
 

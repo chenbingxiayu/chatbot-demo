@@ -160,6 +160,7 @@ def getstaff(request):
     if role:
         qset = qset.filter(staff_role=role)
     res = qset.values('staff_netid').order_by('?').first()  # select randomly
+
     return JsonResponse(res, safe=False, status=200)
 
 

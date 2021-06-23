@@ -6,6 +6,7 @@ from datetime import datetime
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -92,8 +93,8 @@ class StaffStatus(models.Model):
                     'type': 'assignment'
                 }
             })
-        # TODO: send email
-        email_service()
+
+        email_service.send('new_assignment', self.staff_netid)
 
 
 class StudentChatStatus(models.Model):
@@ -167,6 +168,62 @@ class StudentChatHistory(models.Model):
             chat_start_time=student.chat_start_time,
             chat_end_time=time,
             assigned_counsellor=student.assigned_counsellor).save()
+
+
+class ChatSurveyData(models.Model):
+    class Meta:
+        db_table = 'chat-survey-data'
+
+    class Language(models.TextChoices):
+        en_us = 'en-us', _('English')
+        zh_hk = 'zh-hk', _('繁體中文')
+
+    class FrequencyScale(models.TextChoices):
+        rarely = 'rarely', _('Rarely')
+        seldom = 'seldom', _('Seldom')
+        sometimes = 'sometimes', _('Sometimes')
+        often = 'often', _('Often')
+        always = 'always', _('Always')
+
+    date = models.DateField(default=timezone.now().date())
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    is_ployu_student = models.BooleanField()
+    student_netid = models.CharField(max_length=32, null=True)
+    language = models.CharField(max_length=8, choices=Language.choices)
+    q1_academic = models.BooleanField()
+    q1_interpersonal_relationship = models.BooleanField()
+    q1_career = models.BooleanField()
+    q1_family = models.BooleanField()
+    q1_mental_health = models.BooleanField()
+    q1_others = models.BooleanField()
+    q2 = models.BooleanField()
+    q3 = models.CharField(max_length=32, choices=FrequencyScale.choices)
+    q4 = models.CharField(max_length=32, choices=FrequencyScale.choices)
+    q5 = models.BooleanField()
+    q6_1 = models.BooleanField(null=True)
+    q6_2 = models.BooleanField(null=True)
+    score = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(13)])
+    first_option = models.CharField(max_length=256)
+    feedback_rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+
+
+class ChatHistoryData(models.Model):
+    class Meta:
+        db_table = 'chat-history-data'
+
+    student_netid = models.CharField(max_length=32, null=True)
+    date = models.DateField(default=timezone.now().date())
+    q1 = models.BooleanField()
+    q2 = models.BooleanField()
+    request_time = models.DateTimeField()
+    # waiting duration can be calculated
+    chat_start_time = models.DateTimeField(null=True)
+    chat_end_time = models.DateTimeField(null=True)
+    # chat duration can be calculated
+    counsellor = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)
+    is_supervisor_join = models.BooleanField()
+    is_no_show = models.BooleanField()
 
 
 ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,
