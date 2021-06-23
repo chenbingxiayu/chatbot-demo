@@ -16,9 +16,24 @@
     .form-group label {
       font-weight: bold;
     }
+
+    #assigned {
+      background-color: #c9ecd0
+    }
   </style>
 </head>
 <body>
+  <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #c9ffff">
+    <a class="navbar-brand" href="#">Chat Console</a>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/main/page/staffstatus/">Staff Status</a>
+        </li>
+      </ul>
+    </div>
+    <button class="btn logout-btn my-2 my-sm-0" type="button" style="background-color: #dcdcdc">Logout</button>
+  </nav>
   {% csrf_token %}
   <div class="contatiner-fluid p-3">
     <div class="form-group">
@@ -46,11 +61,10 @@
         <div class="col-md-4">
           <label>Status:</label>
           <select id="staff-status-select" class="status-select custom-select" style="width:160px">
-            {% for status in selectable_status %}
-            <option value="{{status}}" {% if staff.staff_chat_status in status.options %} selected {% endif %}>{{status|capfirst}}</option>
+            {% for label, values in selectable_status.items %}
+            <option value="{{label}}" {% if staff.staff_chat_status in values %} selected {% endif %}>{{label|capfirst}}</option>
             {% endfor %}
           </select>
-
         </div>
       </div>
       <hr>
@@ -60,6 +74,7 @@
   </div>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js' integrity='sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ==' crossorigin='anonymous'></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
 
     const host = window.location.host
@@ -86,10 +101,18 @@
         url: '/main/api/updatestaff/',
         headers: { 'X-CSRFToken': getCookie('csrftoken')},
         data: {'status': status},
-
-        error: function(data){
-          alert("Update status fail.")
+        success: () => {
+          location.reload()
+        },
+        error: (data) => {
+          alert("Status update fail.")
         }
+      })
+    })
+
+    $('.logout-btn').on('click', () => {
+      axios.get('/main/api/logout/').then((res) => {
+        window.location.href = res.request.responseURL // redirect
       })
     })
 
@@ -146,8 +169,9 @@
 
     $('.chat-status').each((idx, el) => {
       if ($(el).text() !== 'Assigned') return
-      const student_id = $(el).parent().find('td:first').text()
-      $(el).parent().find('td:first').html(createRoomEl(student_id))
+      const assignRow = $(el).parent().attr('id', 'assigned')
+      const student_id = assignRow.find('td:first').text()
+      assignRow.find('td:first').html(createRoomEl(student_id))
     })
 
   </script>
