@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'chatbot_demo.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'chatbot-db',
-        'USER': 'test',
-        'PASSWORD': '123456',
-        'HOST': '158.132.255.165',
-        'PORT': '3306',
+        'NAME': os.getenv('DB_NAME', 'chatbot-db'),
+        'USER': os.getenv('DB_USER', 'test'),
+        'PASSWORD': os.getenv('DB_PASS', '123456'),
+        'HOST': os.getenv('DB_HOST', '158.132.255.165'),
+        'PORT': os.getenv('DB_PORT', 3306),
     }
 }
 
