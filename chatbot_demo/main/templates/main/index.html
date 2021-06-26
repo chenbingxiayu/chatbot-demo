@@ -494,9 +494,12 @@
         ).then(
             questions
 
+
+
         // questions
 
-        // T_and_C_of_OCS
+        //T_and_C_of_OCS
+
         // low
         // medium
         // high
@@ -770,109 +773,118 @@
     }
 
     function questions() {
-        return botui.message.bot({
+        botui.message.bot({
             loading: true,
             photo: polly,
             delay: 2500,
             content: 'To let me know your concern(s), mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> The following questions are not supposed to treat as any formal psychological or diagnostic assessment.'
         }).then(function () {
-            return botui.message.bot({
+            botui.message.bot({
                 loading: true,
                 delay: 1500,
                 photo: polly,
                 content: 'Q1. What bring(s) you here to chat with us? (Can select more than one item)'
-            }).then(function () {
-                $(".botui-container").animate({ scrollTop: $('.botui-container').prop("scrollHeight")}, 1000);
+            }).then(q1_ans)
+        })
+    }
 
-                return botui.action.select({
-                    addMessage: false,
-                    action: {
-                        placeholder: "Select a option",
-                        multipleselect: true,
-                        value: 0,
-                        options: [
-                            {value: 0, text: 'Academic' },
-                            {value: 1, text: 'Relationship' },
-                            {value: 2, text: 'Career' },
-                            {value: 3, text: 'Family' },
-                            {value: 4, text: 'Mental Health' },
-                            {value: 5, text: 'Other' },
-                        ],
-                        button: {
-                            icon: 'check',
-                            label: 'OK'
-                        }
-                    }
-                }).then(function (res) {
-                    answers[1] = 'Q1. What bring(s) you here to chat with us? (Can select more than one item)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                    // console.log(answers)
-
-                    return botui.message.human({
-                        photo: client,
-                        delay: 500,
-                        content: res.text
-                    }).then(function () {
-                        return botui.message.bot({
-                            loading: true,
-                            delay: 1000,
-                            photo: polly,
-                            content: 'I see, you are now facing the issue(s) comprising ' + res.text + '.'
-                        })
+    function q1_ans() {
+        $(".botui-container").animate({ scrollTop: $('.botui-container').prop("scrollHeight")}, 1000);
+        return botui.action.select({
+            addMessage: false,
+            action: {
+                placeholder: "Select a option",
+                multipleselect: true,
+                options: [
+                    {text: 'Academic' },
+                    {text: 'Relationship' },
+                    {text: 'Career' },
+                    {text: 'Family' },
+                    {text: 'Mental Health' },
+                    {text: 'Other' },
+                ],
+                button: {
+                    icon: 'check',
+                    label: 'OK'
+                }
+            }
+        }).then(function (res) {
+            if (res.text == "") {
+                alert('You have to select at least one item!');
+                q1_ans();
+            } else {
+                answers[1] = 'Q1. What bring(s) you here to chat with us? (Can select more than one item)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                return botui.message.human({
+                    photo: client,
+                    delay: 500,
+                    content: res.text
+                }).then(function () {
+                    return botui.message.bot({
+                        loading: true,
+                        delay: 1000,
+                        photo: polly,
+                        content: 'I see, you are now facing the issue(s) comprising ' + res.text + '.'
                     })
-                })
-            })
+                }).then(q2);
+            }
+        })
+    }
+
+    function q2() {
+        botui.message.bot({
+            loading: true,
+            delay: 1500,
+            photo: polly,
+            content: 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?'
         }).then(function () {
-            return botui.message.bot({
-                loading: true,
-                delay: 1500,
-                photo: polly,
-                content: 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?'
-            }).then(function () {
-                return botui.action.button({
-                    addMessage: false,
-                    action: [
-                        { text: 'Yes', value: 1 },
-                        { text: 'No', value: 0 }
-                    ]
-                }).then(function (res) {
-                    answers[2] = 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                    if (res.value == 0) {
-                        return botui.message.human({
-                            photo: client,
-                            delay: 500,
-                            content: res.text,
-                        }).then(function (res) {
-                            return botui.message.bot({
-                                loading: true,
-                                delay: 1500,
-                                photo: polly,
-                                content: 'Keep it up! We encourage you to take a look at the "Mental Health 101" to learn more tips for enhancing your psychological and mental wellness.'
-                            }).then(mental_health_101)
-                        });
-                    }
-                    score += res.value;
-                    console.log(score);
+            return botui.action.button({
+                addMessage: false,
+                action: [
+                    { text: 'Yes', value: 1 },
+                    { text: 'No', value: 0 }
+                ]
+            }).then(function (res) {
+                answers[2] = 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                if (res.value == 0) {
                     return botui.message.human({
                         photo: client,
                         delay: 500,
-                        content: res.text
-                    }).then(function () {
+                        content: res.text,
+                    }).then(function (res) {
                         return botui.message.bot({
                             loading: true,
                             delay: 1500,
                             photo: polly,
-                            content: 'It is natural for us to experience these feelings in our daily life.'
-                        })
+                            content: 'Keep it up! We encourage you to take a look at the "Mental Health 101" to learn more tips for enhancing your psychological and mental wellness.'
+                        }).then(mental_health_101)
+                    });
+                }
+                score += res.value;
+                console.log(score);
+                return botui.message.human({
+                    photo: client,
+                    delay: 500,
+                    content: res.text
+                }).then(function () {
+                    return botui.message.bot({
+                        loading: true,
+                        delay: 1500,
+                        photo: polly,
+                        content: 'Thanks for telling me. It is natural for us to experience these feelings in our daily life.'
                     })
                 })
             })
-        }).then(function () {
-            return botui.message.bot({
-                loading: true,
-                delay: 1500,
-                photo: polly,
-                content: 'Q3. How often do you experience the feeling of sadness, worry or tension?'
-            })
+        }).then(q3)
+    }
+
+
+    function q3() {
+        botui.message.bot({
+            loading: true,
+            delay: 1500,
+            photo: polly,
+            content: 'Q3. How often do you experience the feeling of sadness, worry or tension?'
+
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -908,129 +920,138 @@
                     })
                 })
             })
+        }).then(q4)
+    }
+
+    function q4() {
+        botui.message.bot({
+            loading: true,
+            delay: 2000,
+            photo: polly,
+            content: 'Q4. How often is your daily life get affected by the feelings mentioned above?'
         }).then(function () {
-            return botui.message.bot({
-                loading: true,
-                delay: 2000,
-                photo: polly,
-                content: 'Q4. How often is your daily life get affected by the feelings mentioned above?'
-            }).then(function () {
-                return botui.action.button({
-                    addMessage: false,
-                    action: [
-                        { text: 'Rarely', value: 1 },
-                        { text: 'Seldom', value: 2 },
-                        { text: 'Sometimes', value: 3 },
-                        { text: 'Often', value: 4 },
-                        { text: 'Always', value: 5 },
-                    ]
-                }).then(function (res) {
-                    answers[4] = 'Q4. How often is your daily life get affected by the feelings mentioned above?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                    score += res.value;
-                    console.log(score);
-                    return botui.message.human({
-                        photo: client,
-                        delay: 500,
-                        content: res.text
-                    }).then(function () {
-                        return botui.message.bot({
-                            loading: true,
-                            photo: polly,
-                            delay: 1500,
-                            content: 'You are aware that your daily life is getting affected by these feelings.'
-                        })
+            return botui.action.button({
+                addMessage: false,
+                action: [
+                    { text: 'Rarely', value: 1 },
+                    { text: 'Seldom', value: 2 },
+                    { text: 'Sometimes', value: 3 },
+                    { text: 'Often', value: 4 },
+                    { text: 'Always', value: 5 },
+                ]
+            }).then(function (res) {
+                answers[4] = 'Q4. How often is your daily life get affected by the feelings mentioned above?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                score += res.value;
+                console.log(score);
+                return botui.message.human({
+                    photo: client,
+                    delay: 500,
+                    content: res.text
+                }).then(function () {
+                    return botui.message.bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 1500,
+                        content: 'You are aware that your daily life is getting affected by these feelings.'
                     })
                 })
             })
+        }).then(q5_q6);
+    }
+
+    function q5_q6() {
+        botui.message.bot({
+            loading: true,
+            delay: 2500,
+            photo: polly,
+            content: 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)'
         }).then(function () {
-            return botui.message.bot({
-                loading: true,
-                delay: 2500,
-                photo: polly,
-                content: 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)'
-            }).then(function () {
-                return botui.action.button({
-                    addMessage: false,
-                    action: [
-                        { text: 'Yes', value: 0 },
-                        { text: 'No', value: 1 }
-                    ]
-                }).then(function (res) {
-                    answers[5] = 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                    score += res.value;
-                    console.log(score);
-                    botui.message.human({
-                            photo: client,
-                            delay: 500,
-                            content: res.text
-                    });
-                    if (res.value == 0) {
-                        return botui.message.bot({
-                                loading: true,
-                                delay: 2000,
-                                photo: polly,
-                                content: 'It is crucial to find some positive coping strategies in dealing with the unsettled sadness\/worry or tension'
-                        }).then(function () {
-                            return botui.message.bot({
-                                loading: true,
-                                delay: 1500,
-                                photo: polly,
-                                content: 'Q6. Do you feel effective when using these coping strategies?'
-                            }).then(function () {
-                                return botui.action.button({
-                                    addMessage: false,
-                                    action: [
-                                        { text: 'Yes', value: 0 },
-                                        { text: 'No', value: 1 }
-                                    ]
-                                }).then(function (res) {
-                                    answers[6] = 'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                                    score += res.value;
-                                    console.log(score);
-                                    botui.message.human({
-                                            photo: client,
-                                            delay: 500,
-                                            content: res.text
-                                    });
-                                })
-                            })
-                        })
-                    } else {
-                        return botui.message.bot({
+            return botui.action.button({
+                addMessage: false,
+                action: [
+                    { text: 'Yes', value: 0 },
+                    { text: 'No', value: 1 }
+                ]
+            }).then(function (res) {
+                answers[5] = 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                score += res.value;
+                console.log(score);
+                botui.message.human({
+                        photo: client,
+                        delay: 500,
+                        content: res.text
+                });
+                if (res.value == 0) {
+                    return botui.message.bot({
                             loading: true,
                             delay: 2000,
                             photo: polly,
                             content: 'It is crucial to find some positive coping strategies in dealing with the unsettled sadness\/worry or tension'
+                    }).then(function () {
+                        return botui.message.bot({
+                            loading: true,
+                            delay: 1500,
+                            photo: polly,
+                            content: 'Q6. Do you feel effective when using these coping strategies?'
                         }).then(function () {
-                            return botui.message.bot({
-                                loading: true,
-                                delay: 1500,
-                                photo: polly,
-                                content: 'Q6. Are you able to manage your sadness/worry or tension at this moment?'
-                            }).then(function () {
-                                return botui.action.button({
-                                    addMessage: false,
-                                    action: [
-                                        { text: 'Yes', value: 0 },
-                                        { text: 'No', value: 1 }
-                                    ]
-                                }).then(function (res) {
-                                    answers[6] = 'Q6. Are you able to manage your sadness/worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                                    score += res.value;
-                                    console.log(score);
-                                    return botui.message.human({
+                            return botui.action.button({
+                                addMessage: false,
+                                action: [
+                                    { text: 'Yes', value: 0 },
+                                    { text: 'No', value: 1 }
+                                ]
+                            }).then(function (res) {
+                                answers[6] = 'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                                score += res.value;
+                                console.log(score);
+                                botui.message.human({
                                         photo: client,
                                         delay: 500,
                                         content: res.text
-                                    })
+                                });
+                            })
+                        })
+                    })
+                } else {
+                    return botui.message.bot({
+                        loading: true,
+                        delay: 2000,
+                        photo: polly,
+                        content: 'It is crucial to find some positive coping strategies in dealing with the unsettled sadness\/worry or tension'
+                    }).then(function () {
+                        return botui.message.bot({
+                            loading: true,
+                            delay: 1500,
+                            photo: polly,
+                            content: 'Q6. Are you able to manage your sadness/worry or tension at this moment?'
+                        }).then(function () {
+                            return botui.action.button({
+                                addMessage: false,
+                                action: [
+                                    { text: 'Yes', value: 0 },
+                                    { text: 'No', value: 1 }
+                                ]
+                            }).then(function (res) {
+                                answers[6] = 'Q6. Are you able to manage your sadness/worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                                score += res.value;
+                                console.log(score);
+                                return botui.message.human({
+                                    photo: client,
+                                    delay: 500,
+                                    content: res.text
                                 })
                             })
                         })
-                    }
-                })
+                    })
+                }
             })
         }).then(confirm_answer)
     }
+
+
+
+
+
 
 
     function confirm_answer() {
