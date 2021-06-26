@@ -298,7 +298,7 @@
 
     login().then(
 
-             verification
+         /*   verification
          ).then(
              select_language
          ).then(
@@ -306,11 +306,11 @@
          ).then(
              T_and_C_split
          ).then(
-            questions
+            questions */
 
-         // T_and_C_split
+        //questions
 
-        // T_and_C_of_OCS
+        T_and_C_of_OCS
         // low
         // medium
         // high
@@ -925,98 +925,142 @@
         }).then(mental_health_101)
     }
 
-
     function medium() {
-        var office_hour = isSAOWorkingHours(new Date());
-        return botui.message.bot({
+        botui.message.bot({
             loading: true,
-            delay: 2000,
+            delay: 1000,
             photo: polly,
             content: 'Your answers show that you quite often experience the feeling mentioned above, and you feel your daily life get affected sometimes.'
-        }).then(function () {
-            if (office_hour == true) {
+        }).then(mid_recommendations)
+    }
+
+    function mid_recommendations() {
+        var office_hour = isSAOWorkingHours(new Date());
+        if (office_hour == true) {
                 return botui.message.bot({
                     loading: true,
-                    delay: 3000,
+                    delay: 1000,
                     photo: polly,
                     content: 'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health 101<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline'
+                }).then(function(){
+                    return botui.action.button({
+                        addMessage: false,
+                        action: [
+                            { text: 'Make Appointment with SAO Counselors', value: 3 },
+                            { text: 'Mental Health 101', value: 1 },
+                            { text: 'Immediate Contact with SAO Counsellors', value: 4 },
+                            { text: 'Online Chat Service(Live)', value: 2 },
+                            { text: 'Community Helpline', value: 6 },
+                        ]
+                    }).then(function (res) {
+                        if (res.value == 1) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(mental_health_101);
+                        }
+                        if (res.value == 2) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(T_and_C_of_OCS);
+                        }
+                        if (res.value == 3) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(make_appointment_with_counsellors);
+                        }
+                        if (res.value == 4) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(contact_with_counsellors);
+                        }
+                        if (res.value == 5) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(polyu_line);
+                        }
+                        if (res.value == 6) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(community_helpline);
+                        }
+                    })
                 })
-            } else {
+        } else {
                 return botui.message.bot({
                     loading: true,
-                    delay: 3000,
+                    delay: 1000,
                     photo: polly,
                     content: 'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with SAO counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health 101<br/>3. Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/>4. Community Helpline'
+                }).then(function(){
+                    return botui.action.button({
+                        addMessage: false,
+                        action: [
+                            { text: 'Make Appointment with SAO Counselors', value: 3 },
+                            { text: 'Mental Health 101', value: 1 },
+                            { text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583', value: 5 },
+                            { text: 'Community Helpline', value: 6 },
+                        ]
+                    }).then(function (res) {
+                        if (res.value == 1) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(mental_health_101);
+                        }
+                        if (res.value == 2) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(T_and_C_of_OCS);
+                        }
+                        if (res.value == 3) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(make_appointment_with_counsellors);
+                        }
+                        if (res.value == 4) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(contact_with_counsellors);
+                        }
+                        if (res.value == 5) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(polyu_line);
+                        }
+                        if (res.value == 6) {
+                            return botui.message.human({
+                                delay: 500,
+                                photo: client,
+                                content: res.text
+                            }).then(community_helpline);
+                        }
+                    })
                 })
-            }
-        }).then(function () {
-            if (office_hour == true) {
-                return botui.action.button({
-                    addMessage: false,
-                    action: [
-                        { text: 'Make Appointment with SAO Counselors', value: 3 },
-                        { text: 'Mental Health 101', value: 1 },
-                        { text: 'Immediate Contact with SAO Counsellors', value: 4 },
-                        { text: 'Online Chat Service(Live)', value: 2 },
-                        { text: 'Community Helpline', value: 6 },
-                    ]
-                })
-            } else {
-                return botui.action.button({
-                    addMessage: false,
-                    action: [
-                        { text: 'Make Appointment with SAO Counselors', value: 3 },
-                        { text: 'Mental Health 101', value: 1 },
-                        { text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583', value: 5 },
-                        { text: 'Community Helpline', value: 6 },
-                    ]
-                })
-            }
-        }).then(function (res) {
-            if (res.value == 1) {
-                return botui.message.human({
-                    delay: 500,
-                    photo: client,
-                    content: res.text
-                }).then(mental_health_101);
-            }
-            if (res.value == 2) {
-                return botui.message.human({
-                    delay: 500,
-                    photo: client,
-                    content: res.text
-                }).then(T_and_C_of_OCS);
-            }
-            if (res.value == 3) {
-                return botui.message.human({
-                    delay: 500,
-                    photo: client,
-                    content: res.text
-                }).then(make_appointment_with_counsellors);
-            }
-            if (res.value == 4) {
-                return botui.message.human({
-                    delay: 500,
-                    photo: client,
-                    content: res.text
-                }).then(contact_with_counsellors);
-            }
-            if (res.value == 5) {
-                return botui.message.human({
-                    delay: 500,
-                    photo: client,
-                    content: res.text
-                }).then(polyu_line);
-            }
-            if (res.value == 6) {
-                return botui.message.human({
-                    delay: 500,
-                    photo: client,
-                    content: res.text
-                }).then(community_helpline);
-            }
-        })
+        }
     }
+
+
 
     function high() {
         score = 20
@@ -1237,6 +1281,7 @@
             pop_msg = 'We\'ll be back at 0900(HKT) in the following working day. We look forward to meeting you !'
         }
 
+        pop_msg = "";
         if (pop_msg != "") {
             botui.message.bot({
                 loading: true,
@@ -1309,18 +1354,19 @@
                     ]
                 })
             }).then(function (res) {
-                if (res.value == true) {
-                    return botui.message.human({
+
+                botui.message.human({
                         delay: 500,
                         photo: client,
                         content: res.text
-                    }).then(function () {
-                        return botui.message.bot({
-                            loading: true,
-                            delay: 3000,
-                            photo: polly,
-                            content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone (852)27666800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.'
-                        })
+                });
+
+                if (res.value == true) {
+                    return botui.message.bot({
+                        loading: true,
+                        delay: 3000,
+                        photo: polly,
+                        content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone (852)27666800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.'
                     }).then(function () {
                         return botui.message.bot({
                             loading: true,
@@ -1516,13 +1562,7 @@
             photo: polly,
             delay: 1500,
             content: '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>'
-        }).then(function () {
-            if (score > 10) {
-                return further_help()
-            } else {
-                return end()
-            }
-        })
+        }).then(further_help)
     }
 
     function contact_with_counsellors() {
@@ -1538,13 +1578,7 @@
                 delay: 1000,
                 content: '1. Call (852)27666800<br/>2. Walk in QT308(Entrance at Core T) during office hours</br>'
             })
-        }).then(function () {
-            if (score > 10) {
-                return further_help()
-            } else {
-                return end()
-            }
-        })
+        }).then(further_help())
     }
 
     function polyu_line() {
@@ -1564,13 +1598,7 @@
                 delay: 3000,
                 content: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/><br/>All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.'
             })
-        }).then(function () {
-            if (score > 10) {
-                return further_help()
-            } else {
-                return end()
-            }
-        })
+        }).then(further_help())
     }
 
     function community_helpline() {
@@ -1579,13 +1607,7 @@
             photo: polly,
             delay: 3000,
             content: 'Emergency Call: (852)999<br/>Social Welfare Department: (852)23432255<br/>Caritas Family Crisis Support Centre: (852)18288<br/>Suicide Prevention Services: (852)23820000<br/>The Samaritans Multi-lingual Suicide Prevention(852)2896-0000<br/>The Hong Kong Jockey Club Charities Trust, Open Up-24-hour online chat platform: <a href="www.openup.hk" target ="_blank">www.openup.hk</a><br/>'
-        }).then(function () {
-            if (score > 10) {
-                return further_help()
-            } else {
-                return end()
-            }
-        })
+        }).then(further_help())
     }
 
     function further_help() {
@@ -1603,23 +1625,33 @@
                 ]
             }).then(function (res) {
                 if (res.value == true) {
-                    return botui.message.human({
-                        photo: client,
-                        delay: 500,
-                        content: res.text
-                    }).then(high_recommendations)
+                    if (score <=10) {
+                        return botui.message.human({
+                            photo: client,
+                            delay: 500,
+                            content: res.text
+                        }).then(mid_recommendations)
+                    } else {
+                        return botui.message.human({
+                            photo: client,
+                            delay: 500,
+                            content: res.text
+                        }).then(high_recommendations)
+                    }
                 } else {
                     return botui.message.human({
                         photo: client,
                         delay: 500,
                         content: res.text
                     }).then(function () {
-                        return botui.message.bot({
-                            loading: true,
-                            photo: polly,
-                            delay: 1000,
-                            content: '<font color=blue>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.</font>'
-                        })
+                        if (score > 10) {
+                            botui.message.bot({
+                                loading: true,
+                                photo: polly,
+                                delay: 1000,
+                                content: content = '<font color=blue>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.</font>'
+                            })
+                        }
                     }).then(end)
                 }
             })
@@ -1636,7 +1668,7 @@
             type: 'html',
             delay: 1000,
             photo: polly,
-            content: '<p>Thank you for using \"My Polly\". Please rate your experience:</p >' +
+            content: '<p>Thank you for using \"My Polly\". \n Please rate your experience:</p >' +
                 '<div class="wrap">\n' +
                 '  <div class="stars">\n' +
                 '    <label class="rate">\n' +
