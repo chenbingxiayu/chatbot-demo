@@ -34,13 +34,125 @@
 
 
 <style type="text/css">
+
+    .profil > img {
+        border: none !important;
+        width: 48px;
+        height: 48px;
+    }
+    
     .profil > img.agent {
       content: unset
     }
-    
+
     body {
-        background: #ebefff;
+        width: 100%;
+        height: 100%;
     }
+
+    .top-banner {
+        height: calc(100vw / 7.73);
+        width: 100%;
+        background: url("/static/Polly-graphics/general/top-banner.jpg")
+            no-repeat center center;
+        background-size: contain;
+    }
+
+    .top-description {
+        background-color: #fcead9;
+        width: 100%;
+        height: auto;
+        padding: 30px 50px;
+    }
+
+    .main-content {
+        height: auto;
+        background-color: #fefae4;
+    }
+
+    .login-form {
+        margin-top: 80px;
+    }
+
+    .linkage {
+        background-color: #fcead9;
+        height: auto;
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+
+    .linkage ul {
+        list-style-type: none;
+        color: #df643b;
+        padding-left: 0px;
+    }
+
+    .linkage-item {
+        font-size: 20px;
+        color: #df643b;
+        position: relative;
+        width: 55%;
+        border-top: 3px solid #df643b;
+        padding: 5px 30px;
+        font-weight: 500;
+    }
+
+    .linkage-item a {
+        color: #df643b;
+    }
+
+    .linkage-item a:hover {
+        color: #df643b;
+        text-decoration: none;
+    }
+
+    .linkage-item:last-child {
+        border-bottom: 3px solid #df643b;
+    }
+
+    .linkage-item::before {
+        content: "";
+        border-top: 20px solid #df643b;
+        border-right: 12px solid transparent;
+        border-left: 12px solid transparent;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+    }
+
+    .copyright {
+        background-color: #ca3f6a;
+        height: auto;
+        padding: 20px 50px;
+    }
+
+    .copyright ul {
+        display: inline-flex;
+        list-style-type: none;
+        color: white;
+        padding-left: 0px;
+    }
+
+    .copyright-item {
+        border-right: 1px solid white;
+        padding: 0px 10px;
+    }
+
+    .copyright-item a {
+        color: white;
+    }
+
+    .copyright-item a:hover {
+        text-decoration: none;
+    }
+
+    .copyright-text {
+        margin-top: 20px;
+        color: white;
+        text-align: right;
+    }
+    
 
     .wrap {
         width: 200px;
@@ -162,7 +274,7 @@
     .max-width-2 {
         max-width: 1230px;
         margin: 0 auto;
-        padding: 0 2em;
+        padding: 4em 2em;
         position: relative;
     }
 
@@ -203,6 +315,31 @@
         top: 0;
     }
 
+    .botui-header-icon {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        z-index: 10;
+
+    }
+
+    .icon-home {
+        background: url('/static/Polly-graphics/general/home.png') no-repeat ;
+        width: 25px;
+        height: 25px;
+        z-index: 1000;
+        background-size: contain;
+        cursor: pointer;
+    }
+    .icon-leave {
+        background: url('/static/Polly-graphics/general/close-icon.png') no-repeat ;
+        width: 25px;
+        height: 25px;
+        z-index: 1000;
+        background-size: contain;
+        cursor: pointer;
+    }
+
     .botui-message-content {
         background-color: #c2c890;
         border-radius: 10px 10px 10px 5px;
@@ -223,24 +360,76 @@
 {% block body %}
 
 <body>
-    <div class="container" style="background-color: #f7f8f8">
-        <section id="top-section" style="height:1000px; background-color: white">
-        </section>
-        <section class="middle-section">
-            <div class="max-width-2">
-                <div class="row justify-content-center">
-                    <div class="col-sm col-md-8 col-lg-6">
-                        <div class="chatbox-wrapper">
-                            <div id="chatbox" class="botui">
-                                <div class="botui-header"></div>
-                                <bot-ui ></bot-ui>
+    <section>
+      <div class="top-banner"></div>
+      <div class="top-description">
+        <p>
+          The Counselling and Wellness Section (CWS) of the Student Affairs
+          Office (SAO) renders the timely and quality mental health support to
+          students of The Hong Kong Polytechnic University (PolyU) via the
+          non-face-to-face service mode besides the face-to-face platform.
+        </p>
+        <p>
+          CWS embarks the
+          <b><i>Counselling Chatbot Service, My Polly</i></b> which fit our
+          students’ need for the mental health service surpass accessibility;
+          students in distress can approach our various psychological services
+          through the “My Polly” Chatbot. This Chatbot serves the purpose of the
+          identification of students’ service need and the referral of
+          psychological services, i.e. online chat, face-to-face counselling and
+          online psychoeducation materials.
+        </p>
+      </div>
+    </section>
+    <section class="main-content">
+    <div class="container">
+        <div class="max-width-2">
+            <div class="row justify-content-center">
+                <div class="col-sm col-md-8 col-lg-6">
+                    <div class="chatbox-wrapper">
+                        <div id="chatbox" class="botui">
+                            <div class="botui-header">
+                                <div class="botui-header-icon">
+                                    <label class="icon-home"></label>    
+                                    <label class="icon-leave"></label>    
+                                </div>
                             </div>
+                            <bot-ui ></bot-ui>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
+    </section>
+    <section class="footer">
+      <div class="linkage">
+        <ul>
+          <li class="linkage-item"><a href="#">Terms and Conditions</a></li>
+          <li class="linkage-item"><a href="#">Mental Health 101</a></li>
+          <li class="linkage-item">
+            <a href="#">Making Counselling Appointment</a>
+          </li>
+          <li class="linkage-item"><a href="#">Emergency Support</a></li>
+        </ul>
+      </div>
+      <div class="copyright">
+        <ul>
+          <li class="copyright-item"><a href="#">Sitemap</a></li>
+          <li class="copyright-item"><a href="#">Contact Us</a></li>
+          <li class="copyright-item">
+            <a href="#">Privacy Policy Statement</a>
+          </li>
+          <li class="copyright-item">
+            <a href="#">Personal Information Collection Statement</a>
+          </li>
+          <li class="copyright-item"><a href="#">Accessibility</a></li>
+        </ul>
+        <p class="copyright-text">
+          Copyright © The Hong Kong Polytechnic Univeristy Reserved. 2020
+        </p>
+      </div>
+    </section>
 
 </body>
 {% endblock body %}
@@ -288,8 +477,8 @@
     var answers = {};
     var personalInfo = {};
     var name = 'User';
-    var polly = '{% static "Polly-graphics/general/general-polly.png" %}';
-    var client = '{% static "Polly-graphics/general/general-client.png" %}';
+    var polly = '{% static "Polly-graphics/general/polly.png" %}';
+    var client = '{% static "Polly-graphics/general/student.png" %}';
 
     $("body").on('click', '.dropdown', function() {
         $(".botui-container").animate({ scrollTop: $('.botui-container').prop("scrollHeight")}, 1000);
@@ -1742,6 +1931,21 @@
             } else {
                 console.log('has');
             }
+        })
+        .on('click', '.icon-leave', function() {
+            if (confirm("Are you sure you want to quit?")) {
+                if (navigator.userAgent.indexOf("Firefox") != -1 || navigator.userAgent.indexOf("Chrome") !=-1) {
+                    window.location.href="about:blank";
+                    window.close();
+                } else {
+                    window.opener = null;
+                    window.open("", "_self");
+                    window.close();
+                }
+            }
+        })
+        .on('click', '.icon-home', function() {
+            location.reload();
         });
 
     });
