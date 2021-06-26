@@ -485,21 +485,18 @@
     });
 
 
-    login().then(
+    select_language()
+        .then(
+            get_name
+        )
+        .then(
+            T_and_C_split
+        ).then(
+            questions
 
-         /*   verification
-         ).then(
-             select_language
-         ).then(
-             get_name
-         ).then(
-             T_and_C_split
-         ).then(
-            questions */
+        // questions
 
-        //questions
-
-        T_and_C_of_OCS
+        // T_and_C_of_OCS
         // low
         // medium
         // high
@@ -762,6 +759,12 @@
                     delay: 2000,
                     content: 'You are always welcome to contact SAO counsellors at (852)27666800 for enquiries.',
                 }).then(end);
+            } else {
+                return botui.message.bot({
+                    human: true,
+                    photo: client,
+                    content: res.text,
+                })
             }
         })
     }
@@ -1485,7 +1488,7 @@
                 delay: 1000,
                 photo: polly,
                 content: 'We noted that you have accepted the Terms and Conditions of using Counselling ChatBot. Before starting the Online Chat, here are a few reminders:<br/><br/>' +
-                        '1. In case of emergency and when<br/><br/>' +
+                        '1. In case of emergency and when ' +
                         'there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.<br/><br/>' +
                         '2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>' +
                         '3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>'
