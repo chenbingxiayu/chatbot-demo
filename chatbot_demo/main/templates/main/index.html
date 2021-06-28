@@ -624,13 +624,13 @@
             photo: polly,
             loading: true,
             delay: 3000,
-            content: 'Hi there! I\’m Polly, your counselling Chatbot. I\'m here to understand your service need and provide you with appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/><br/>To know more about SAO services, please visit the website<br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">https://www.polyu.edu.hk/sao/</a> '
+            content: 'Hi there! I\’m Polly, your counselling Chatbot. I\'m here to understand your service need and provide you with appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/><br/>You may know more about SAO services <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> '
         }).then(function () {
             return botui.message.bot({
                 loading: true,
                 photo: polly,
                 delay: 1000,
-                content: 'May I know your name?'
+                content: 'May I have your name please?'
             })
         }).then(function () {
             return botui.action.text({
@@ -664,8 +664,8 @@
             loading: true,
             photo: polly,
             delay: 2000,
-            content: 'Hi ' + name + ', you need to note the followings prior using \"My Polly\":</br></br>Important Notes:</br>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.' +
-                '</br></br>Please visit the SAO/CWS website for more emergency support information.</br></br>' + ESI + '</br>'
+            content: 'Hi ' + name + ', you need to read the followings prior using \"My Polly\":</br></br>Important Notes:</br>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency / A&E service.' +
+                '</br></br>Please visit the <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/office-hours/">HERE</a> for more emergency support information.</br></br>' + ESI + '</br>'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -776,8 +776,8 @@
         botui.message.bot({
             loading: true,
             photo: polly,
-            delay: 2500,
-            content: 'To let me know your concern(s), mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> The following questions are not supposed to treat as any formal psychological or diagnostic assessment.'
+            delay: 1500,
+            content: 'We would like to know more about your mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> It is not supposed to treat as formal psychological or diagnostic assessment.'
         }).then(function () {
             botui.message.bot({
                 loading: true,
@@ -835,7 +835,7 @@
             loading: true,
             delay: 1500,
             photo: polly,
-            content: 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?'
+            content: 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -844,7 +844,7 @@
                     { text: 'No', value: 0 }
                 ]
             }).then(function (res) {
-                answers[2] = 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                answers[2] = 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                 if (res.value == 0) {
                     return botui.message.human({
                         photo: client,
@@ -855,7 +855,7 @@
                             loading: true,
                             delay: 1500,
                             photo: polly,
-                            content: 'Keep it up! We encourage you to take a look at the "Mental Health 101" to learn more tips for enhancing your psychological and mental wellness.'
+                            content: 'Keep it up! We encourage you to take a look at the "Mental Health 101" to know more tips for enhancing your psychological and mental wellness.'
                         }).then(mental_health_101)
                     });
                 }
@@ -883,7 +883,7 @@
             loading: true,
             delay: 1500,
             photo: polly,
-            content: 'Q3. How often do you experience the feeling of sadness, worry or tension?'
+            content: 'Q3. How often do you feel sad, worried or tensed?'
 
         }).then(function () {
             return botui.action.button({
@@ -896,7 +896,7 @@
                     { text: 'Always', value: 5 },
                 ]
             }).then(function (res) {
-                answers[3] = 'Q3. How often do you experience the feeling of sadness, worry or tension?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                answers[3] = 'Q3. How often do you feel sad, worried or tensed?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                 score += res.value;
                 console.log(score);
 
@@ -909,13 +909,13 @@
                         delay: 2500,
                         loading: true,
                         photo: polly,
-                        content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
+                        content: 'Awareness is the first step of change that helps to aid our self-understanding and steps of healing to take.'
                     }).then(function () {
                         return botui.message.bot({
                             delay: 1000,
                             loading: true,
                             photo: polly,
-                            content: 'You show aware of your feelings happening to you.'
+                            content: 'I see that you are aware of what is happening to you. '
                         })
                     })
                 })
@@ -928,7 +928,7 @@
             loading: true,
             delay: 2000,
             photo: polly,
-            content: 'Q4. How often is your daily life get affected by the feelings mentioned above?'
+            content: 'Q4. How often does your daily life being affected by the feelings mentioned above?'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -940,7 +940,7 @@
                     { text: 'Always', value: 5 },
                 ]
             }).then(function (res) {
-                answers[4] = 'Q4. How often is your daily life get affected by the feelings mentioned above?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                answers[4] = 'Q4. How often does your daily life being affected by the feelings mentioned above?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                 score += res.value;
                 console.log(score);
                 return botui.message.human({
@@ -952,7 +952,7 @@
                         loading: true,
                         photo: polly,
                         delay: 1500,
-                        content: 'You are aware that your daily life is getting affected by these feelings.'
+                        content: 'It shows that your daily life is being affected by these feelings.'
                     })
                 })
             })
@@ -964,7 +964,7 @@
             loading: true,
             delay: 2500,
             photo: polly,
-            content: 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)'
+            content: 'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -973,7 +973,7 @@
                     { text: 'No', value: 1 }
                 ]
             }).then(function (res) {
-                answers[5] = 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                answers[5] = 'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                 score += res.value;
                 console.log(score);
                 botui.message.human({
@@ -986,7 +986,7 @@
                             loading: true,
                             delay: 2000,
                             photo: polly,
-                            content: 'It is crucial to find some positive coping strategies in dealing with the unsettled sadness\/worry or tension'
+                            content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.'
                     }).then(function () {
                         return botui.message.bot({
                             loading: true,
@@ -1023,7 +1023,7 @@
                             loading: true,
                             delay: 1500,
                             photo: polly,
-                            content: 'Q6. Are you able to manage your sadness/worry or tension at this moment?'
+                            content: 'Q6. Are you able to manage your sadness, worry or tension at this moment?'
                         }).then(function () {
                             return botui.action.button({
                                 addMessage: false,
@@ -1032,7 +1032,7 @@
                                     { text: 'No', value: 1 }
                                 ]
                             }).then(function (res) {
-                                answers[6] = 'Q6. Are you able to manage your sadness/worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                                answers[6] = 'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                                 score += res.value;
                                 console.log(score);
                                 return botui.message.human({
@@ -1143,7 +1143,7 @@
             loading: true,
             delay: 1000,
             photo: polly,
-            content: 'Your answers show that you quite often experience the feeling mentioned above, and you feel your daily life get affected sometimes.'
+            content: 'Your answers show that you experience the feeling mentioned above quite oven, and <strong>you feel your daily life get affected sometimes.</strong>'
         }).then(mid_recommendations)
     }
 
@@ -1509,7 +1509,7 @@
                 photo: polly,
                 content: 'We noted that you have accepted the Terms and Conditions of using Counselling ChatBot. Before starting the Online Chat, here are a few reminders:<br/><br/>' +
                         '1. In case of emergency and when ' +
-                        'there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.<br/><br/>' +
+                        'there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency / A&E service.<br/><br/>' +
                         '2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>' +
                         '3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>'
         }).then(function () {
@@ -1532,7 +1532,7 @@
                         delay: 1500,
                         photo: polly,
                         content: 'You are always welcome to contact us at (852)27666800 for enquires.'
-                    })
+                    }).then(end)
                 })
             } else {
                 return botui.message.human({
@@ -1839,7 +1839,7 @@
                 addMessage: false,
                 action: [
                     { text: 'I still need other services.', value: true },
-                    { text: 'No, thank you! I will stop here.', value: false },
+                    { text: 'No, thank you! ', value: false },
                 ]
             }).then(function (res) {
                 if (res.value == true) {
@@ -1886,7 +1886,7 @@
             type: 'html',
             delay: 1000,
             photo: polly,
-            content: '<p>Thank you for using \"My Polly\". \n Please rate your experience:</p >' +
+            content: '<p>Thank you for using \"My Polly\". \n Please rate your experience now:</p >' +
                 '<div class="wrap">\n' +
                 '  <div class="stars">\n' +
                 '    <label class="rate">\n' +
