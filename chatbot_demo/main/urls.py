@@ -40,6 +40,9 @@ debug_urls = [
     path('debug/endchat/', debug_api.endchat, name='debug_endchat'),
     path('debug/reassign_counsellor/', debug_api.reassign_task, name='reassign_counsellor'),
     path('debug/dequeue_student/', debug_api.dequeue_task, name='dequeue_student'),
+    path('debug/add_survey_data/', debug_api.add_survey_data, name='add_survey_data'),
+    path('debug/export_statistics/', debug_api.export_statistics, name='export_statistics'),
+    path('debug/export_red_route/', debug_api.export_red_route, name='export_red_route'),
 ]
 
 urlpatterns += debug_urls

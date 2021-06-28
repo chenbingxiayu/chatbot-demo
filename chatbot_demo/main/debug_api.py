@@ -1,5 +1,8 @@
+import json
 import logging
+from datetime import timedelta
 
+import requests
 from django.core import serializers
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
@@ -8,7 +11,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.forms.models import model_to_dict
 
-from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, ROLE_RANKING
+from main.models import (
+    StaffStatus,
+    StudentChatStatus,
+    StudentChatHistory,
+    CounsellingServiceSession,
+    ROLE_RANKING
+)
+from main.utils import hk_time
 from tasks.tasks import reassign_counsellor, dequeue_student
 
 logger = logging.getLogger('django')
@@ -339,4 +349,56 @@ def reassign_task(request):
 @require_http_methods(['GET'])
 def dequeue_task(request):
     dequeue_student()
+    return JsonResponse({'status': 'success'}, status=200)
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def add_survey_data(request):
+    survey_data = json.loads(request.body.decode('utf-8'))
+    now = timezone.now().astimezone(hk_time) - timedelta(days=1)
+    today = now.date()
+    CounsellingServiceSession(
+        date=today,
+        start_time=now.time(),
+        end_time=(now + timedelta(seconds=15 * 60)).time(),
+        is_ployu_student=survey_data['is_ployu_student'],
+        student_netid=survey_data['student_netid'],
+        language=survey_data['language'],
+        q1_academic=survey_data['q1_academic'],
+        q1_interpersonal_relationship=survey_data['q1_interpersonal_relationship'],
+        q1_career=survey_data['q1_career'],
+        q1_family=survey_data['q1_family'],
+        q1_mental_health=survey_data['q1_mental_health'],
+        q1_others=survey_data['q1_others'],
+        q2=survey_data['q2'],
+        q3=survey_data['q3'],
+        q4=survey_data['q4'],
+        q5=survey_data['q5'],
+        q6_1=survey_data['q6_1'],
+        q6_2=survey_data['q6_2'],
+        score=survey_data['score'],
+        first_option=survey_data['first_option'],
+        feedback_rating=survey_data['feedback_rating']
+    ).save()
+
+    return JsonResponse({'status': 'success'}, status=201)
+
+
+@csrf_exempt
+@require_http_methods(['GET'])
+def export_statistics(request):
+    from_date = timezone.now().date() - timedelta(days=1)
+    to_date = timezone.now().date()
+
+    CounsellingServiceSession.statis_overview(from_date, to_date)
+    return JsonResponse({'status': 'success'}, status=200)
+
+
+@csrf_exempt
+@require_http_methods(['GET'])
+def export_red_route(request):
+    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
+
+    CounsellingServiceSession.get_red_route(from_date)
     return JsonResponse({'status': 'success'}, status=200)
