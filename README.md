@@ -53,3 +53,20 @@ Cross-Origin Read Blocking (CORB) 头像的问题可以参考一下这个
 - 选择语言（ENG/繁/简体）（是否能够提前为第一个逻辑？）
   
 
+
+# i18n
+js 文件中用 gettext('msgid')
+html 文件用 {% translate 'msgid' %}
+其它请查阅https://docs.djangoproject.com/en/3.2/ref/django-admin/#django-admin-makemessages
+
+
+command:
+```
+自动生成js .po 文件
+python manage.py makemessages --domain djangojs --all
+生成html和python .po文件
+python manage.py makemessages --all
+
+编译生成 .mo 文件 
+python manage.py compilemessages  
+```

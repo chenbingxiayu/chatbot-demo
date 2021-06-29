@@ -1,4 +1,5 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
+from django.views.i18n import JavaScriptCatalog
 
 from . import views
 
@@ -27,4 +28,6 @@ urlpatterns = [
     url(r'^user/login/$', views.login, name='login'),
     url(r'^user/login-sso/$', views.login_sso, name='login_sso'),
     url(r'^user/login-sso/callback/$', views.login_sso_callback, name='login_sso_callback'),
+    url(r'^jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
 ]
