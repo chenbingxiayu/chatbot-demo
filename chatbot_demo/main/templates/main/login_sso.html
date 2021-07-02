@@ -153,6 +153,7 @@
           <form class="col-9 login-form" action="{% url 'login' %}" method="get">
             <div class="form-group">
               <label class="col-sm-4 col-form-label"></label>
+              <input value={{decoded_jwt}} />
               <button type="submit">Login</button>
             <div>
             </div>
@@ -205,5 +206,9 @@
       type="module"
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
     ></script>
+    <script>
+      const jwt = "{{decoded_jwt}}";
+      console.log(jwt);
+    </script>
   </body>
 </html>
