@@ -153,7 +153,8 @@
           <form class="col-9 login-form" action="{% url 'login' %}" method="get">
             <div class="form-group">
               <label class="col-sm-4 col-form-label"></label>
-              <input value={{decoded_jwt}} />
+              <label style="color: red" >{{error_message}}</label>
+              <input value="{{decoded_jwt}}" />
               <button type="submit">Login</button>
             <div>
             </div>
@@ -208,7 +209,6 @@
     ></script>
     <script>
       const jwt = "{{decoded_jwt}}";
-      console.log(jwt);
     </script>
   </body>
 </html>
