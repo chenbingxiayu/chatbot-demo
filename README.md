@@ -82,7 +82,7 @@ Our chatbot images is built from source code. So every time we want to deploy th
 For pull the new code
 ```
 cd /root/chatbot/chatbot-demo
-git branch (currently switched to 'sso' for testing purposes)
+git branch  // currently switched to 'sso' for testing purposes
 git pull 
 ```
 
@@ -96,7 +96,7 @@ Then it will build the newer image for our chatbot services. Once this process i
 
 I will always clean the unused image at the end.
 ```
-docker image ls (list all images)
+docker image ls  // list all images
 docker image rm  {IMAGE ID}
 ```
 
