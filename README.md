@@ -53,3 +53,36 @@ Cross-Origin Read Blocking (CORB) 头像的问题可以参考一下这个
 - 选择语言（ENG/繁/简体）（是否能够提前为第一个逻辑？）
   
 
+
+## 部署
+```
+cd /root/chatbot
+```
+There is `docker-compose.yml` under /root/chatbot directory. It contains all of our docker services. (Please modify the environment variables through this file.)
+
+Our chatbot images is built from source code. So every time we want to deploy the newer version, we have to pull the new code and rebuild the image again.
+
+
+For pull the new code
+```
+cd /root/chatbot/chatbot-demo
+git branch (currently switched to 'sso' for testing purposes)
+git pull 
+```
+
+for rebuild the image
+```
+cd /root/chatbot/
+docker-compose up -d --build chatbot
+```
+
+Then it will build the newer image for our chatbot services. Once this process is done, it has successfully depolyed.
+
+I will always clean the unused image at the end.
+```
+docker image ls (list all images)
+docker image rm  {IMAGE ID}
+```
+
+
+
