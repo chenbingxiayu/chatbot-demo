@@ -6,8 +6,10 @@
     );
   });
 
-  select_language().then(get_name).then(T_and_C_split).then(
-    questions
+  select_language().then(
+    init_choices
+  // get_name).then(T_and_C_split).then(
+  // questions
 
     // questions
 
@@ -17,6 +19,113 @@
     // medium
     // high
   );
+
+  function init_choices() {
+    var office_hour = isSAOWorkingHours(new Date());
+    if (office_hour == true) {
+        return botui.message.bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content: "Please select the service below:"
+        }).then(function(){
+            return botui.action.button({
+              addMessage: false,
+              action: [
+                { text: "Counselling Chatbot", value: 1 },
+                { text: "Mental Health Educational Materials", value: 2 },
+                { text: "Immediate Contact with SAO counsellor", value: 3 },
+                { text: "Online Chat", value: 4 },
+                { text: "Make Appointment with SAO counsellor", value: 5 },
+                { text: "Emergency Support", value: 3 },
+              ],
+        }).then(function(res){
+            if (res.value == 1) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(get_name).then(questions);
+            }
+            if (res.value == 2) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(mental_health_101);
+            }
+            if (res.value == 3) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(contact_with_counsellors);
+            }
+            if (res.value == 4) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(T_and_C_of_OCS);
+            }
+            if (res.value == 5) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(make_appointment_with_counsellors);
+            }
+        })
+      })
+    } else {
+        return botui.message.bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content: "Please select the service below:"
+        }).then(function(){
+            return botui.action.button({
+              addMessage: false,
+              action: [
+                { text: "Counselling Chatbot", value: 1 },
+                { text: "Mental Health Educational Materials", value: 2 },
+                { text: "Immediate Contact with SAO counsellor", value: 3 },
+                { text: "Make Appointment with SAO counsellor", value: 5 },
+                { text: "Emergency Support", value: 3 },
+              ],
+        }).then(function(res){
+            if (res.value == 1) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(get_name).then(questions);
+            }
+            if (res.value == 2) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(mental_health_101);
+            }
+            if (res.value == 3) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(polyu_line);
+            }
+            if (res.value == 5) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  }).then(make_appointment_with_counsellors);
+            }
+          })
+        })
+    }
+  }
 
   function isSAOWorkingHours(now) {
     var weekday = now.getDay();
@@ -83,7 +192,7 @@
         loading: true,
         delay: 3000,
         content:
-          'Hi there! I’m Polly, your counselling Chatbot. I\'m here to understand your service need and provide you with appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/><br/>You may know more about SAO services <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
+          'Hello! This is Polly. I\'m here to understand your service need and provide you with appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/><br/>You may know more about SAO services <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
       })
       .then(function () {
         return botui.message.bot({
@@ -268,7 +377,7 @@
         photo: polly,
         delay: 1500,
         content:
-          "We would like to know more about your mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> It is not supposed to treat as formal psychological or diagnostic assessment.",
+          "Hi, "+name+", we would like to know more about your mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> It is not supposed to treat as formal psychological or diagnostic assessment.",
       })
       .then(function () {
         botui.message
@@ -625,8 +734,7 @@
                 });
             }
           });
-      })
-      .then(confirm_answer);
+      }).then(dispatch);//.then(confirm_answer);
   }
 
   function confirm_answer() {
@@ -713,7 +821,7 @@
         return botui.action
           .button({
             addMessage: false,
-            action: [{ text: "Mental Health 101" }],
+            action: [{ text: "Mental Health Educational Materials" }],
           })
           .then(function (res) {
             return botui.message.human({
@@ -755,7 +863,7 @@
               addMessage: false,
               action: [
                 { text: "Make Appointment with SAO Counsellors", value: 3 },
-                { text: "Mental Health 101", value: 1 },
+                { text: "Mental Health Educational Materials", value: 1 },
                 { text: "Immediate Contact with SAO Counsellors", value: 4 },
                 { text: "Online Chat Service(Live)", value: 2 },
                 { text: "Community Helpline", value: 6 },
@@ -833,7 +941,7 @@
               addMessage: false,
               action: [
                 { text: "Make Appointment with SAO Counsellors", value: 3 },
-                { text: "Mental Health 101", value: 1 },
+                { text: "Mental Health Educational Materials", value: 1 },
                 {
                   text: "Immediate Contact with PolyU-Line Counsellors: (852)81001583",
                   value: 5,
@@ -1300,7 +1408,7 @@
                   return botui.action.button({
                     addMessage: false,
                     action: [
-                      { text: "Mental Health 101", value: true },
+                      { text: "Mental Health Educational Materials", value: true },
                       { text: "End of service", value: false },
                     ],
                   });
@@ -1648,7 +1756,7 @@
         delay: 1000,
         photo: polly,
         content:
-          '<p>Thank you for using "My Polly". \n Please rate your experience now:</p >' +
+          '<p>Thank you for using our service. \n Please rate your experience now:</p >' +
           '<div class="wrap">\n' +
           '  <div class="stars">\n' +
           '    <label class="rate">\n' +
