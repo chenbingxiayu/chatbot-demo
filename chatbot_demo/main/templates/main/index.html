@@ -55,18 +55,61 @@
     }
 
     .top-banner {
-        height: calc(100vw / 7.73);
+        height: 15vh;
         width: 100%;
-        background: url("/static/Polly-graphics/general/top-banner.jpg")
-            no-repeat center center;
-        background-size: contain;
+        background-color: #f1592a;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .top-right-side {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
     }
 
     .top-description {
-        background-color: #fcead9;
-        width: 100%;
-        height: auto;
-        padding: 30px 50px;
+        color: white;
+        font-weight: 600;
+        font-size: 24;
+        text-align: center;
+        margin: 10px 0 10px 20px;
+    }
+
+    .top-description p {
+        margin-bottom: 0px;
+    }
+
+    .top-sao-logo {
+        height: 33vw;
+        max-height: 60%;
+        background: url('../static/Polly-graphics/general/SAO-logo.jpg') no-repeat center center;
+        background-size: contain;
+        padding-left: 20px;
+        width: 33vw;
+    }
+
+    .top-sao-icon {
+        background: url('../static/Polly-graphics/general/polly-ontopbar.png') no-repeat center center;
+        background-size: contain;
+        width: 100px;
+        margin-left: 20px;
+
+    }
+
+    .top-sao-text-2 {
+        color: #f5ee31;
+    }
+
+    @media (max-width: 380px) {
+        .top-description {
+            margin: 0;
+        }
+        .top-sao-icon {
+            margin: 0;
+            width: 80px;
+        }
     }
 
     .main-content {
@@ -74,56 +117,13 @@
         background-color: #fefae4;
     }
 
-    .login-form {
-        margin-top: 80px;
-    }
-
-    .linkage {
-        background-color: #fcead9;
+    .service-description {
+        background-color: #FCEAD9;
+        width: 100%;
         height: auto;
-        padding-top: 80px;
-        padding-bottom: 80px;
+        padding: 30px 50px;
     }
 
-    .linkage ul {
-        list-style-type: none;
-        color: #df643b;
-        padding-left: 0px;
-    }
-
-    .linkage-item {
-        font-size: 20px;
-        color: #df643b;
-        position: relative;
-        width: 55%;
-        border-top: 3px solid #df643b;
-        padding: 5px 30px;
-        font-weight: 500;
-    }
-
-    .linkage-item a {
-        color: #df643b;
-    }
-
-    .linkage-item a:hover {
-        color: #df643b;
-        text-decoration: none;
-    }
-
-    .linkage-item:last-child {
-        border-bottom: 3px solid #df643b;
-    }
-
-    .linkage-item::before {
-        content: "";
-        border-top: 20px solid #df643b;
-        border-right: 12px solid transparent;
-        border-left: 12px solid transparent;
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        cursor: pointer;
-    }
 
     .copyright {
         background-color: #ca3f6a;
@@ -368,8 +368,17 @@
 
 <body>
     <section>
-      <div class="top-banner"></div>
-      <div class="top-description">
+      <div class="top-banner">
+        <div class="top-sao-logo"></div>
+        <div class="top-right-side">
+            <div class="top-sao-icon"></div>
+            <div class="top-description">
+                <p>Integrated</p>
+                <p class="top-sao-text-2">Counselling Service</p>
+            </div>
+        </div>
+      </div>
+      <div class="service-description">
         <p>
           The Counselling and Wellness Section (CWS) of the Student Affairs
           Office (SAO) renders the timely and quality mental health support to
@@ -410,16 +419,6 @@
     </div>
     </section>
     <section class="footer">
-      <div class="linkage">
-        <ul>
-          <li class="linkage-item"><a href="#">Terms and Conditions</a></li>
-          <li class="linkage-item"><a href="#">Mental Health 101</a></li>
-          <li class="linkage-item">
-            <a href="#">Making Counselling Appointment</a>
-          </li>
-          <li class="linkage-item"><a href="#">Emergency Support</a></li>
-        </ul>
-      </div>
       <div class="copyright">
         <ul>
           <li class="copyright-item"><a href="#">Sitemap</a></li>
@@ -437,8 +436,7 @@
         </p>
       </div>
     </section>
-    <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
-    {% comment %} <input name="next" type="hidden" value="{{ redirect_to }}"> {% endcomment %}
+    {% comment %} <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
     <select name="language">
         {% for language in languages %}
             <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
@@ -447,7 +445,7 @@
         {% endfor %}
     </select>
     <input type="submit" value="Go">
-</form>
+</form> {% endcomment %}
 </body>
 {% endblock body %}
 
