@@ -55,7 +55,7 @@
     }
 
     .top-banner {
-        height: 15vh;
+        height: auto;
         width: 100%;
         background-color: #f1592a;
         display: flex;
@@ -67,6 +67,7 @@
         display: flex;
         flex-direction: row;
         flex: 1;
+        margin: 20px 10px;
     }
 
     .top-description {
@@ -82,12 +83,12 @@
     }
 
     .top-sao-logo {
-        height: 33vw;
+        height: 8vw;
         max-height: 60%;
-        background: url('../static/Polly-graphics/general/SAO-logo.jpg') no-repeat center center;
+        background: url('../static/Polly-graphics/general/SAO-logo.png') no-repeat center center;
         background-size: contain;
-        padding-left: 20px;
-        width: 33vw;
+        margin: 20px;
+        width: 30vw;
     }
 
     .top-sao-icon {
@@ -102,13 +103,22 @@
         color: #f5ee31;
     }
 
-    @media (max-width: 380px) {
+    @media (max-width: 576px) {
         .top-description {
             margin: 0;
+            font-size: 16;
         }
         .top-sao-icon {
             margin: 0;
             width: 80px;
+        }
+
+        .top-right-side {
+            margin: 10px;
+        }
+        .top-sao-logo {
+            height: 10vw;
+            margin: 10px;
         }
     }
 
