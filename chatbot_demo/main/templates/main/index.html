@@ -61,6 +61,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        position: relative;
     }
 
     .top-right-side {
@@ -83,12 +84,11 @@
     }
 
     .top-sao-logo {
-        height: 8vw;
-        max-height: 60%;
         background: url('../static/Polly-graphics/general/SAO-logo.png') no-repeat center center;
         background-size: contain;
-        margin: 20px;
-        width: 30vw;
+        margin: 0 20px;
+        width: 33vw;
+        height: 60px;
     }
 
     .top-sao-icon {
@@ -96,30 +96,10 @@
         background-size: contain;
         width: 100px;
         margin-left: 20px;
-
     }
 
     .top-sao-text-2 {
         color: #f5ee31;
-    }
-
-    @media (max-width: 576px) {
-        .top-description {
-            margin: 0;
-            font-size: 16;
-        }
-        .top-sao-icon {
-            margin: 0;
-            width: 80px;
-        }
-
-        .top-right-side {
-            margin: 10px;
-        }
-        .top-sao-logo {
-            height: 10vw;
-            margin: 10px;
-        }
     }
 
     .main-content {
@@ -318,9 +298,9 @@
     }
 
     .botui-header {
-        padding-top: 30%; 
+        padding-top: 120px; 
         width: 100%;
-        background: url('../static/Polly-graphics/general/general-top.png') no-repeat ;
+        background: url('../static/Polly-graphics/general/polly-2.png') no-repeat 60px 5px;
         background-size: contain;
         -o-background-size: contain;
         -moz-background-size: contain;
@@ -328,6 +308,23 @@
         position: sticky;
         z-index: 1;
         top: 0;
+        background-color: #fcb040;
+        border-radius: 0 0 30px 30px;
+    }
+
+    .botui-header-text {
+        position: absolute;
+        top: 30px;
+        background: #522d54;
+        border-radius: 40px 35px 35px 15px;
+        width: 140px;
+        text-align: center;
+        padding: 10px 0 0px 0;
+        line-height: 10px;
+        font-size: 20px;
+        font-weight: 500;
+        color: #f1e202;
+        right: 20%;
     }
 
     .botui-header-icon {
@@ -372,6 +369,37 @@
         margin: 0;
     }
       
+    
+    @media (max-width: 576px) {
+        .top-description {
+            margin: 0;
+            font-size: 16;
+        }
+        .top-sao-icon {
+            margin: 0;
+            width: 80px;
+        }
+
+        .top-right-side {
+            margin: 10px;
+        }
+        .top-sao-logo {
+            height: 30px;
+            margin: 10px;
+        }
+        .botui-header {
+            background: url(../static/Polly-graphics/general/polly-2.png) no-repeat 0px 5px;
+            background-size: contain;
+            background-color: #fcb040;
+        }
+        .botui-header-text {
+            font-size: 15px;
+            width: 100px;
+            padding: 10px 0 0 0;
+            top: 35px;
+            line-height: 5px;
+        }
+    }
 </style>
 
 {% block body %}
@@ -390,20 +418,7 @@
       </div>
       <div class="service-description">
         <p>
-          The Counselling and Wellness Section (CWS) of the Student Affairs
-          Office (SAO) renders the timely and quality mental health support to
-          students of The Hong Kong Polytechnic University (PolyU) via the
-          non-face-to-face service mode besides the face-to-face platform.
-        </p>
-        <p>
-          CWS embarks the
-          <b><i>Counselling Chatbot Service, My Polly</i></b> which fit our
-          students’ need for the mental health service surpass accessibility;
-          students in distress can approach our various psychological services
-          through the “My Polly” Chatbot. This Chatbot serves the purpose of the
-          identification of students’ service need and the referral of
-          psychological services, i.e. online chat, face-to-face counselling and
-          online psychoeducation materials.
+          Welcome to the <b><i>Integrated Counselling Service</i></b>! We are here to recommend our psychological services that will suit your needs.   Let’s start and explore!
         </p>
       </div>
     </section>
@@ -415,6 +430,10 @@
                     <div class="chatbox-wrapper">
                         <div id="chatbox" class="botui">
                             <div class="botui-header">
+                                <div class="botui-header-text">
+                                    <p>Hello,</p>
+                                    <p>I'm Polly</p>
+                                </div>
                                 <div class="botui-header-icon">
                                     <label class="icon-home"></label>    
                                     <label class="icon-leave"></label>    
