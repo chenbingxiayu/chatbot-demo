@@ -37,14 +37,15 @@
               action: [
                 { text: "Counselling Chatbot", value: 1 },
                 { text: "Mental Health Educational Materials", value: 2 },
-                { text: "Immediate Contact with SAO counsellor", value: 3 },
                 { text: "Online Chat", value: 4 },
                 { text: "Make Appointment with SAO counsellor", value: 5 },
-                { text: "Emergency Support", value: 3 },
+                { text: "Immediate Contact with SAO counsellor", value: 3 },
+                { text: "Emergency Support", value: 6 },
               ],
             })
             .then(function (res) {
               if (res.value == 1) {
+                service_list = false;
                 return botui.message
                   .human({
                     delay: 500,
@@ -90,6 +91,15 @@
                   })
                   .then(make_appointment_with_counsellors);
               }
+              if (res.value == 6) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(emergency_support);
+              }
             });
         });
     } else {
@@ -107,13 +117,14 @@
               action: [
                 { text: "Counselling Chatbot", value: 1 },
                 { text: "Mental Health Educational Materials", value: 2 },
-                { text: "Immediate Contact with SAO counsellor", value: 3 },
                 { text: "Make Appointment with SAO counsellor", value: 5 },
-                { text: "Emergency Support", value: 3 },
+                { text: "Immediate Contact with PolyU-Line Counsellor (852) 8100 1583", value: 3 },
+                { text: "Emergency Support", value: 6 },
               ],
             })
             .then(function (res) {
               if (res.value == 1) {
+                service_list = false;
                 return botui.message
                   .human({
                     delay: 500,
@@ -149,6 +160,15 @@
                     content: res.text,
                   })
                   .then(make_appointment_with_counsellors);
+              }
+              if (res.value == 6) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(emergency_support);
               }
             });
         });
@@ -220,7 +240,7 @@
         loading: true,
         delay: 3000,
         content:
-          'Hello! This is Polly. I\'m here to understand your service need and provide you with appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/><br/>You may know more about SAO services <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
+          'Hello! This is Polly. I\'m here to understand your service need and provide you with appropriate services.<br/><br/>You may know more about SAO services <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
       })
       .then(function () {
         return botui.message.bot({
@@ -407,7 +427,7 @@
         content:
           "Hi, " +
           name +
-          ", we would like to know more about your mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> It is not supposed to treat as formal psychological or diagnostic assessment.",
+          ". To know you better, please answer a few questions below. So I can provide you with the right support.<br/><br/> It is not supposed to treat as formal psychological or diagnostic assessment.",
       })
       .then(function () {
         botui.message
@@ -1196,7 +1216,14 @@
           delay: 2500,
           photo: polly,
           content:
-            '1. <a href="http://www.google.com" target ="_blank">Academic</a><br/>2. <a href="http://www.google.com" target ="_blank">Interpersonal Relationship</a><br/>3. <a href="http://www.google.com" target ="_blank">Career</a><br/>4. <a href="http://www.google.com" target ="_blank">Family</a><br/>5. <a href="http://www.google.com" target ="_blank">Mental Health</a><br/>6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS Psychological workshops and groups</a>',
+            '1. <a href="http://www.google.com" target ="_blank">Academic</a><br/>'+
+            '2. <a href="http://www.google.com" target ="_blank">Interpersonal Relationship</a><br/>'+
+            '3. <a href="http://www.google.com" target ="_blank">Career</a><br/>'+
+            '4. <a href="http://www.google.com" target ="_blank">Family</a><br/>'+
+            '5. <a href="http://www.google.com" target ="_blank">Mental Health</a><br/>'+
+            '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">Psychological workshops and groups (Counselling and Wellness Section, SAO)</a><br>'+
+            '7. <a href="http://www.google.com" target ="_blank">Other</a><br/>' +
+            '<br><br>*In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.',
         });
       })
       .then(function () {
@@ -1234,6 +1261,14 @@
             })
             .then(end);
         } else {
+          if (service_list == true) {
+            botui.message.human({
+                delay: 500,
+                photo: client,
+                content: res.text,
+            }).then(init_choices);
+            return;
+          }
           if (office_hour == true) {
             return botui.action
               .button({
@@ -1330,6 +1365,73 @@
         .then(_close);
     }
 
+
+
+    //----
+    botui.message.bot({
+          loading: true,
+          photo: polly,
+          delay: 2000,
+          content:
+            "<p><b>My Polly Counselling Chatbot Service</b></p>\n" +
+            "<br/>\n" +
+            "<p>(The Terms and Conditions are only available in English.)</p>\n" +
+            "<br/>\n" +
+            "<p><b>Use of this service</b></p>\n" +
+            "<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n" +
+            "<br/>\n" +
+            "<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/ face-to- face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n",
+      }).then(function () {
+        return botui.action.button({
+          addMessage: false,
+          photo: client,
+          action: [
+            {
+              text: "Read more",
+            },
+          ],
+        });
+      }).then(function () {
+        return botui.message.bot({
+          loading: true,
+          photo: polly,
+          delay: 2000,
+          content:
+            "<br/>\n" +
+            "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+            "<br/>\n" +
+            "<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n",
+        });
+      }).then(function () {
+        return botui.action.button({
+          addMessage: false,
+          photo: client,
+          action: [
+            {
+              text: "Read more",
+            },
+          ],
+        });
+      }).then(function () {
+        return botui.message.bot({
+          loading: true,
+          photo: polly,
+          delay: 2000,
+          content:
+            "<br/>\n" +
+            "<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n" +
+            "<br/>\n" +
+            "<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n" +
+            "<br/>\n" +
+            "<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n" +
+            "<br/>\n" +
+            '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
+            "<br/>\n" +
+            '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
+        });
+      })
+    //----
+    /*
     botui.message
       .bot({
         loading: true,
@@ -1341,7 +1443,7 @@
           "there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency / A&E service.<br/><br/>" +
           "2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>" +
           "3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>",
-      })
+      })*/
       .then(function () {
         return botui.action.button({
           addMessage: false,
@@ -1650,6 +1752,35 @@
       });
   }
 
+  function emergency_support() {
+    return botui.message
+      .bot({
+        loading: true,
+        photo: polly,
+        delay: 1500,
+        content:
+          '*In case of emergency, please Call 999 or go to the nearest emergency  / A&E service',
+      }).then(function(){
+        var office_hour = isSAOWorkingHours(new Date());
+        if (office_hour == true) {
+            contact_with_counsellors();
+        } else {
+            return botui.message.bot({
+                loading: true,
+                photo: polly,
+                delay: 1500,
+                content:
+                '1. Contact with PolyU-Line Counsellors: (852)81001583 <br>' +
+                '*All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.<br/><br/>' +
+                '2. The nearest public hospital of our campus is: Queen Elizabeth Hospital <br>' +
+                '-30 Gascoigne Road, Kowloon, Hong Kong'+'<br>-Tel: (852)35068888',
+            }).then(further_help);
+        }
+      });
+  }
+
+
+
   function make_appointment_with_counsellors() {
     return botui.message
       .bot({
@@ -1657,54 +1788,29 @@
         photo: polly,
         delay: 1500,
         content:
-          '1. Email: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+          '1. Email: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
       })
       .then(further_help);
   }
 
   function contact_with_counsellors() {
-    return botui.message
-      .bot({
-        loading: true,
-        photo: polly,
-        delay: 2000,
-        content:
-          "Immediate Contact with SAO Counsellors<br/>Mon-Fri: 0900 -1900(HKT).<br/>Sat: 0900 - 1200(HKT)",
-      })
-      .then(function () {
-        return botui.message.bot({
+    return botui.message.bot({
           loading: true,
           photo: polly,
           delay: 1000,
           content:
             "1. Call (852)27666800<br/>2. Walk in QT308(Entrance at Core T) during office hours</br>",
-        });
-      })
-      .then(further_help());
+      }).then(further_help());
   }
 
   function polyu_line() {
-    return botui.message
-      .bot({
-        loading: true,
-        photo: polly,
-        delay: 1500,
-        content:
-          "Service Hours:<br/>" +
-          "Monday to Friday: <br/>00: 00 to 09: 00(HKT) and 19: 00 to 00: 00(HKT)<br/>" +
-          "Saturday: <br/>00: 00 to 09: 00(HKT) and 12: 00 to 00: 00(HKT)<br/>" +
-          "Sunday and public holidays: <br/>24 hours(HKT) round the clock",
-      })
-      .then(function () {
-        return botui.message.bot({
+    return botui.message.bot({
           loading: true,
           photo: polly,
           delay: 3000,
           content:
             "Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/><br/>All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.",
-        });
-      })
-      .then(further_help());
+      }).then(further_help());
   }
 
   function community_helpline() {
@@ -1738,6 +1844,15 @@
           })
           .then(function (res) {
             if (res.value == true) {
+              if (service_list == true) {
+                botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                }).then(init_choices);
+                return;
+              }
+
               if (score <= 10) {
                 return botui.message
                   .human({
