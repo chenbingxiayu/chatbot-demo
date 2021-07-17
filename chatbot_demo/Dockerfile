@@ -1,17 +1,26 @@
-FROM python:3.8-slim-buster
+FROM python:3.8.2
 
 # set work directory
 WORKDIR /app
 
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 # update vm
-RUN apt-get update \
-    && apt-get install -y libpython3-dev default-libmysqlclient-dev build-essential \
-    && python -m pip install --upgrade pip
+RUN apt-get update
+RUN apt-get install libpython3-dev default-libmysqlclient-dev build-essential -y
 
 # install dependencies
+RUN pip install --upgrade pip
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
-# copy src code
+# copy entrypoint.sh
+#COPY ./entrypoint.sh /app/entrypoint.sh
+
+# copy project
 COPY . /app
-ENTRYPOINT ["./entrypoint.sh"]
+
+# run entrypoint.sh
+#ENTRYPOINT ["/app/entrypoint.sh"]

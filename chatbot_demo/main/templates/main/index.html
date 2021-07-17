@@ -34,126 +34,13 @@
 
 
 <style type="text/css">
-
-    .profil > img {
-        border: none !important;
-        width: 48px;
-        height: 48px;
-    }
-    
     .profil > img.agent {
       content: unset
     }
-
-    body {
-        width: 100%;
-        height: 100%;
-    }
-
-    .top-banner {
-        height: calc(100vw / 7.73);
-        width: 100%;
-        background: url("/static/Polly-graphics/general/top-banner.jpg")
-            no-repeat center center;
-        background-size: contain;
-    }
-
-    .top-description {
-        background-color: #fcead9;
-        width: 100%;
-        height: auto;
-        padding: 30px 50px;
-    }
-
-    .main-content {
-        height: auto;
-        background-color: #fefae4;
-    }
-
-    .login-form {
-        margin-top: 80px;
-    }
-
-    .linkage {
-        background-color: #fcead9;
-        height: auto;
-        padding-top: 80px;
-        padding-bottom: 80px;
-    }
-
-    .linkage ul {
-        list-style-type: none;
-        color: #df643b;
-        padding-left: 0px;
-    }
-
-    .linkage-item {
-        font-size: 20px;
-        color: #df643b;
-        position: relative;
-        width: 55%;
-        border-top: 3px solid #df643b;
-        padding: 5px 30px;
-        font-weight: 500;
-    }
-
-    .linkage-item a {
-        color: #df643b;
-    }
-
-    .linkage-item a:hover {
-        color: #df643b;
-        text-decoration: none;
-    }
-
-    .linkage-item:last-child {
-        border-bottom: 3px solid #df643b;
-    }
-
-    .linkage-item::before {
-        content: "";
-        border-top: 20px solid #df643b;
-        border-right: 12px solid transparent;
-        border-left: 12px solid transparent;
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        cursor: pointer;
-    }
-
-    .copyright {
-        background-color: #ca3f6a;
-        height: auto;
-        padding: 20px 50px;
-        overflow: scroll;
-    }
-
-    .copyright ul {
-        display: inline-flex;
-        list-style-type: none;
-        color: white;
-        padding-left: 0px;
-    }
-
-    .copyright-item {
-        border-right: 1px solid white;
-        padding: 0px 10px;
-    }
-
-    .copyright-item a {
-        color: white;
-    }
-
-    .copyright-item a:hover {
-        text-decoration: none;
-    }
-
-    .copyright-text {
-        margin-top: 20px;
-        color: white;
-        text-align: right;
-    }
     
+    body {
+        background: #ebefff;
+    }
 
     .wrap {
         width: 200px;
@@ -275,8 +162,7 @@
     .max-width-2 {
         max-width: 1230px;
         margin: 0 auto;
-        padding: 4em 0px;
-        position: relative;
+        padding: 0 2em;
     }
 
     .chatbox-wrapper {
@@ -290,7 +176,6 @@
         height: 100%;
         display: inline-flex;
         flex-direction: column;
-        width: 100%;
     }
 
 
@@ -316,31 +201,6 @@
         top: 0;
     }
 
-    .botui-header-icon {
-        position: absolute;
-        top: 5px;
-        right: 10px;
-        z-index: 10;
-
-    }
-
-    .icon-home {
-        background: url('/static/Polly-graphics/general/home.png') no-repeat ;
-        width: 25px;
-        height: 25px;
-        z-index: 1000;
-        background-size: contain;
-        cursor: pointer;
-    }
-    .icon-leave {
-        background: url('/static/Polly-graphics/general/close-icon.png') no-repeat ;
-        width: 25px;
-        height: 25px;
-        z-index: 1000;
-        background-size: contain;
-        cursor: pointer;
-    }
-
     .botui-message-content {
         background-color: #c2c890;
         border-radius: 10px 10px 10px 5px;
@@ -349,90 +209,31 @@
 
     .botui-message-content.human {
         background-color: #fccca5;
-        color: #595a5a;
         border-radius: 10px 10px 10px 5px;
     }
-
-    .justify-content-center.row {
-        width: 100%;
-        margin: 0;
-    }
-      
 </style>
 
 {% block body %}
 
 <body>
-    <section>
-      <div class="top-banner"></div>
-      <div class="top-description">
-        <p>
-          The Counselling and Wellness Section (CWS) of the Student Affairs
-          Office (SAO) renders the timely and quality mental health support to
-          students of The Hong Kong Polytechnic University (PolyU) via the
-          non-face-to-face service mode besides the face-to-face platform.
-        </p>
-        <p>
-          CWS embarks the
-          <b><i>Counselling Chatbot Service, My Polly</i></b> which fit our
-          students’ need for the mental health service surpass accessibility;
-          students in distress can approach our various psychological services
-          through the “My Polly” Chatbot. This Chatbot serves the purpose of the
-          identification of students’ service need and the referral of
-          psychological services, i.e. online chat, face-to-face counselling and
-          online psychoeducation materials.
-        </p>
-      </div>
-    </section>
-    <section class="main-content">
-    <div class="container">
-        <div class="max-width-2">
-            <div class="row justify-content-center">
-                <div class="col-sm col-md-10 col-lg-8">
-                    <div class="chatbox-wrapper">
-                        <div id="chatbox" class="botui">
-                            <div class="botui-header">
-                                <div class="botui-header-icon">
-                                    <label class="icon-home"></label>    
-                                    <label class="icon-leave"></label>    
-                                </div>
+    <div class="container" style="background-color: #f7f8f8">
+        <section id="top-section" style="height:1000px; background-color: white">
+        </section>
+        <section class="middle-section">
+            <div class="max-width-2">
+                <div class="row justify-content-center">
+                    <div class="col-sm col-md-8 col-lg-6">
+                        <div class="chatbox-wrapper">
+                            <div id="chatbox" class="botui">
+                                <div class="botui-header"></div>
+                                <bot-ui ></bot-ui>
                             </div>
-                            <bot-ui ></bot-ui>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
-    </section>
-    <section class="footer">
-      <div class="linkage">
-        <ul>
-          <li class="linkage-item"><a href="#">Terms and Conditions</a></li>
-          <li class="linkage-item"><a href="#">Mental Health 101</a></li>
-          <li class="linkage-item">
-            <a href="#">Making Counselling Appointment</a>
-          </li>
-          <li class="linkage-item"><a href="#">Emergency Support</a></li>
-        </ul>
-      </div>
-      <div class="copyright">
-        <ul>
-          <li class="copyright-item"><a href="#">Sitemap</a></li>
-          <li class="copyright-item"><a href="#">Contact Us</a></li>
-          <li class="copyright-item">
-            <a href="#">Privacy Policy Statement</a>
-          </li>
-          <li class="copyright-item">
-            <a href="#">Personal Information Collection Statement</a>
-          </li>
-          <li class="copyright-item"><a href="#">Accessibility</a></li>
-        </ul>
-        <p class="copyright-text">
-          Copyright © The Hong Kong Polytechnic Univeristy Reserved. 2020
-        </p>
-      </div>
-    </section>
 
 </body>
 {% endblock body %}
@@ -480,29 +281,27 @@
     var answers = {};
     var personalInfo = {};
     var name = 'User';
-    var polly = '{% static "Polly-graphics/general/polly.png" %}';
-    var client = '{% static "Polly-graphics/general/student.png" %}';
+    var polly = '{% static "Polly-graphics/general/general-polly.png" %}';
+    var client = '{% static "Polly-graphics/general/general-client.png" %}';
 
     $("body").on('click', '.dropdown', function() {
         $(".botui-container").animate({ scrollTop: $('.botui-container').prop("scrollHeight")}, 1000);
     });
 
 
-    select_language()
-        .then(
-            get_name
-        )
-        .then(
-            T_and_C_split
-        ).then(
+    login().then(
+
+             verification
+         ).then(
+             select_language
+         ).then(
+             get_name
+         ).then(
+             T_and_C_split
+         ).then(
             questions
 
-
-
-        // questions
-
-        //T_and_C_of_OCS
-
+        // T_and_C_of_OCS
         // low
         // medium
         // high
@@ -601,10 +400,11 @@
                 addMessage: false,
                 action: {
                     placeholder: "Please select a language",
-                    value: '1',
+                    value: '2',
                     options: [
                         { value: "0", text: "繁體中文" },
-                        { value: "1", text: "English" },
+                        { value: "1", text: "简体中文" },
+                        { value: "2", text: "English" },
                     ],
                     button: {
                         icon: 'check',
@@ -626,13 +426,13 @@
             photo: polly,
             loading: true,
             delay: 3000,
-            content: 'Hi there! I\’m Polly, your counselling Chatbot. I\'m here to understand your service need and provide you with appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/><br/>You may know more about SAO services <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> '
+            content: 'Hi there! I\’m Polly, your counselling Chatbot. I\'m here to understand your service need and provide you with appropriate services, i.e. online chat, face-to-face counselling booking and online psycho-education materials.<br/><br/>To know more about SAO services, please visit the website<br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">https://www.polyu.edu.hk/sao/</a> '
         }).then(function () {
             return botui.message.bot({
                 loading: true,
                 photo: polly,
                 delay: 1000,
-                content: 'May I have your name please?'
+                content: 'May I know your name?'
             })
         }).then(function () {
             return botui.action.text({
@@ -652,7 +452,80 @@
         })
     }
 
-
+    function T_and_C_full() {
+        return botui.message.bot({
+            loading: true,
+            photo: polly,
+            delay: 2000,
+            content: 'Hi ' + name + ', you need to note the followings prior using \"My Polly\":</br></br>Important Notes:</br>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.' +
+                '</br></br>Please visit the SAO/CWS website for more emergency support information.</br></br>Emergency support information</br>' +
+                '(Office Hours : <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/office-hours/" target ="_blank">https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/office-hours/</a><br/>' +
+                'Non-office hours: <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/non-office-hours/" target ="_blank">https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/non-office-hours/</a> )',
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                photo: client,
+                action: [{
+                    text: 'Got it',
+                }]
+            }).then(function (res) {
+                // TODO  a new website about T&C
+            })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                photo: polly,
+                delay: 2000,
+                content: '<p><b>My Polly Counselling Chatbot Service</b></p>\n' +
+                             '<br/>\n' +
+                             '<p>(The Terms and Conditions are only available in English.)</p>\n' +
+                             '<br/>\n' +
+                             '<p><b>Use of this service</b></p>\n' +
+                             '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n' +
+                             '<br/>\n' +
+                             '<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/ face-to- face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n' +
+                             '<br/>\n' +
+                             '<p>The Service intends to render \'remote\' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n' +
+                             '<br/>\n' +
+                             '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n' +
+                             '<br/>\n' +
+                             '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
+                             '<br/>\n' +
+                             '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                             '<br/>\n' +
+                             '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
+                             '<br/>\n' +
+                             '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
+                             '<br/>\n' +
+                             '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>'
+            })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                photo: polly,
+                delay: 1500,
+                content: 'By clicking \"Hi, Polly\" to accept the above terms and conditions.'
+            })
+        }).then(function () {
+            return botui.action.button({
+                addMessage: false,
+                photo: client,
+                action: [
+                    { text: 'No, I stop here.', value: false },
+                    { text: 'Hi, Polly', value: true },
+                ]
+            }).then(function (res) {
+                if (res.value == false) {
+                    return botui.message.bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 2000,
+                        content: 'You are always welcome to contact SAO counsellors at (852)27666800 for enquiries.',
+                    }).then(end);
+                }
+            })
+        })
+    }
 
     function T_and_C_split() {
         var ESI = "";
@@ -666,8 +539,8 @@
             loading: true,
             photo: polly,
             delay: 2000,
-            content: 'Hi ' + name + ', you need to read the followings prior using \"My Polly\":</br></br>Important Notes:</br>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency / A&E service.' +
-                '</br></br>Please visit the <a target ="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/emergency-support/office-hours/" >HERE</a> for more emergency support information.</br></br>' + ESI + '</br>'
+            content: 'Hi ' + name + ', you need to note the followings prior using \"My Polly\":</br></br>Important Notes:</br>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.' +
+                '</br></br>Please visit the SAO/CWS website for more emergency support information.</br></br>' + ESI + '</br>'
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -675,15 +548,8 @@
                 action: [{
                     text: 'Got it',
                 }]
-            })
-        }).then(function (res) {
-            return botui.message.human({
-                photo: client,
-                delay: 500,
-                content: res.text
-            })
-        }).then(function (res) {
-            return botui.message.bot({
+            }).then(function () {
+                return botui.message.bot({
                     loading: true,
                     photo: polly,
                     delay: 2000,
@@ -694,199 +560,169 @@
                         '<p><b>Use of this service</b></p>\n' +
                         '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n' +
                         '<br/>\n' +
-                        '<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/ face-to- face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n'
-            })
-        }).then(function () {
-            return botui.action.button({
+                        '<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/ face-to- face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n' +
+                        '<br/>\n' +
+                        '<p>The Service intends to render \'remote\' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n'
+                })
+            }).then(function () {
+                return botui.action.button({
                     addMessage: false,
                     photo: client,
                     action: [{
                         text: 'Read more',
                     }]
-            })
-        }).then(function () {
-            return botui.message.bot({
-                loading: true,
-                photo: polly,
-                delay: 2000,
-                content:
-                '<br/>\n' +
-                '<p>The Service intends to render \'remote\' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n' +
-                '<br/>\n' +
-                '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n'
-            })
-        }).then(function () {
-            return botui.action.button({
-                addMessage: false,
-                photo: client,
-                action: [{
-                    text: 'Read more',
-                }]
-            })
-        }).then(function () {
-            return botui.message.bot({
-                loading: true,
-                photo: polly,
-                delay: 2000,
-                content:
-                '<br/>\n' +
-                '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
-                '<br/>\n' +
-                '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
-                '<br/>\n' +
-                '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
-                '<br/>\n' +
-                '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
-                '<br/>\n' +
-                '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>'
-            })
-        }).then(function () {
-            return botui.message.bot({
-                loading: true,
-                photo: polly,
-                delay: 5000,
-                content: 'By clicking \"Hi, Polly\" to accept the above terms and conditions.'
-            })
-        }).then(function () {
-            return botui.action.button({
-                addMessage: false,
-                photo: client,
-                action: [
-                    {text: 'No, I stop here.', value: false},
-                    {text: 'Hi, Polly', value: true},
-                ]
-            })
-        }).then(function (res) {
-            if (res.value == false) {
-                return botui.message.bot({
-                    loading: true,
-                    photo: polly,
-                    delay: 2000,
-                    content: 'You are always welcome to contact SAO counsellors at (852)27666800 for enquiries.',
-                }).then(end);
-            } else {
-                return botui.message.bot({
-                    human: true,
-                    photo: client,
-                    content: res.text,
+                }).then(function () {
+                    return botui.message.bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 2000,
+                        content: '<br/>\n' +
+                            '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n' +
+                            '<br/>\n' +
+                            '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
+                            '<br/>\n' +
+                            '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                            '<br/>\n' +
+                            '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
+                            '<br/>\n' +
+                            '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
+                            '<br/>\n' +
+                            '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>'
+                    })
+                }).then(function () {
+                    return botui.message.bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 5000,
+                        content: 'By clicking \"Hi, Polly\" to accept the above terms and conditions.'
+                    })
+                }).then(function () {
+                    return botui.action.button({
+                        addMessage: false,
+                        photo: client,
+                        action: [
+                            {text: 'No, I stop here.', value: false},
+                            {text: 'Hi, Polly', value: true},
+                        ]
+                    }).then(function (res) {
+                        if (res.value == false) {
+                            return botui.message.bot({
+                                loading: true,
+                                photo: polly,
+                                delay: 2000,
+                                content: 'You are always welcome to contact SAO counsellors at (852)27666800 for enquiries.',
+                            }).then(end);
+                        }
+                    })
                 })
-            }
+            })
         })
     }
 
+
     function questions() {
-        botui.message.bot({
+        return botui.message.bot({
             loading: true,
             photo: polly,
-            delay: 1500,
-            content: 'We would like to know more about your mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> It is not supposed to treat as formal psychological or diagnostic assessment.'
+            delay: 2500,
+            content: 'To let me know your concern(s), mental well-being and help-seeking behaviour, please answer a few questions below. Once you have completed them, I will suggest the types of services or information you may connect with.<br/><br/> The following questions are not supposed to treat as any formal psychological or diagnostic assessment.'
         }).then(function () {
-            botui.message.bot({
+            return botui.message.bot({
                 loading: true,
                 delay: 1500,
                 photo: polly,
                 content: 'Q1. What bring(s) you here to chat with us? (Can select more than one item)'
-            }).then(q1_ans)
-        })
-    }
+            }).then(function () {
+                $(".botui-container").animate({ scrollTop: $('.botui-container').prop("scrollHeight")}, 1000);
 
-    function q1_ans() {
-        $(".botui-container").animate({ scrollTop: $('.botui-container').prop("scrollHeight")}, 1000);
-        return botui.action.select({
-            addMessage: false,
-            action: {
-                placeholder: "Select a option",
-                multipleselect: true,
-                options: [
-                    {text: 'Academic' },
-                    {text: 'Relationship' },
-                    {text: 'Career' },
-                    {text: 'Family' },
-                    {text: 'Mental Health' },
-                    {text: 'Other' },
-                ],
-                button: {
-                    icon: 'check',
-                    label: 'OK'
-                }
-            }
-        }).then(function (res) {
-            if (res.text == "") {
-                alert('You have to select at least one item!');
-                q1_ans();
-            } else {
-                answers[1] = 'Q1. What bring(s) you here to chat with us? (Can select more than one item)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                return botui.message.human({
-                    photo: client,
-                    delay: 500,
-                    content: res.text
-                }).then(function () {
-                    return botui.message.bot({
-                        loading: true,
-                        delay: 1000,
-                        photo: polly,
-                        content: 'I see, you are now facing the issue(s) comprising ' + res.text + '.'
-                    })
-                }).then(q2);
-            }
-        })
-    }
+                return botui.action.select({
+                    addMessage: false,
+                    action: {
+                        placeholder: "Select a option",
+                        multipleselect: true,
+                        options: [
+                            { text: 'Academic' },
+                            { text: 'Relationship' },
+                            { text: 'Career' },
+                            { text: 'Family' },
+                            { text: 'Mental Health' },
+                            { text: 'Other' },
+                        ],
+                        button: {
+                            icon: 'check',
+                            label: 'OK'
+                        }
+                    }
+                }).then(function (res) {
+                    answers[1] = 'Q1. What bring(s) you here to chat with us? (Can select more than one item)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                    console.log(answers)
 
-    function q2() {
-        botui.message.bot({
-            loading: true,
-            delay: 1500,
-            photo: polly,
-            content: 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?'
-        }).then(function () {
-            return botui.action.button({
-                addMessage: false,
-                action: [
-                    { text: 'Yes', value: 1 },
-                    { text: 'No', value: 0 }
-                ]
-            }).then(function (res) {
-                answers[2] = 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                if (res.value == 0) {
                     return botui.message.human({
                         photo: client,
                         delay: 500,
-                        content: res.text,
-                    }).then(function (res) {
+                        content: res.text
+                    }).then(function () {
+                        return botui.message.bot({
+                            loading: true,
+                            delay: 1000,
+                            photo: polly,
+                            content: 'I see, you are now facing the issue(s) comprising ' + res.text + '.'
+                        })
+                    })
+                })
+            })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                delay: 1500,
+                photo: polly,
+                content: 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?'
+            }).then(function () {
+                return botui.action.button({
+                    addMessage: false,
+                    action: [
+                        { text: 'Yes', value: 1 },
+                        { text: 'No', value: 0 }
+                    ]
+                }).then(function (res) {
+                    answers[2] = 'Q2. In facing the issues indicated, are you encountering the feeling of sadness, worry or tension now?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                    if (res.value == 0) {
+                        return botui.message.human({
+                            photo: client,
+                            delay: 500,
+                            content: res.text,
+                        }).then(function (res) {
+                            return botui.message.bot({
+                                loading: true,
+                                delay: 1500,
+                                photo: polly,
+                                content: 'Keep it up! We encourage you to take a look at the "Mental Health 101" to learn more tips for enhancing your psychological and mental wellness.'
+                            }).then(mental_health_101)
+                        });
+                    }
+                    score += res.value;
+                    console.log(score);
+                    return botui.message.human({
+                        photo: client,
+                        delay: 500,
+                        content: res.text
+                    }).then(function () {
                         return botui.message.bot({
                             loading: true,
                             delay: 1500,
                             photo: polly,
-                            content: 'Keep it up! We encourage you to take a look at the "Mental Health 101" to know more tips for enhancing your psychological and mental wellness.'
-                        }).then(mental_health_101)
-                    });
-                }
-                score += res.value;
-                console.log(score);
-                return botui.message.human({
-                    photo: client,
-                    delay: 500,
-                    content: res.text
-                }).then(function () {
-                    return botui.message.bot({
-                        loading: true,
-                        delay: 1500,
-                        photo: polly,
-                        content: 'Thanks for telling me. It is natural for us to experience these feelings in our daily life.'
+                            content: 'It is natural for us to experience these feelings in our daily life.'
+                        })
                     })
                 })
             })
-        }).then(q3)
-    }
-
-
-    function q3() {
-        botui.message.bot({
-            loading: true,
-            delay: 1500,
-            photo: polly,
-            content: 'Q3. How often do you feel sad, worried or tensed?'
-
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                delay: 1500,
+                photo: polly,
+                content: 'Q3. How often do you experience the feeling of sadness, worry or tension?'
+            })
         }).then(function () {
             return botui.action.button({
                 addMessage: false,
@@ -898,7 +734,7 @@
                     { text: 'Always', value: 5 },
                 ]
             }).then(function (res) {
-                answers[3] = 'Q3. How often do you feel sad, worried or tensed?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                answers[3] = 'Q3. How often do you experience the feeling of sadness, worry or tension?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
                 score += res.value;
                 console.log(score);
 
@@ -911,149 +747,136 @@
                         delay: 2500,
                         loading: true,
                         photo: polly,
-                        content: 'Awareness is the first step of change that helps to aid our self-understanding and steps of healing to take.'
+                        content: 'According to the Psychologist Nathaniel Branden, \"The fisrt step toward change is awareness.\" It aids our self-understanding and steps of healing to take.'
                     }).then(function () {
                         return botui.message.bot({
                             delay: 1000,
                             loading: true,
                             photo: polly,
-                            content: 'I see that you are aware of what is happening to you. '
+                            content: 'You show aware of your feelings happening to you.'
                         })
                     })
                 })
             })
-        }).then(q4)
-    }
-
-    function q4() {
-        botui.message.bot({
-            loading: true,
-            delay: 2000,
-            photo: polly,
-            content: 'Q4. How often does your daily life being affected by the feelings mentioned above?'
         }).then(function () {
-            return botui.action.button({
-                addMessage: false,
-                action: [
-                    { text: 'Rarely', value: 1 },
-                    { text: 'Seldom', value: 2 },
-                    { text: 'Sometimes', value: 3 },
-                    { text: 'Often', value: 4 },
-                    { text: 'Always', value: 5 },
-                ]
-            }).then(function (res) {
-                answers[4] = 'Q4. How often does your daily life being affected by the feelings mentioned above?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                score += res.value;
-                console.log(score);
-                return botui.message.human({
-                    photo: client,
-                    delay: 500,
-                    content: res.text
-                }).then(function () {
-                    return botui.message.bot({
-                        loading: true,
-                        photo: polly,
-                        delay: 1500,
-                        content: 'It shows that your daily life is being affected by these feelings.'
-                    })
-                })
-            })
-        }).then(q5_q6);
-    }
-
-    function q5_q6() {
-        botui.message.bot({
-            loading: true,
-            delay: 2500,
-            photo: polly,
-            content: 'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)'
-        }).then(function () {
-            return botui.action.button({
-                addMessage: false,
-                action: [
-                    { text: 'Yes', value: 0 },
-                    { text: 'No', value: 1 }
-                ]
-            }).then(function (res) {
-                answers[5] = 'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                score += res.value;
-                console.log(score);
-                botui.message.human({
+            return botui.message.bot({
+                loading: true,
+                delay: 2000,
+                photo: polly,
+                content: 'Q4. How often is your daily life get affected by the feelings mentioned above?'
+            }).then(function () {
+                return botui.action.button({
+                    addMessage: false,
+                    action: [
+                        { text: 'Rarely', value: 1 },
+                        { text: 'Seldom', value: 2 },
+                        { text: 'Sometimes', value: 3 },
+                        { text: 'Often', value: 4 },
+                        { text: 'Always', value: 5 },
+                    ]
+                }).then(function (res) {
+                    answers[4] = 'Q4. How often is your daily life get affected by the feelings mentioned above?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                    score += res.value;
+                    console.log(score);
+                    return botui.message.human({
                         photo: client,
                         delay: 500,
                         content: res.text
-                });
-                if (res.value == 0) {
-                    return botui.message.bot({
-                            loading: true,
-                            delay: 2000,
-                            photo: polly,
-                            content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.'
                     }).then(function () {
                         return botui.message.bot({
                             loading: true,
-                            delay: 1500,
                             photo: polly,
-                            content: 'Q6. Do you feel effective when using these coping strategies?'
-                        }).then(function () {
-                            return botui.action.button({
-                                addMessage: false,
-                                action: [
-                                    { text: 'Yes', value: 0 },
-                                    { text: 'No', value: 1 }
-                                ]
-                            }).then(function (res) {
-                                answers[6] = 'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                                score += res.value;
-                                console.log(score);
-                                botui.message.human({
-                                        photo: client,
-                                        delay: 500,
-                                        content: res.text
-                                });
-                            })
+                            delay: 1500,
+                            content: 'You are aware that your daily life is getting affected by these feelings.'
                         })
                     })
-                } else {
-                    return botui.message.bot({
-                        loading: true,
-                        delay: 2000,
-                        photo: polly,
-                        content: 'It is crucial to find some positive coping strategies in dealing with the unsettled sadness\/worry or tension'
-                    }).then(function () {
-                        return botui.message.bot({
-                            loading: true,
-                            delay: 1500,
-                            photo: polly,
-                            content: 'Q6. Are you able to manage your sadness, worry or tension at this moment?'
+                })
+            })
+        }).then(function () {
+            return botui.message.bot({
+                loading: true,
+                delay: 2500,
+                photo: polly,
+                content: 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)'
+            }).then(function () {
+                return botui.action.button({
+                    addMessage: false,
+                    action: [
+                        { text: 'Yes', value: 0 },
+                        { text: 'No', value: 1 }
+                    ]
+                }).then(function (res) {
+                    answers[5] = 'Q5. Have you been trying to cope with your sadness\/worry or tension through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                    score += res.value;
+                    console.log(score);
+                    if (res.value == 0) {
+                        return botui.message.human({
+                            photo: client,
+                            delay: 500,
+                            content: res.text
                         }).then(function () {
-                            return botui.action.button({
-                                addMessage: false,
-                                action: [
-                                    { text: 'Yes', value: 0 },
-                                    { text: 'No', value: 1 }
-                                ]
-                            }).then(function (res) {
-                                answers[6] = 'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
-                                score += res.value;
-                                console.log(score);
-                                return botui.message.human({
-                                    photo: client,
-                                    delay: 500,
-                                    content: res.text
+                            return botui.message.bot({
+                                loading: true,
+                                delay: 2000,
+                                photo: polly,
+                                content: 'It is crucial to find some positive coping strategies in dealing with the unsettled sadness\/worry or tension'
+                            })
+                        }).then(function () {
+                            return botui.message.bot({
+                                loading: true,
+                                delay: 1500,
+                                photo: polly,
+                                content: 'Q6. Do you feel effective when using these coping strategies?'
+                            }).then(function () {
+                                return botui.action.button({
+                                    addMessage: false,
+                                    action: [
+                                        { text: 'Yes', value: 0 },
+                                        { text: 'No', value: 1 }
+                                    ]
+                                }).then(function (res) {
+                                    answers[6] = 'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                                    score += res.value;
+                                    console.log(score);
                                 })
                             })
                         })
-                    })
-                }
+                    } else {
+                        return botui.message.bot({
+                            loading: true,
+                            delay: 2000,
+                            photo: polly,
+                            content: 'It is crucial to find some positive coping strategies in dealing with the unsettled sadness\/worry or tension'
+                        }).then(function () {
+                            return botui.message.bot({
+                                loading: true,
+                                delay: 1500,
+                                photo: polly,
+                                content: 'Q6. Are you able to manage your sadness/worry or tension at this moment?'
+                            }).then(function () {
+                                return botui.action.button({
+                                    addMessage: false,
+                                    action: [
+                                        { text: 'Yes', value: 0 },
+                                        { text: 'No', value: 1 }
+                                    ]
+                                }).then(function (res) {
+                                    answers[6] = 'Q6. Are you able to manage your sadness/worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>'
+                                    score += res.value;
+                                    console.log(score);
+                                    return botui.message.human({
+                                        photo: client,
+                                        delay: 500,
+                                        content: res.text
+                                    })
+                                })
+                            })
+                        })
+                    }
+                })
             })
         }).then(confirm_answer)
     }
-
-
-
-
-
 
 
     function confirm_answer() {
@@ -1140,142 +963,98 @@
         }).then(mental_health_101)
     }
 
-    function medium() {
-        botui.message.bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: 'Your answers show that you experience the feeling mentioned above quite often, and <strong>you feel your daily life get affected sometimes.</strong>'
-        }).then(mid_recommendations)
-    }
 
-    function mid_recommendations() {
+    function medium() {
         var office_hour = isSAOWorkingHours(new Date());
-        if (office_hour == true) {
+        return botui.message.bot({
+            loading: true,
+            delay: 2000,
+            photo: polly,
+            content: 'Your answers show that you quite often experience the feeling mentioned above, and you feel your daily life get affected sometimes.'
+        }).then(function () {
+            if (office_hour == true) {
                 return botui.message.bot({
                     loading: true,
-                    delay: 1000,
+                    delay: 3000,
                     photo: polly,
                     content: 'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health 101<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline'
-                }).then(function(){
-                    return botui.action.button({
-                        addMessage: false,
-                        action: [
-                            { text: 'Make Appointment with SAO Counsellors', value: 3 },
-                            { text: 'Mental Health 101', value: 1 },
-                            { text: 'Immediate Contact with SAO Counsellors', value: 4 },
-                            { text: 'Online Chat Service(Live)', value: 2 },
-                            { text: 'Community Helpline', value: 6 },
-                        ]
-                    }).then(function (res) {
-                        if (res.value == 1) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(mental_health_101);
-                        }
-                        if (res.value == 2) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(T_and_C_of_OCS);
-                        }
-                        if (res.value == 3) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(make_appointment_with_counsellors);
-                        }
-                        if (res.value == 4) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(contact_with_counsellors);
-                        }
-                        if (res.value == 5) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(polyu_line);
-                        }
-                        if (res.value == 6) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(community_helpline);
-                        }
-                    })
                 })
-        } else {
+            } else {
                 return botui.message.bot({
                     loading: true,
-                    delay: 1000,
+                    delay: 3000,
                     photo: polly,
                     content: 'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with SAO counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health 101<br/>3. Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/>4. Community Helpline'
-                }).then(function(){
-                    return botui.action.button({
-                        addMessage: false,
-                        action: [
-                            { text: 'Make Appointment with SAO Counsellors', value: 3 },
-                            { text: 'Mental Health 101', value: 1 },
-                            { text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583', value: 5 },
-                            { text: 'Community Helpline', value: 6 },
-                        ]
-                    }).then(function (res) {
-                        if (res.value == 1) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(mental_health_101);
-                        }
-                        if (res.value == 2) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(T_and_C_of_OCS);
-                        }
-                        if (res.value == 3) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(make_appointment_with_counsellors);
-                        }
-                        if (res.value == 4) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(contact_with_counsellors);
-                        }
-                        if (res.value == 5) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(polyu_line);
-                        }
-                        if (res.value == 6) {
-                            return botui.message.human({
-                                delay: 500,
-                                photo: client,
-                                content: res.text
-                            }).then(community_helpline);
-                        }
-                    })
                 })
-        }
+            }
+        }).then(function () {
+            if (office_hour == true) {
+                return botui.action.button({
+                    addMessage: false,
+                    action: [
+                        { text: 'Make Appointment with SAO Counselors', value: 3 },
+                        { text: 'Mental Health 101', value: 1 },
+                        { text: 'Immediate Contact with SAO Counsellors', value: 4 },
+                        { text: 'Online Chat Service(Live)', value: 2 },
+                        { text: 'Community Helpline', value: 6 },
+                    ]
+                })
+            } else {
+                return botui.action.button({
+                    addMessage: false,
+                    action: [
+                        { text: 'Make Appointment with SAO Counselors', value: 3 },
+                        { text: 'Mental Health 101', value: 1 },
+                        { text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583', value: 5 },
+                        { text: 'Community Helpline', value: 6 },
+                    ]
+                })
+            }
+        }).then(function (res) {
+            if (res.value == 1) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text
+                }).then(mental_health_101);
+            }
+            if (res.value == 2) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text
+                }).then(T_and_C_of_OCS);
+            }
+            if (res.value == 3) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text
+                }).then(make_appointment_with_counsellors);
+            }
+            if (res.value == 4) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text
+                }).then(contact_with_counsellors);
+            }
+            if (res.value == 5) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text
+                }).then(polyu_line);
+            }
+            if (res.value == 6) {
+                return botui.message.human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text
+                }).then(community_helpline);
+            }
+        })
     }
-
-
 
     function high() {
         score = 20
@@ -1302,7 +1081,7 @@
                     addMessage: false,
                     action: [
                         { text: 'Immediate Contact with SAO Counsellors', value: 4 },
-                        { text: 'Make Appointment with SAO Counsellors', value: 3 },
+                        { text: 'Make Appointment with SAO Counselors', value: 3 },
                         { text: 'Community Helpline', value: 6 },
                     ]
                 })
@@ -1349,7 +1128,7 @@
                     addMessage: false,
                     action: [
                         { text: 'Immediately contact with PolyU-Line Counsellors', value: 5 },
-                        { text: 'Make Appointment with SAO Counsellors', value: 3 },
+                        { text: 'Make Appointment with SAO Counselors', value: 3 },
                         { text: 'Community Helpline', value: 6 },
                     ]
                 }).then(function (res) {
@@ -1434,7 +1213,7 @@
                     return botui.action.button({
                         addMessage: false,
                         action: [
-                            { text: 'Make Appointment with SAO Counsellors', value: 1 },
+                            { text: 'Make Appointment with SAO Counselors', value: 1 },
                             { text: 'Immediate Contact with SAO Counsellors', value: 2 },
                         ]
                     }).then(function (res) {
@@ -1457,7 +1236,7 @@
                     return botui.action.button({
                         addMessage: false,
                         action: [
-                            { text: 'Make Appointment with SAO Counsellors', value: 1 },
+                            { text: 'Make Appointment with SAO Counselors', value: 1 },
                             { text: 'Immediate Contact with PolyU-Line Counsellors: (852)8100-1583', value: 3 },
                         ]
                     }).then(function (res) {
@@ -1487,9 +1266,9 @@
         pop_msg = "";
 
         if (myDate.getDay() >=1 && myDate.getDay() <=5) {
-            if (myDate.getHours() >=12 && myDate.getHours() <=13) {
+            if (myDate.getHours() >=12 && myDate.getHours() <=14) {
                 pop_msg = 'We\'ll be back in service at 1400(HKT). We look forward to meeting you !'
-            } else if (myDate.getHours() == 18) {
+            } else if (myDate.getHours() >=18 && myDate.getHours() <=19) {
                 pop_msg = 'We\'ll be back during service hours: 0900-1200 & 1400 - 1800 (HKT) , Monday through Friday. We look forward to meeting you !'
             }
         } else {
@@ -1510,8 +1289,8 @@
                 delay: 1000,
                 photo: polly,
                 content: 'We noted that you have accepted the Terms and Conditions of using Counselling ChatBot. Before starting the Online Chat, here are a few reminders:<br/><br/>' +
-                        '1. In case of emergency and when ' +
-                        'there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency / A&E service.<br/><br/>' +
+                        '1. In case of emergency and when<br/><br/>' +
+                        'there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.<br/><br/>' +
                         '2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>' +
                         '3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>'
         }).then(function () {
@@ -1534,7 +1313,7 @@
                         delay: 1500,
                         photo: polly,
                         content: 'You are always welcome to contact us at (852)27666800 for enquires.'
-                    }).then(end)
+                    })
                 })
             } else {
                 return botui.message.human({
@@ -1568,19 +1347,18 @@
                     ]
                 })
             }).then(function (res) {
-
-                botui.message.human({
+                if (res.value == true) {
+                    return botui.message.human({
                         delay: 500,
                         photo: client,
                         content: res.text
-                });
-
-                if (res.value == true) {
-                    return botui.message.bot({
-                        loading: true,
-                        delay: 3000,
-                        photo: polly,
-                        content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone (852)27666800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.'
+                    }).then(function () {
+                        return botui.message.bot({
+                            loading: true,
+                            delay: 3000,
+                            photo: polly,
+                            content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone (852)27666800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.'
+                        })
                     }).then(function () {
                         return botui.message.bot({
                             loading: true,
@@ -1657,7 +1435,6 @@
                                 console.log(personalInfo);
                                 return botui.message.add({
                                     human: true, 
-                                    photo: client,
                                     content: 'Personal contact number is ' + res.value
                                 });
                             })
@@ -1675,7 +1452,6 @@
                                 console.log(personalInfo);
                                 return botui.message.add({
                                     human: true,
-                                    photo: client,
                                     content: 'Emergency contact name is ' + res.value
                                 });
                             })
@@ -1693,7 +1469,6 @@
                                 console.log(personalInfo);
                                 return botui.message.add({
                                     human: true, 
-                                    photo: client,
                                     content: 'Relationship is ' + res.value
                                 });
                             })
@@ -1711,7 +1486,6 @@
                                 console.log(personalInfo);
                                 return botui.message.add({
                                     human: true,
-                                    photo: client,
                                     content: 'Emergency contact number is ' + res.value
                                 });
                             })
@@ -1731,13 +1505,7 @@
                                 return botui.message.add({
                                     delay: 3000,
                                     photo: polly,
-                                    content: 'For student, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">link</a> to enter the chat room.'
-                                });
-                            }).then(function() {
-                                return botui.message.add({
-                                    delay: 1000,
-                                    photo: polly,
-                                    content: '[Demo only] For counsellor, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">link</a> to enter the chat room.'
+                                    content: 'You have incoming online chat request, please <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">click</a> the link to enter the chat room.'
                                 });
                             });
                         } else {
@@ -1781,8 +1549,14 @@
             loading: true,
             photo: polly,
             delay: 1500,
-            content: '1. Email: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>'
-        }).then(further_help)
+            content: '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>'
+        }).then(function () {
+            if (score > 10) {
+                return further_help()
+            } else {
+                return end()
+            }
+        })
     }
 
     function contact_with_counsellors() {
@@ -1798,7 +1572,13 @@
                 delay: 1000,
                 content: '1. Call (852)27666800<br/>2. Walk in QT308(Entrance at Core T) during office hours</br>'
             })
-        }).then(further_help())
+        }).then(function () {
+            if (score > 10) {
+                return further_help()
+            } else {
+                return end()
+            }
+        })
     }
 
     function polyu_line() {
@@ -1818,7 +1598,13 @@
                 delay: 3000,
                 content: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/><br/>All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.'
             })
-        }).then(further_help())
+        }).then(function () {
+            if (score > 10) {
+                return further_help()
+            } else {
+                return end()
+            }
+        })
     }
 
     function community_helpline() {
@@ -1827,7 +1613,13 @@
             photo: polly,
             delay: 3000,
             content: 'Emergency Call: (852)999<br/>Social Welfare Department: (852)23432255<br/>Caritas Family Crisis Support Centre: (852)18288<br/>Suicide Prevention Services: (852)23820000<br/>The Samaritans Multi-lingual Suicide Prevention(852)2896-0000<br/>The Hong Kong Jockey Club Charities Trust, Open Up-24-hour online chat platform: <a href="www.openup.hk" target ="_blank">www.openup.hk</a><br/>'
-        }).then(further_help())
+        }).then(function () {
+            if (score > 10) {
+                return further_help()
+            } else {
+                return end()
+            }
+        })
     }
 
     function further_help() {
@@ -1841,37 +1633,27 @@
                 addMessage: false,
                 action: [
                     { text: 'I still need other services.', value: true },
-                    { text: 'No, thank you! ', value: false },
+                    { text: 'No, thank you! I will stop here.', value: false },
                 ]
             }).then(function (res) {
                 if (res.value == true) {
-                    if (score <=10) {
-                        return botui.message.human({
-                            photo: client,
-                            delay: 500,
-                            content: res.text
-                        }).then(mid_recommendations)
-                    } else {
-                        return botui.message.human({
-                            photo: client,
-                            delay: 500,
-                            content: res.text
-                        }).then(high_recommendations)
-                    }
+                    return botui.message.human({
+                        photo: client,
+                        delay: 500,
+                        content: res.text
+                    }).then(high_recommendations)
                 } else {
                     return botui.message.human({
                         photo: client,
                         delay: 500,
                         content: res.text
                     }).then(function () {
-                        if (score > 10) {
-                            botui.message.bot({
-                                loading: true,
-                                photo: polly,
-                                delay: 1000,
-                                content: content = '<font color=blue>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.</font>'
-                            })
-                        }
+                        return botui.message.bot({
+                            loading: true,
+                            photo: polly,
+                            delay: 1000,
+                            content: '<font color=blue>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.</font>'
+                        })
                     }).then(end)
                 }
             })
@@ -1879,66 +1661,61 @@
     }
 
     function end() {
-        rating();
+        return botui.message.bot({
+            loading: true,
+            delay: 3000,
+            photo: polly,
+            content: 'Thank you for using \"My Polly\".'
+        }).then(rating
+
+            /* function () {
+             return botui.message.bot({
+                loading: true,
+                delay: 1000,
+                photo: polly,
+                content: 'Please rate your experience'
+            }).then(rating).then(_close)
+            }*/
+        )
     }
 
 
     function rating() {
-        botui.message.add({
+        return botui.message.add({
             type: 'html',
             delay: 1000,
             photo: polly,
-            content: '<p>Thank you for using \"My Polly\". \n Please rate your experience now:</p >' +
+            content: '<p>Please rate your experience:</p>' +
                 '<div class="wrap">\n' +
                 '  <div class="stars">\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star1" value="star1">\n' +
 
-                '      <i class="far fa-star star one-star available"></i>\n' +
+                '      <i class="far fa-star star one-star"></i>\n' +
                 '    </label>\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star2" value="star2">\n' +
 
-                '      <i class="far fa-star star two-star available"></i>\n' +
+                '      <i class="far fa-star star two-star"></i>\n' +
                 '    </label>\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star3" value="star3">\n' +
 
-                '      <i class="far fa-star star three-star available"></i>\n' +
+                '      <i class="far fa-star star three-star"></i>\n' +
                 '    </label>\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star4" value="star4">\n' +
 
-                '      <i class="far fa-star star four-star available"></i>\n' +
+                '      <i class="far fa-star star four-star"></i>\n' +
                 '    </label>\n' +
                 '    <label class="rate">\n' +
                 '      <input type="radio" name="radio1" id="star5" value="star5">\n' +
 
-                '      <i class="far fa-star star five-star available"></i>\n' +
+                '      <i class="far fa-star star five-star"></i>\n' +
                 '    </label>\n' +
                 '  </div>\n' +
                 '</div>'
-        }).then(function() {
-             botui.action.button({
-                    addMessage: false,
-                    photo: client,
-                    action: [{
-                        text: 'Submit my rating',
-                    }]
-             }).then(function() {
-                    // fix the stars
-                    console.log($('.far'));
-
-                    $('.far').removeClass('available');
-                    botui.message.bot({
-                        loading: true,
-                        delay: 1000,
-                        photo: polly,
-                        content: 'Thank you for your valuable feedback!'
-                    });
-             });
-
-        }).then(_close);
+        }).then(_close)
     }
 
     /*
@@ -1976,39 +1753,24 @@
     $(function () {
         $(document).on({
             mouseover: function (event) {
-                $(this).find('.available').addClass('star-over');
-                $(this).prevAll().find('.available').addClass('star-over');
+                $(this).find('.far').addClass('star-over');
+                $(this).prevAll().find('.far').addClass('star-over');
             },
             mouseleave: function (event) {
-                $(this).find('.available').removeClass('star-over');
-                $(this).prevAll().find('.available').removeClass('star-over');
+                $(this).find('.far').removeClass('star-over');
+                $(this).prevAll().find('.far').removeClass('star-over');
             }
         }, '.rate');
 
 
         $(document).on('click', '.rate', function () {
-            if (!$(this).find('.available').hasClass('rate-active')) {
-                $(this).siblings().find('.available').addClass('far').removeClass('fas rate-active');
-                $(this).find('.available').addClass('rate-active fas').removeClass('far star-over');
-                $(this).prevAll().find('.available').addClass('fas').removeClass('far star-over');
+            if (!$(this).find('.star').hasClass('rate-active')) {
+                $(this).siblings().find('.star').addClass('far').removeClass('fas rate-active');
+                $(this).find('.star').addClass('rate-active fas').removeClass('far star-over');
+                $(this).prevAll().find('.star').addClass('fas').removeClass('far star-over');
             } else {
                 console.log('has');
             }
-        })
-        .on('click', '.icon-leave', function() {
-            if (confirm("Are you sure you want to quit?")) {
-                if (navigator.userAgent.indexOf("Firefox") != -1 || navigator.userAgent.indexOf("Chrome") !=-1) {
-                    window.location.href="about:blank";
-                    window.close();
-                } else {
-                    window.opener = null;
-                    window.open("", "_self");
-                    window.close();
-                }
-            }
-        })
-        .on('click', '.icon-home', function() {
-            location.reload();
         });
 
     });

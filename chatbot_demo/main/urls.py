@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('response', views.auto_response, name='auto_response'),
     path('response_api', views.response_api, name='response_api'),
-    path('login/staff/', views.login_page, name='login_staff'),
+    path('login/staff/', views.login_page, name='login_page'),
     path('page/counsellor/', views.counsellor, name='counsellor'),
     path('page/supervisor/', views.supervisor, name='supervisor'),
     path('page/administrator/', views.administrator, name='administrator'),
@@ -14,10 +14,7 @@ urlpatterns = [
     path('api/logout/', views.logout_view, name='logout_view'),
     path('api/findstaff/', views.findstaff, name='findstaff'),
     path('api/updatestaff/', views.updatestaff, name='updatestaff'),
-    path('api/addstud/', views.addstud, name='addstud'),
-    path('user/login/', views.login_all, name='login'),
-    path('user/login-sso/', views.login_sso, name='login_sso'),
-    path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback')
+    path('api/addstud/', views.addstud, name='addstud')
 ]
 
 debug_urls = [
