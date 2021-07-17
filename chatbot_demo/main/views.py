@@ -22,8 +22,10 @@ from main.forms import LoginForm
 from main.utils import today_start
 from main.signals import update_queue
 from tasks.tasks import assign_staff
+from main.auth import sso_auth
 
 logger = logging.getLogger(__name__)
+COOKIE_MAX_AGE = 8 * 60 * 60
 
 
 def index(request):
@@ -72,7 +74,7 @@ def response_api(request):
 def login_page(request):
     if request.method == "GET":
         form = LoginForm(auto_id=True)
-        return render(request, 'main/login.html', {'form': form})
+        return render(request, 'main/login_staff.html', {'form': form})
     elif request.method == "POST":
 
         staff_netid = request.POST.get('netid')
@@ -323,20 +325,39 @@ def addstud(request):
         return JsonResponse({'status': 'success', 'message': msg}, status=201)
 
 
-
 def login_all(request):
     return render(request, 'main/login_sso.html')
 
 
 @csrf_exempt
 def login_sso(request):
-    # TODO redirect to rapid connect server
-    return render(request, 'main/login_sso.html')
+    # redirect to rapid connect server
+    response = redirect(sso_auth.destination)
+    return response
 
 
+@csrf_exempt
+@require_http_methods(['POST'])
 def login_sso_callback(request):
-    encoded_jwt = jwt.encode({"hi": "payload"}, 'secret', algorithm='HS256')
-    decoded_jwt = jwt.decode(encoded_jwt, 'secret', algorithms="HS256")
-    print(decoded_jwt)
-    # TODO jwt decode
-    return render(request, 'main/login_sso.html')
+    try:
+        encoded_jwt = request.POST.get('data')
+        if not encoded_jwt:
+            return render(request, 'main/login_sso.html', {
+                'error_message': "Cannot get JWT"
+            })
+
+        decoded_jwt = sso_auth.decode(encoded_jwt)
+
+        if decoded_jwt['polyuUserType'] == 'Student':
+            return render(request, 'main/login_sso.html', {
+                'decoded_jwt': decoded_jwt
+            })
+        elif decoded_jwt['polyuUserType'] == 'Staff':
+            return render(request, 'main/login_staff.html', {
+                'decoded_jwt': decoded_jwt
+            })
+
+    except Exception as e:
+        render(request, 'main/login_sso.html', {
+            'error_message': str(e)
+        })
