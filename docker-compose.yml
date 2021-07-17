@@ -6,44 +6,57 @@ services:
     ports:
       - 6379:6379
 
+  mysql:
+    image: mysql:8.0.25
+    ports:
+      - '3306:3306'
+    env_file:
+      - .env.docker
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+    command: [ "--default-authentication-plugin=mysql_native_password" ]
+
+  django:
+    build: ./chatbot_demo
+    command: runserver 0.0.0.0:8000
+    volumes:
+      - ./chatbot_demo:/app
+    ports:
+      - 80:8000
+    env_file:
+      - .env.docker
+    depends_on:
+      - mysql
+      - redis
+
   celery:
     build: ./chatbot_demo
-    command: celery -A chatbot_demo worker -l info -P gevent
+    command: ./run_celery.sh
     volumes:
       - ./chatbot_demo:/app
     env_file:
-      - ./chatbot_demo/.env.docker
+      - .env.docker
     depends_on:
       - redis
 
   celery_beat:
     build: ./chatbot_demo
-    command: celery -A chatbot_demo beat -l info
+    command: ./run_celery_beat.sh
     volumes:
       - ./chatbot_demo:/app
     env_file:
-      - ./chatbot_demo/.env.docker
+      - .env.docker
     depends_on:
       - redis
 
   dashboard:
     build: ./chatbot_demo
-    command: flower -A chatbot_demo --port=5555 --broker=redis://redis:6379/0
+    command: ./run_flower.sh
     ports:
       - 5555:5555
     env_file:
-      - ./chatbot_demo/.env.docker
+      - .env.docker
     depends_on:
       - redis
 
-  django:
-    build: ./chatbot_demo
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./chatbot_demo:/app/
-    ports:
-      - 8000:8000
-    env_file:
-      - ./chatbot_demo/.env.docker
-    depends_on:
-      - redis
+
