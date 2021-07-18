@@ -12,7 +12,7 @@ from channels.layers import get_channel_layer
 
 from main.email_service import email_service
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
 
 

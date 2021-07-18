@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
 import logging
 import requests
-import jwt
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -24,7 +22,7 @@ from main.signals import update_queue
 from tasks.tasks import assign_staff
 from main.auth import sso_auth
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 COOKIE_MAX_AGE = 8 * 60 * 60
 
 

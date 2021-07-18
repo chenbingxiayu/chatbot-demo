@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, ROLE_RANKING
 from tasks.tasks import reassign_counsellor, dequeue_student
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 
 @csrf_exempt

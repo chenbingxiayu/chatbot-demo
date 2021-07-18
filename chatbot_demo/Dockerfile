@@ -3,6 +3,9 @@ FROM python:3.8-slim-buster
 # set work directory
 WORKDIR /app
 
+# set environment variables
+ENV PYTHONUNBUFFERED 1
+
 # update vm
 RUN apt-get update \
     && apt-get install -y libpython3-dev default-libmysqlclient-dev build-essential \

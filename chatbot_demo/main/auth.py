@@ -1,5 +1,6 @@
 import os
 from typing import Dict
+
 import jwt
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User

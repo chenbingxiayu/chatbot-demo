@@ -151,6 +151,29 @@ STATICFILES_DIRS = (
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s [%(levelname)s] {%(filename)s:%(lineno)s} %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+        },
+    },
+    'loggers': {
+        'django': {
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': False
+        },
+    },
+}
+
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://redis:6379/0")
 
