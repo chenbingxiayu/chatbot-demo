@@ -69,35 +69,49 @@ python manage.py makemessages --all
 python manage.py compilemessages  
 ```
 
-## 部署
-```
-cd /root/chatbot
-```
-There is `docker-compose.yml` under /root/chatbot directory. It contains all of our docker services. (Please modify the environment variables through this file.)
-
+## Deployment
 Our chatbot images is built from source code. So every time we want to deploy the newer version, we have to pull the new code and rebuild the image again.
 
+1. Pull the new code
 
-For pull the new code
-```
+```bash
 cd /root/chatbot/chatbot-demo
-git branch  // currently switched to 'sso' for testing purposes
-git pull 
+git branch  # currently switched to 'backend' for testing purpose
+git checkout backend
+git pull
 ```
 
-for rebuild the image
+If you need to make some changes, please don't commit on `backend` branch, and checkout a new branch instead. 
+
+2. Edit environment variables
+
+Please specify all your environment variables inside file `.env.docker`, try not to explicitly write in source code.
+
+```bash
+cat .env.docker
+nano .env.docker
 ```
-cd /root/chatbot/
-docker-compose up -d --build chatbot
+
+3. Rebuild image
+
+```bash
+docker-compose up -d --build django
 ```
 
 Then it will build the newer image for our chatbot services. Once this process is done, it has successfully depolyed.
 
+4. Remove containers and images
+
 I will always clean the unused image at the end.
-```
+
+```bash
+docker-compose down
+docker rm -f $(docker ps -a -q) // delete all containers
+docker volume rm $(docker volume ls -q) // remove all docker-compose volumes
+
+# Remove images
 docker image ls  // list all images
 docker image rm  {IMAGE ID}
+# or
+docker rmi $(docker images -a -q)
 ```
-
-
-
