@@ -150,11 +150,28 @@
       <div class="container">
         <div class="row">
           <div class="col-3"></div>
-          <form class="col-9 login-form" action="{% url 'login' %}" method="get">
+          <form class="col-9 login-form" action="/main/" method="get">
             <div class="form-group">
-              <label style="color: red" >{{error_message}}</label>
-              <label class="col-sm-4 col-form-label">Debug: decode JWT</label><input value="{{decoded_jwt}}" />
+              <label for="staticEmail" class="col-sm-4 col-form-label"
+                >NetID</label
+              >
+              <input type="text" class="" id="staticEmail" placeholder="NetID" />
+            </div>
+            <div class="form-group">
+              <label for="inputPassword" class="col-sm-4 col-form-label"
+                >Net Password</label
+              >
+              <input
+                type="password"
+                class=""
+                id="inputPassword"
+                placeholder="Password"
+              />
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 col-form-label"></label>
               <button type="submit">Login</button>
+            
             <div>
             </div>
             

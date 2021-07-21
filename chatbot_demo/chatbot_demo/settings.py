@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -137,6 +138,16 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+LANGUAGES = (
+    ('en', ('English')),
+    ('zh-hant', ('中文繁體')),
+    ('zh-hans', ('中文简体')),
+)
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 

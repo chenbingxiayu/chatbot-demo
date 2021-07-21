@@ -51,18 +51,67 @@ Cross-Origin Read Blocking (CORB) 头像的问题可以参考一下这个
 
 - 登录信息传回后台，发送请求给ITS认证
 - 选择语言（ENG/繁/简体）（是否能够提前为第一个逻辑？）
-  
-# Start Django Backend
 
-1. Create a virtual environment and install python packages with `requirements.txt`.
-2. Set up a MYSQL server in your local machine.
-3. Compose a `.env` and a `.env.dokcer` file that contains all environment variables. You can take `.env.sample` as reference.
-4. Start the redis database container only with the help in `docker-compose.yml`.
-5. Start Django server with 
-```python
-python manage.py migrate
-python manage.py runserver "port_no" # default port is 8000
+# i18n
+js 文件中用 gettext('msgid')
+html 文件用 {% translate 'msgid' %}
+其它请查阅https://docs.djangoproject.com/en/3.2/ref/django-admin/#django-admin-makemessages
+
+
+command:
 ```
-6. Run `run_celery.sh` and `run_celery_beat.sh` in terminal to run scheduled tasks.
-7. (Optional) Run `run_flower.sh` or build up the `dashboard` container to monitor task status with flower UI.
+自动生成js .po 文件
+python manage.py makemessages --domain djangojs --all
+生成html和python .po文件
+python manage.py makemessages --all
 
+编译生成 .mo 文件 
+python manage.py compilemessages  
+```
+
+## Deployment
+Our chatbot images is built from source code. So every time we want to deploy the newer version, we have to pull the new code and rebuild the image again.
+
+1. Pull the new code
+
+```bash
+cd /root/chatbot/chatbot-demo
+git branch  # currently switched to 'backend' for testing purpose
+git checkout backend
+git pull
+```
+
+If you need to make some changes, please don't commit on `backend` branch, and checkout a new branch instead. 
+
+2. Edit environment variables
+
+Please specify all your environment variables inside file `.env.docker`, try not to explicitly write in source code.
+
+```bash
+cat .env.docker
+nano .env.docker
+```
+
+3. Rebuild image
+
+```bash
+docker-compose up -d --build django
+```
+
+Then it will build the newer image for our chatbot services. Once this process is done, it has successfully depolyed.
+
+4. Remove containers and images
+
+I will always clean the unused image at the end.
+
+```bash
+docker-compose down
+docker rm -f $(docker ps -a -q) // delete all containers
+docker volume rm $(docker volume ls -q) // remove all docker-compose volumes
+
+# Remove images
+docker image ls  // list all images
+docker image rm  {IMAGE ID}
+# or
+docker rmi $(docker images -a -q)
+```

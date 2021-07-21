@@ -1,7 +1,12 @@
-.idea
+.idea/
 venv
 .env*
 !.env.sample
+*.pyc
+**__pycache__/
+
+**.DS_Store
+**migrations/
 
 **.sqlite3
 celerybeat*

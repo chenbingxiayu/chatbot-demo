@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from django.views.i18n import JavaScriptCatalog
 
 from main import views, debug_api
 
@@ -17,7 +18,9 @@ urlpatterns = [
     path('api/addstud/', views.addstud, name='addstud'),
     path('user/login/', views.login_all, name='login'),
     path('user/login-sso/', views.login_sso, name='login_sso'),
-    path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback')
+    path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback'),
+    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    path('i18n/', include('django.conf.urls.i18n'))
 ]
 
 debug_urls = [
