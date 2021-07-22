@@ -902,7 +902,7 @@
   }
 
   function mid_recommendations() {
-    var office_hour = true; //isSAOWorkingHours(new Date());
+    var office_hour = isSAOWorkingHours(new Date());
     if (office_hour == true) {
       return botui.message
         .bot({
