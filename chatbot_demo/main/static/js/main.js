@@ -6,6 +6,8 @@
     );
   });
 
+
+  var finish_assessment = false;
   select_language().then(
     init_choices
     // get_name).then(T_and_C_split).then(
@@ -16,7 +18,7 @@
     //T_and_C_of_OCS
 
     // low
-    // medium
+    //medium
     // high
   );
 
@@ -35,11 +37,11 @@
             .button({
               addMessage: false,
               action: [
-                { text: "Counselling Chatbot", value: 1 },
-                { text: "Mental Health Educational Materials", value: 2 },
-                { text: "Online Chat", value: 4 },
-                { text: "Make Appointment with SAO counsellor", value: 5 },
-                { text: "Immediate Contact with SAO counsellor", value: 3 },
+                { text: "Counselling ChatBOT", value: 1 },
+                { text: "Mental Health Educational Materials/Resources", value: 2 },
+                { text: "Online Chat (Live)", value: 4 },
+                { text: "Make Appointment with SAO Counsellors", value: 5 },
+                { text: "Immediate Contact with SAO Counsellors", value: 3 },
                 { text: "Emergency Support", value: 6 },
               ],
             })
@@ -115,10 +117,10 @@
             .button({
               addMessage: false,
               action: [
-                { text: "Counselling Chatbot", value: 1 },
-                { text: "Mental Health Educational Materials", value: 2 },
-                { text: "Make Appointment with SAO counsellor", value: 5 },
-                { text: "Immediate Contact with PolyU-Line Counsellor (852) 8100 1583", value: 3 },
+                { text: "Counselling ChatBOT", value: 1 },
+                { text: "Mental Health Educational Materials/Resources", value: 2 },
+                { text: "Make Appointment with SAO Counsellors", value: 5 },
+                { text: "Immediate Contact with PolyU-Line Counsellor : (852) 8100 1583", value: 3 },
                 { text: "Emergency Support", value: 6 },
               ],
             })
@@ -535,10 +537,11 @@
                       delay: 1500,
                       photo: polly,
                       content:
-                        'Keep it up! We encourage you to take a look at the "Mental Health 101" to know more tips for enhancing your psychological and mental wellness.',
+                        'Keep it up! We encourage you to take a look at the "Mental Health Educational Materials/Resources" to know more tips for enhancing your psychological and mental wellness.',
                     })
                     .then(mental_health_101);
-                });
+                }).then(end_);
+
             }
             score += res.value;
             console.log(score);
@@ -841,6 +844,7 @@
   }
 
   function dispatch() {
+    finish_assessment = true;
     if (score <= 6) {
       low();
     } else if (score <= 10) {
@@ -865,7 +869,7 @@
           delay: 3500,
           photo: polly,
           content:
-            'Keep it up! We encourage you to take a look at the "Mental Health 101" to learn more tips for enhancing your psychological and mental wellness.',
+            'Keep it up! We encourage you to take a look at the "Mental Health Educational Materials/Resources" to know more tips for enhancing your psychological and mental wellness.',
         });
       })
       .then(function () {
@@ -898,7 +902,7 @@
   }
 
   function mid_recommendations() {
-    var office_hour = isSAOWorkingHours(new Date());
+    var office_hour = true; //isSAOWorkingHours(new Date());
     if (office_hour == true) {
       return botui.message
         .bot({
@@ -1221,9 +1225,9 @@
             '3. <a href="http://www.google.com" target ="_blank">Career</a><br/>'+
             '4. <a href="http://www.google.com" target ="_blank">Family</a><br/>'+
             '5. <a href="http://www.google.com" target ="_blank">Mental Health</a><br/>'+
-            '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">Psychological workshops and groups (Counselling and Wellness Section, SAO)</a><br>'+
+            '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS Psychological workshops and groups</a><br>'+
             '7. <a href="http://www.google.com" target ="_blank">Other</a><br/>' +
-            '<br><br>*In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.',
+            '<br><br>*In case of emergency, please call 999 or go to the nearest emergency  / A&E service.',
         });
       })
       .then(function () {
@@ -1231,7 +1235,7 @@
           loading: true,
           delay: 3000,
           photo: polly,
-          content: "May I assist you with anything further?",
+          content: "Thank you for using our service. May I assist you with anything further?",
         });
       })
       .then(function () {
@@ -1261,7 +1265,7 @@
             })
             .then(end);
         } else {
-          if (service_list == true) {
+          if (service_list == true || finish_assessment == false) {
             botui.message.human({
                 delay: 500,
                 photo: client,
@@ -1373,11 +1377,11 @@
           photo: polly,
           delay: 2000,
           content:
+            "<p>Please accept the Terms and Conditions of using the Online Chat service:</p><br/>"+
             "<p><b>My Polly Counselling Chatbot Service</b></p>\n" +
             "<br/>\n" +
             "<p>(The Terms and Conditions are only available in English.)</p>\n" +
             "<br/>\n" +
-            "<p><b>Use of this service</b></p>\n" +
             "<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n" +
             "<br/>\n" +
             "<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/ face-to- face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n",
@@ -1470,7 +1474,7 @@
                   content:
                     "You are always welcome to contact us at (852)27666800 for enquires.",
                 })
-                .then(end);
+                .then(further_help);
             });
         } else {
           return botui.message
@@ -1492,7 +1496,7 @@
         delay: 1500,
         photo: polly,
         content:
-          "Online Chat Service please indicate your answers(either Yes or No) below:",
+          "Please indicate your answers (either Yes or No) below:",
       })
       .then(function () {
         return botui.message
@@ -1534,7 +1538,7 @@
                     delay: 1500,
                     photo: polly,
                     content:
-                      "Please also feel free to reach ouur online self-help materials here.",
+                      "You are always welcome to read our online self-help materials here.",
                   });
                 })
                 .then(function () {
@@ -1542,10 +1546,10 @@
                     addMessage: false,
                     action: [
                       {
-                        text: "Mental Health Educational Materials",
+                        text: "Mental Health Educational Materials/Resources",
                         value: true,
                       },
-                      { text: "End of service", value: false },
+                      { text: "No, thank you!", value: false },
                     ],
                   });
                 })
@@ -1557,7 +1561,7 @@
                         photo: client,
                         content: res.text,
                       })
-                      .then(end);
+                      .then(further_help);
                   } else {
                     return botui.message
                       .human({
@@ -1722,17 +1726,17 @@
                           delay: 2000,
                           photo: polly,
                           content:
-                            "For facilitating the comprehensive support to you, you are highly advised to make a face to face appointment with our counsellor.",
+                            "To provide comprehensive support to you, you are highly advised to make a face to face appointment with SAO counsellor.",
                         });
                       })
                       .then(function () {
                         if (office_hour == true) {
                           return botui.message.bot({
                             loading: true,
-                            delay: 2000,
+                            delay: 1000,
                             photo: polly,
                             content:
-                              '1. Call (852)27666800<br/>2. Walk in QT308(Entrance at Core T) during office hours<br/>3. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+                              '1. Call (852)27666800<br/>2. Walk in QT308(Entrance at Core T) during office hours<br/>3. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
                           });
                         } else {
                           return botui.message.bot({
@@ -1740,7 +1744,7 @@
                             delay: 2000,
                             photo: polly,
                             content:
-                              '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: Direct to <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+                              '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
                           });
                         }
                       });
@@ -1759,7 +1763,7 @@
         photo: polly,
         delay: 1500,
         content:
-          '*In case of emergency, please Call 999 or go to the nearest emergency  / A&E service',
+          '<font color=black>In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.</font>',
       }).then(function(){
         var office_hour = isSAOWorkingHours(new Date());
         if (office_hour == true) {
@@ -1797,7 +1801,7 @@
     return botui.message.bot({
           loading: true,
           photo: polly,
-          delay: 1000,
+          delay: 100,
           content:
             "1. Call (852)27666800<br/>2. Walk in QT308(Entrance at Core T) during office hours</br>",
       }).then(further_help());
@@ -1831,7 +1835,7 @@
         loading: true,
         photo: polly,
         delay: 3000,
-        content: "May I assist you with anything further?",
+        content: "Thank you for using our service. May I assist you with anything further?",
       })
       .then(function () {
         return botui.action
@@ -1844,7 +1848,7 @@
           })
           .then(function (res) {
             if (res.value == true) {
-              if (service_list == true) {
+              if (service_list == true || finish_assessment == false) {
                 botui.message.human({
                     delay: 500,
                     photo: client,
@@ -1878,13 +1882,13 @@
                   content: res.text,
                 })
                 .then(function () {
-                  if (score > 10) {
+                  if (score > 10 || service_list == true) {
                     botui.message.bot({
                       loading: true,
                       photo: polly,
                       delay: 1000,
                       content: (content =
-                        "<font color=blue>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.</font>"),
+                        "<font color=black>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.</font>"),
                     });
                   }
                 })
@@ -1905,7 +1909,7 @@
         delay: 1000,
         photo: polly,
         content:
-          "<p>Thank you for using our service. \n Please rate your experience now:</p >" +
+          "<p>Please rate your experience now:</p >" +
           '<div class="wrap">\n' +
           '  <div class="stars">\n' +
           '    <label class="rate">\n' +
