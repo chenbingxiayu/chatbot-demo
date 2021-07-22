@@ -1,227 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1"
-    />
-    <title>SAO Login Page</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
-      crossorigin="anonymous"
-    />
-    {% load static %}
-    <style>
-      body {
-        width: 100%;
-        height: 100%;
-      }
-      .top-banner {
-        height: calc(100vw / 7.73);
-        width: 100%;
-        background: url("/static/Polly-graphics/general/top-banner.jpg")
-          no-repeat center center;
-        background-size: contain;
-      }
 
-      .top-description {
-        background-color: #fcead9;
-        width: 100%;
-        height: auto;
-        padding: 30px 50px;
-      }
+{% extends "main/clientBase.html" %}
+{% load static %}
 
-      .main-content {
-        height: 500px;
-        background-color: #fefae4;
-      }
 
-      .login-form {
-        margin-top: 80px;
-      }
+{% block custom_style %}
+<style>
 
-      .linkage {
-        background-color: #fcead9;
-        height: auto;
-        padding-top: 80px;
-        padding-bottom: 80px;
-      }
+.top-banner {
+  height: 65vw;
+  max-height: 680px;
+}
 
-      .linkage ul {
-        list-style-type: none;
-        color: #df643b;
-        padding-left: 0px;
-      }
+.top-banner-description {
+    text-align: center;
+    line-height: 10px;
+    position: absolute;
+    z-index: 10;
+    top: 32vw;
+    left: 50%;
+    margin-left: -380px;
+    margin-top: -25px;
+}
 
-      .linkage-item {
-        font-size: 20px;
-        color: #df643b;
-        position: relative;
-        width: 55%;
-        border-top: 3px solid #df643b;
-        padding: 5px 30px;
-        font-weight: 500;
-      }
+.login-button {
+  text-align: center;
+  position: absolute;
+  z-index: 10;
+  top: 40vw;
+  left: 50%;
+  margin-left: -15px;
+  margin-top: -27px;
+}
 
-      .linkage-item a {
-        color: #df643b;
-      }
+.login-button button {
+    background-color: #ffb741;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 5px 15px;
+}
 
-      .linkage-item a:hover {
-        color: #df643b;
-        text-decoration: none;
-      }
+@media (max-width: 860px) {
+    .top-banner-header {
+        font-size: 25px;
+        margin-left: -108px;
+        margin-top: -50px;
+    }
 
-      .linkage-item:last-child {
-        border-bottom: 3px solid #df643b;
-      }
+    .top-banner-description {
+        top: 35vw;
+        line-height: initial;
+        margin-left: -50%;
+    }
 
-      .linkage-item::before {
-        content: "";
-        border-top: 20px solid #df643b;
-        border-right: 12px solid transparent;
-        border-left: 12px solid transparent;
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        cursor: pointer;
-      }
+    .login-button {
+        top: 55vw;
+    }
+}
 
-      .copyright {
-        background-color: #ca3f6a;
-        height: auto;
-        padding: 20px 50px;
-      }
+@media (max-width: 576px) { 
 
-      .copyright ul {
-        display: inline-flex;
-        list-style-type: none;
-        color: white;
-        padding-left: 0px;
-      }
+  .top-banner-header {
+    font-size: 18px;
+    margin-left: -78px;
+    margin-top: -46px;
+  }
+  .top-banner-description {
+      font-size: 12px;
+      top: 35vw;
+      line-height: initial;
+      margin-left: -50%;
+  }
 
-      .copyright-item {
-        border-right: 1px solid white;
-        padding: 0px 10px;
-      }
+  .login-button{
+    top: 60vw;
+    margin-left: -36px;
+  }
 
-      .copyright-item a {
-        color: white;
-      }
+  .login-button button {
+    padding: 3px 8px;
+    font-size: 12px;
+  }
+}
+</style>
+{% endblock%}
 
-      .copyright-item a:hover {
-        text-decoration: none;
-      }
-
-      .copyright-text {
-        margin-top: 20px;
-        color: white;
-        text-align: right;
-      }
-    </style>
-  </head>
-  <body>
-    <section>
-      <div class="top-banner"></div>
-      <div class="top-description">
-        <p>
-          The Counselling and Wellness Section (CWS) of the Student Affairs
-          Office (SAO) renders the timely and quality mental health support to
-          students of The Hong Kong Polytechnic University (PolyU) via the
-          non-face-to-face service mode besides the face-to-face platform.
-        </p>
-        <p>
-          CWS embarks the
-          <b><i>Counselling Chatbot Service, My Polly</i></b> which fit our
-          students’ need for the mental health service surpass accessibility;
-          students in distress can approach our various psychological services
-          through the “My Polly” Chatbot. This Chatbot serves the purpose of the
-          identification of students’ service need and the referral of
-          psychological services, i.e. online chat, face-to-face counselling and
-          online psychoeducation materials.
-        </p>
+{% block top_banner_content %}
+<section>
+  <div class="top-banner">
+    <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/login-top-banner.png' %}"></img>
+    <div class="top-sao-logo"></div>
+    <div class="top-banner-header">
+        <p>Integrated</p>
+        <p>Counselling Service</p>
+    </div>
+    <div class="top-banner-description">
+      <p>Welcome to Integrated Counselling Service!</p>
+      <p>We are here to recommend to our psychological services that will suit your needs. let's start and explore!</p>
+    </div>
+    <form method="GET" action="{% url 'index' %}">
+      <div class="login-button">
+        <button type="submit">Login</button>
       </div>
-    </section>
-    <section class="main-content">
-      <div class="container">
-        <div class="row">
-          <div class="col-3"></div>
-          <form class="col-9 login-form" action="/main/" method="get">
-            <div class="form-group">
-              <label for="staticEmail" class="col-sm-4 col-form-label"
-                >NetID</label
-              >
-              <input type="text" class="" id="staticEmail" placeholder="NetID" />
-            </div>
-            <div class="form-group">
-              <label for="inputPassword" class="col-sm-4 col-form-label"
-                >Net Password</label
-              >
-              <input
-                type="password"
-                class=""
-                id="inputPassword"
-                placeholder="Password"
-              />
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 col-form-label"></label>
-              <button type="submit">Login</button>
-            
-            <div>
-            </div>
-            
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-    <section class="footer">
-      <div class="linkage">
-        <ul>
-          <li class="linkage-item"><a href="#">Terms and Conditions</a></li>
-          <li class="linkage-item"><a href="#">Mental Health 101</a></li>
-          <li class="linkage-item">
-            <a href="#">Making Counselling Appointment</a>
-          </li>
-          <li class="linkage-item"><a href="#">Emergency Support</a></li>
-        </ul>
-      </div>
-      <div class="copyright">
-        <ul>
-          <li class="copyright-item"><a href="#">Sitemap</a></li>
-          <li class="copyright-item"><a href="#">Contact Us</a></li>
-          <li class="copyright-item">
-            <a href="#">Privacy Policy Statement</a>
-          </li>
-          <li class="copyright-item">
-            <a href="#">Personal Information Collection Statement</a>
-          </li>
-          <li class="copyright-item"><a href="#">Accessibility</a></li>
-        </ul>
-        <p class="copyright-text">
-          Copyright © The Hong Kong Polytechnic Univeristy Reserved. 2020
-        </p>
-      </div>
-    </section>
+    </form>
+  </div>
+</section>
 
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      type="module"
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-    ></script>
-  </body>
+
+{% endblock%}
+
+{% block main_content %}
+
+<section class="main-content">
+  <div class="container">
+      <div class="max-width-2">
+          <div class="row justify-content-center">
+              <div class="col-sm col-md-10 col-lg-8">
+                  
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+{% endblock main_content %}
+
+{% block footer_script %}
+{% endblock footer_script%}
 </html>

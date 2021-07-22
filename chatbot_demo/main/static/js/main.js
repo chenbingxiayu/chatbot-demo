@@ -205,7 +205,7 @@
         loading: true,
         searchselect: true,
         delay: 1000,
-        content: gettext("Please select your language 請選擇語言"),
+        content: "Please select your language 請選擇語言",
       })
       .then(function () {
         return botui.action
