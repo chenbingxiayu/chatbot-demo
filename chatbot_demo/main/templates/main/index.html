@@ -1,165 +1,9 @@
-<!--<!DOCTYPE html>-->
-<html>
 
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Dialogggg</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+{% extends "main/clientBase.html" %}
+{% load static %}
 
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.14/vue.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
-
-
-    {% load static %}
-    <script src="{% static 'botui-master/build/botui.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'botui-master/build/botui.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'botui-master/build/botui-theme-default.css' %}" />
-    <link href="{% static 'fontawesome-free-5.15.3-web/css/all.css' %}" rel="stylesheet">
-
-    <!-- <script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css" /> -->
-
-
-    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script src="http://malsup.github.io/jquery.form.js"></script>
-
-
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.css" rel="stylesheet">
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
-
-    {% load i18n %}
-    <script  src="{% url 'javascript-catalog' %}"></script>
-    {% get_current_language as LANGUAGE_CODE %}
-    {% get_available_languages as LANGUAGES %}
-    {% get_language_info_list for LANGUAGES as languages %}
-</head>
-
-
-<style type="text/css">
-
-    .profil > img {
-        border: none !important;
-        width: 48px;
-        height: 48px;
-    }
-    
-    .profil > img.agent {
-      content: unset
-    }
-
-    body {
-        width: 100%;
-        height: 100%;
-    }
-
-    .top-banner {
-        height: auto;
-        width: 100%;
-        background-color: #f1592a;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        position: relative;
-    }
-
-    .top-right-side {
-        display: flex;
-        flex-direction: row;
-        flex: 1;
-        margin: 20px 10px;
-    }
-
-    .top-description {
-        color: white;
-        font-weight: 600;
-        font-size: 24;
-        text-align: center;
-        margin: 10px 0 10px 20px;
-    }
-
-    .top-description p {
-        margin-bottom: 0px;
-    }
-
-    .top-sao-logo {
-        background: url('../static/Polly-graphics/general/SAO-logo.png') no-repeat center center;
-        background-size: contain;
-        margin: 0 20px;
-        width: 33vw;
-        height: 60px;
-    }
-
-    .top-sao-icon {
-        background: url('../static/Polly-graphics/general/polly-ontopbar.png') no-repeat center center;
-        background-size: contain;
-        width: 100px;
-        margin-left: 20px;
-    }
-
-    .top-sao-text-2 {
-        color: #f5ee31;
-    }
-
-    .main-content {
-        height: auto;
-        background-color: #fefae4;
-    }
-
-    .service-description {
-        background-color: #FCEAD9;
-        width: 100%;
-        height: auto;
-        padding: 30px 50px;
-    }
-
-
-    .copyright {
-        background-color: #ca3f6a;
-        height: auto;
-        padding: 20px 50px;
-        overflow: scroll;
-    }
-
-    .copyright ul {
-        display: inline-flex;
-        list-style-type: none;
-        color: white;
-        padding-left: 0px;
-    }
-
-    .copyright-item {
-        border-right: 1px solid white;
-        padding: 0px 10px;
-    }
-
-    .copyright-item a {
-        color: white;
-    }
-
-    .copyright-item a:hover {
-        text-decoration: none;
-    }
-
-    .copyright-text {
-        margin-top: 20px;
-        color: white;
-        text-align: right;
-    }
-    
-
-    .wrap {
-        width: 200px;
-        height: 25px;
-        /*background: #ebefff;*/
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: 10px;
-    }
-
+{% block custom_style %}
+<style>
     .stars {
         width: fit-content;
         margin: 0 auto;
@@ -266,67 +110,6 @@
         opacity: 1;
     }
 
-    .max-width-2 {
-        max-width: 1230px;
-        margin: 0 auto;
-        padding: 4em 0px;
-        position: relative;
-    }
-
-    .chatbox-wrapper {
-        background-color: #eff7d7;
-        position: relative;
-        height: 675px;
-        width: 100%;
-    }
-      
-    #chatbox {
-        height: 100%;
-        display: inline-flex;
-        flex-direction: column;
-        width: 100%;
-    }
-
-
-    .botui-container {
-        {% comment %} height: calc(100% - ((100% - 4em - 60px) * 0.3)); {% endcomment %}
-        background: url('../static/Polly-graphics/general/general-bg.png') no-repeat center center #eff7d7;
-        background-size: cover;
-        -o-background-size: cover;
-        -moz-background-size: cover;
-        -webkit-background-size: cover;
-    }
-
-    .botui-header {
-        padding-top: 120px; 
-        width: 100%;
-        background: url('../static/Polly-graphics/general/polly-2.png') no-repeat 60px 5px;
-        background-size: contain;
-        -o-background-size: contain;
-        -moz-background-size: contain;
-        -webkit-background-size: contain;
-        position: sticky;
-        z-index: 1;
-        top: 0;
-        background-color: #fcb040;
-        border-radius: 0 0 30px 30px;
-    }
-
-    .botui-header-text {
-        position: absolute;
-        top: 30px;
-        background: #522d54;
-        border-radius: 40px 35px 35px 15px;
-        width: 140px;
-        text-align: center;
-        padding: 10px 0 0px 0;
-        line-height: 10px;
-        font-size: 20px;
-        font-weight: 500;
-        color: #f1e202;
-        right: 20%;
-    }
-
     .botui-header-icon {
         position: absolute;
         top: 5px;
@@ -351,77 +134,26 @@
         background-size: contain;
         cursor: pointer;
     }
-
-    .botui-message-content {
-        background-color: #c2c890;
-        border-radius: 10px 10px 10px 5px;
-        overflow-wrap: break-word;
-    }
-
-    .botui-message-content.human {
-        background-color: #fccca5;
-        color: #595a5a;
-        border-radius: 10px 10px 10px 5px;
-    }
-
-    .justify-content-center.row {
-        width: 100%;
-        margin: 0;
-    }
-      
     
-    @media (max-width: 576px) {
-        .top-description {
-            margin: 0;
-            font-size: 16;
-        }
-        .top-sao-icon {
-            margin: 0;
-            width: 80px;
-        }
-
-        .top-right-side {
-            margin: 10px;
-        }
-        .top-sao-logo {
-            height: 30px;
-            margin: 10px;
-        }
-        .botui-header {
-            background: url(../static/Polly-graphics/general/polly-2.png) no-repeat 10px 5px;
-            background-size: contain;
-            background-color: #fcb040; 
-            padding-top: 90px;
-        }
-        .botui-header-text {
-            font-size: 13px;
-            width: 90px;
-            padding: 10px 0 0 0;
-            line-height: 0px;
-        }
-    }
 </style>
 
-{% block body %}
+{% endblock %}
 
-<body>
-    <section>
-      <div class="top-banner">
-        <div class="top-sao-logo"></div>
-        <div class="top-right-side">
-            <div class="top-sao-icon"></div>
-            <div class="top-description">
-                <p>Integrated</p>
-                <p class="top-sao-text-2">Counselling Service</p>
-            </div>
-        </div>
-      </div>
-      <div class="service-description">
-        <p align="center">
-          Welcome to the <b><i>Integrated Counselling Service</i></b>! We are here to recommend our psychological services that will suit your needs.   Let’s start and explore!
-        </p>
-      </div>
-    </section>
+
+{% block top_banner_content %}
+<section>
+  <div class="top-banner">
+    <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/top-banner.png' %}"></img>
+    <div class="top-sao-logo"></div>
+    <div class="top-banner-header">
+        <p>Integrated</p>
+        <p>Counselling Service</p>
+    </div>
+  </div>
+</section>
+{% endblock top_banner_content %}
+{% block main_content %}
+
     <section class="main-content">
     <div class="container">
         <div class="max-width-2">
@@ -431,8 +163,9 @@
                         <div id="chatbox" class="botui">
                             <div class="botui-header">
                                 <div class="botui-header-text">
-                                    <p>Hello,</p>
-                                    <p>I'm Polly</p>
+                                    <p>Welcome to integrated Counselling Service!</p>
+                                    <p>We are here to recommend our psychological services</p>
+                                    <p>that will suit your needs. Let's start and explore!</p>
                                 </div>
                                 <div class="botui-header-icon">
                                     <label class="icon-home"></label>    
@@ -447,45 +180,11 @@
         </div>
     </div>
     </section>
-    <section class="footer">
-      <div class="copyright">
-        <ul>
-          <li class="copyright-item"><a href="#">Sitemap</a></li>
-          <li class="copyright-item"><a href="#">Contact Us</a></li>
-          <li class="copyright-item">
-            <a href="#">Privacy Policy Statement</a>
-          </li>
-          <li class="copyright-item">
-            <a href="#">Personal Information Collection Statement</a>
-          </li>
-          <li class="copyright-item"><a href="#">Accessibility</a></li>
-        </ul>
-        <p class="copyright-text">
-          Copyright © The Hong Kong Polytechnic Univeristy Reserved. 2020
-        </p>
-      </div>
-    </section>
-    {% comment %} <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
-    <select name="language">
-        {% for language in languages %}
-            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                {{ language.name_local }} ({{ language.code }})
-            </option>
-        {% endfor %}
-    </select>
-    <input type="submit" value="Go">
-</form> {% endcomment %}
-</body>
-{% endblock body %}
+{% endblock main_content %}
 
 
-
-
-{% load static %}
-{% block javascript %}
+{% block footer_script %}
 <script>
-    // set date and time
-    {% comment %} var office_hour = true; {% endcomment %}
 
     var botui = new BotUI('chatbox');
     var content = document.getElementsByTagName('chatbox');
@@ -502,6 +201,6 @@
 
 </script>
 <script src="{% static 'js/main.js' %}"></script>
-{% endblock javascript %}
+{% endblock footer_script %}
 
 </html>
