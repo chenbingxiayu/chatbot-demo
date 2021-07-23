@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import logging
 import requests
 
@@ -13,10 +10,12 @@ from django.utils import timezone
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 
+from main.exceptions import UnauthorizedException
 from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, SELECTABLE_STATUS
-from main.forms import LoginForm
+from main.forms import StaffLoginForm
 from main.utils import today_start
 from main.signals import update_queue
 from tasks.tasks import assign_staff
@@ -68,20 +67,18 @@ def response_api(request):
     return HttpResponse(response.json()['response'])
 
 
+@login_required
 @require_http_methods(['GET', 'POST'])
 def login_page(request):
     if request.method == "GET":
-        form = LoginForm(auto_id=True)
+        form = StaffLoginForm(auto_id=True)
         return render(request, 'main/login_staff.html', {'form': form})
     elif request.method == "POST":
 
-        staff_netid = request.POST.get('netid')
+        staff_netid = request.user.username
+        user_group = request.session['user_group']
         role = request.POST.get('role')
         status = request.POST.get('status')
-        user = authenticate(requests, username=staff_netid)
-
-        if not user:
-            return redirect('login_page')
 
         try:
             staff = StaffStatus.objects.get(staff_netid=staff_netid)
@@ -89,9 +86,9 @@ def login_page(request):
             staff = StaffStatus(staff_netid=staff_netid)
 
         # check which user group does the user belongs to
-        if 'counsellor' in [group.name for group in user.groups.all()]:
+        if user_group == 'counsellor':
             staff.staff_role = role
-        elif 'app_admin' in [group.name for group in user.groups.all()]:
+        elif user_group == 'app_admin':
             staff.staff_role = StaffStatus.Role.SUPERVISOR
         else:
             return redirect('login_page')
@@ -100,8 +97,6 @@ def login_page(request):
         staff.status_change_time = timezone.now()
         staff.save()
         staff.refresh_from_db()
-
-        login(request, user)
 
         if staff.staff_role in ('online_triage', 'do', 'counsellor'):
             return redirect('counsellor')
@@ -118,7 +113,7 @@ def login_page(request):
 def logout_view(request):
     logout(request)
 
-    return redirect('login_page')
+    return redirect('login')
 
 
 @login_required
@@ -334,8 +329,17 @@ def login_sso(request):
     return response
 
 
+def get_user_group(user: User) -> str:
+    if 'app_admin' in user.groups.values_list('name', flat=True):
+        return 'app_admin'
+    elif 'counsellor' in user.groups.values_list('name', flat=True):
+        return 'counsellor'
+
+    raise UnauthorizedException(f'Staff({user.username}) does not belong to any user group in this application.')
+
+
 @csrf_exempt
-@require_http_methods(['POST'])
+@require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
         encoded_jwt = request.POST.get('data')
@@ -351,11 +355,13 @@ def login_sso_callback(request):
                 'decoded_jwt': decoded_jwt
             })
         elif decoded_jwt['polyuUserType'] == 'Staff':
-            return render(request, 'main/login_staff.html', {
-                'decoded_jwt': decoded_jwt
-            })
+            staff_netid = decoded_jwt['cn']
+            user = authenticate(requests, username=staff_netid)
+            user_group = get_user_group(user)
+            request.session['user_group'] = user_group
+            login(request, user)
+            return redirect('login_staff')
 
-    except Exception as e:
-        render(request, 'main/login_sso.html', {
-            'error_message': str(e)
-        })
+    except (Exception, UnauthorizedException) as e:
+        logger.warning(e)
+        return redirect('login')

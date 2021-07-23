@@ -5,6 +5,8 @@ import jwt
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 
+from main.exceptions import UnauthorizedException
+
 
 class AuthBackend(ModelBackend):
     """Log in to Django without providing a password.
@@ -14,7 +16,7 @@ class AuthBackend(ModelBackend):
         try:
             return User.objects.get(username=username)
         except User.DoesNotExist:
-            return None
+            raise UnauthorizedException('Unauthorized staff.')
 
 
 class SSOAuth:
