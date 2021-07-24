@@ -59,10 +59,9 @@
       height: 100%;
     }
 
-    .top-banner {
-        height: 40vw;
+    {% comment %} .top-banner {
+        height: auto;
         width: 100%;
-        {% comment %} background: url('/static/Polly-graphics/general/top-banner.png') no-repeat center center; {% endcomment %}
         background-color: #fefae4;
         background-size: cover;
     }
@@ -94,12 +93,13 @@
         left: 50%;
         margin-left: -170px;
         margin-top: -75px;
-    }
+    } {% endcomment %}
 
     .copyright {
+      overflow-x: hidden;
       background-color: #ca3f6a;
       height: auto;
-      overflow: scroll;
+      {% comment %} overflow: scroll; {% endcomment %}
       padding: 20px 50px;
     }
 
@@ -137,7 +137,6 @@
     .max-width-2 {
         max-width: 1230px;
         margin: 0 auto;
-        padding: 4em 0px;
         position: relative;
     }
     
@@ -190,7 +189,7 @@
         z-index: 1;
         top: 0;
         background-color: #fcb040;
-        border-radius: 0 0 30px 30px;
+        border-radius: 10px 10px 30px 30px;
     }
 
     .botui-header-text {
@@ -207,6 +206,10 @@
         right: 10%;
     }
 
+    .botui-header-text p {
+      {% comment %} margin-bottom: 10px; {% endcomment %}
+    }
+
     .botui-message-content {
       background-color: #c2c890;
       border-radius: 10px 10px 10px 5px;
@@ -221,32 +224,53 @@
       font-weight: bold;
     }
 
-    @media (max-width: 576px) {
-        .top-banner-header {
-            font-size: 18px;
-            margin-left: -78px;
-            margin-top: -46px;
+    @media (max-width: 678px) {
+        .top-banner-header-1 {
+            font-size: 24px;
         }
+
         .botui-header {
             background: url(../static/Polly-graphics/general/polly-full.png) no-repeat 10px 5px;
             background-size: contain;
             background-color: #fcb040; 
-            padding-top: 90px;
+            padding-top: 120px;
         }
         .botui-header-text {
             font-size: 10px;
             width: 300px;
             padding: 10px 0 0 0;
-            line-height: 0px;
+            line-height: 10px;
         }
     }
 
-    @media (max-width: 482px) {
+    @media (max-width: 530px) {
+      .botui-header { 
+        padding-top: 90px;
+      }
+
         .botui-header-text {
             font-size: 5px;
             width: 156px;
             padding: 10px 0 0 0;
             line-height: 0px;
+        }
+
+        .copyright ul {
+          flex-direction: column;
+        }
+
+        .copyright-item {
+          border-right: none;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .top-banner-header-1 {
+            font-size: 16px;
+        }
+
+        .top-sao-logo-1 {           
+            height: 30px;
         }
     }
   </style>

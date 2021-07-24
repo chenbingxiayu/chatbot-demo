@@ -6,30 +6,15 @@
 {% block custom_style %}
 <style>
 
-.top-banner {
-  height: 65vw;
-  max-height: 680px;
+.max-width-2 {
+  padding: 2em 0px;
 }
 
-.top-banner-description {
-    text-align: center;
-    line-height: 10px;
-    position: absolute;
+.top-banner-right {
     z-index: 10;
-    top: 32vw;
-    left: 50%;
-    margin-left: -380px;
-    margin-top: -25px;
-}
-
-.login-button {
-  text-align: center;
-  position: absolute;
-  z-index: 10;
-  top: 40vw;
-  left: 50%;
-  margin-left: -15px;
-  margin-top: -27px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
 }
 
 .login-button button {
@@ -41,69 +26,94 @@
     padding: 5px 15px;
 }
 
-@media (max-width: 860px) {
-    .top-banner-header {
-        font-size: 25px;
-        margin-left: -108px;
-        margin-top: -50px;
-    }
-
-    .top-banner-description {
-        top: 35vw;
-        line-height: initial;
-        margin-left: -50%;
-    }
-
-    .login-button {
-        top: 55vw;
-    }
+.top-sao-logo-img {
+    width: 100%;
+    height: 400px;
+    position: absolute;
+    top: 0px;
 }
 
+.top-banner-1 {
+    display: flex;
+    height: 400px;
+    background-color: #fefae4;
+    align-items: start;
+    justify-content: center;
+    padding-top: 50px;
+}
+
+.top-sao-logo-1 {
+    width: 100px;
+    z-index: 10;
+    margin: 0px 20px;
+    text-align: left;
+}
+
+.top-banner-header-1 {
+    z-index: 10;
+    font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+    text-align: center;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.top-banner-header-1 p {
+    margin-bottom: 0;
+}
+
+
 @media (max-width: 576px) { 
-
-  .top-banner-header {
-    font-size: 18px;
-    margin-left: -78px;
-    margin-top: -46px;
-  }
-  .top-banner-description {
-      font-size: 12px;
-      top: 35vw;
-      line-height: initial;
-      margin-left: -50%;
-  }
-
-  .login-button{
-    top: 60vw;
-    margin-left: -36px;
-  }
-
   .login-button button {
     padding: 3px 8px;
     font-size: 12px;
   }
+}
+
+    @media (max-width: 678px) {
+        .top-banner-header-1 {
+            font-size: 24px;
+        }
+
+    }
+
+    @media (max-width: 420px) {
+        .top-banner-header-1 {
+            font-size: 16px;
+        }
+
+        .top-sao-logo-1 {           
+            height: 30px;
+        }
+
+        .top-banner-description-1 {
+          font-size: 12px;
+        }
+    }
+
 }
 </style>
 {% endblock%}
 
 {% block top_banner_content %}
 <section>
-  <div class="top-banner">
+  <div class="top-banner-1">
     <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/login-top-banner.png' %}"></img>
-    <div class="top-sao-logo"></div>
-    <div class="top-banner-header">
+    <div class="top-banner-right">
+    <img src="/static/Polly-graphics/general/SAO-logo.png" class="top-sao-logo-1"></img>
+    <div class="top-banner-header-1">
         <p>Integrated</p>
         <p>Counselling Service</p>
     </div>
-    <div class="top-banner-description">
-      <p>Welcome to Integrated Counselling Service!</p>
-      <p>We are here to recommend to our psychological services that will suit your needs. let's start and explore!</p>
+    <div class="top-banner-description-1">
+      <p>Welcome to the <i>Integrated Counselling Service</i>!</p>
+      <p>We are here to recommend to you our psychological services. Let’s start and explore!</p>
     </div>
-    <form method="GET" action="{% url 'index' %}">
+    <form style="text-align: center;" method="GET" action="{% url 'index' %}">
       <div class="login-button">
         <button type="submit">Login</button>
       </div>
     </form>
+    </div>
   </div>
 </section>
 
