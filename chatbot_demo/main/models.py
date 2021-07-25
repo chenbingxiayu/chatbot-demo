@@ -38,10 +38,10 @@ class StaffStatus(models.Model):
         ADMIN = 'admin', _('Admin')
 
     class ChatStatus(models.TextChoices):
-        AVAILABLE = 'available', _('Available'),
-        AWAY = 'away', _('Away'),
-        ASSIGNED = 'assigned', _('Assigned'),
-        CHATTING = 'chatting', _('Chatting'),
+        AVAILABLE = 'available', _('Available')
+        AWAY = 'away', _('Away')
+        ASSIGNED = 'assigned', _('Assigned')
+        CHATTING = 'chatting', _('Chatting')
         OFFLINE = 'offline', _('Offline')
 
     staff_netid = models.CharField(max_length=64, primary_key=True)
@@ -112,9 +112,10 @@ class StudentChatStatus(models.Model):
         db_table = 'student-chat-status'
 
     class ChatStatus(models.TextChoices):
-        WAITING = 'waiting', _('Waiting'),
-        CHATTING = 'chatting', _('Chatting'),
+        WAITING = 'waiting', _('Waiting')
+        CHATTING = 'chatting', _('Chatting')
         ASSIGNED = 'assigned', _('Assigned')
+        END = 'end', _('End')
 
     id = models.AutoField(primary_key=True)
     student_netid = models.CharField(max_length=64, unique=True)
@@ -161,7 +162,7 @@ class StudentChatHistory(models.Model):
     @classmethod
     def append_end_chat(cls, student: StudentChatStatus, time: datetime):
         cls(student_netid=student.student_netid,
-            student_chat_status=student.student_chat_status,
+            student_chat_status=StudentChatStatus.ChatStatus.END,
             chat_request_time=student.chat_request_time,
             chat_start_time=student.chat_start_time,
             chat_end_time=time,
