@@ -3,8 +3,8 @@ from typing import Dict
 
 import jwt
 from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth.models import User
 
+from main.models import User
 from main.exceptions import UnauthorizedException
 
 
@@ -12,9 +12,9 @@ class AuthBackend(ModelBackend):
     """Log in to Django without providing a password.
     """
 
-    def authenticate(self, request, username: str = None):
+    def authenticate(self, request, netid: str = None):
         try:
-            return User.objects.get(username=username)
+            return User.objects.get(netid=netid)
         except User.DoesNotExist:
             raise UnauthorizedException('Unauthorized staff.')
 
