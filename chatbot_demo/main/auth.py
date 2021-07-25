@@ -43,9 +43,9 @@ class SSOAuth:
         decoded_jwt = jwt.decode(token, self.secret, audience=self.aud, algorithms=[self.algorithm])
         return decoded_jwt
 
-    def encode(self, token: str) -> Dict:
-        decoded_jwt = jwt.encode(token, self.secret, algorithm=self.algorithm)
-        return decoded_jwt
+    def encode(self, data: Dict) -> str:
+        encoded_jwt = jwt.encode(data, self.secret, algorithm=self.algorithm)
+        return encoded_jwt
 
 
 sso_auth = SSOAuth()

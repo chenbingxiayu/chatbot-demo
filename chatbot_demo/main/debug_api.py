@@ -42,6 +42,7 @@ def addstud(request):
     :return:
     """
     student_netid = request.POST.get('student_netid')
+    status = request.POST.get('status')
     if not student_netid:
         return JsonResponse({"error": "Invalid student ID"}, status=400)
 
@@ -49,6 +50,8 @@ def addstud(request):
         .get_or_create(student_netid=student_netid.upper(),
                        defaults={'chat_request_time': timezone.now()})
     msg = f"{student} is {'created' if created else 'updated'}"
+    if status:
+        student.add_to_queue()
     return JsonResponse({'status': 'success', 'message': msg}, status=201)
 
 
