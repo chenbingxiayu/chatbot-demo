@@ -51,6 +51,8 @@ class UserChangeForm(forms.ModelForm):
 
 
 class StaffUserAdmin(UserAdmin):
+    """A custom user management section. Replaced username to netid.
+    """
     form = UserChangeForm
     add_form = UserCreationForm
 

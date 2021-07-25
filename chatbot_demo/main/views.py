@@ -332,8 +332,7 @@ def login_all(request):
 @csrf_exempt
 def login_sso(request):
     # redirect to rapid connect server
-    # response = redirect(sso_auth.destination)
-    response = redirect('login_sso_callback')
+    response = redirect(sso_auth.destination)
     return response
 
 
