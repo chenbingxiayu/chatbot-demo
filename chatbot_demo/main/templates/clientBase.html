@@ -1,3 +1,4 @@
+{% load render_bundle from webpack_loader %} 
 {% load static %}
 
  <!--<!DOCTYPE html>-->
@@ -132,6 +133,7 @@
     .main-content {
       height: auto;
       background-color: #fefae4;
+      padding-bottom: 40px;
     }
 
     .max-width-2 {
@@ -160,7 +162,7 @@
     }
 
     .botui-container {
-        background: url('../static/Polly-graphics/general/general-bg.png') no-repeat center center #eff7d7;
+        background: url('/static/Polly-graphics/general/general-bg.png') no-repeat center center #eff7d7;
         background-size: cover;
         -o-background-size: cover;
         -moz-background-size: cover;
@@ -169,7 +171,7 @@
 
     .botui {
       height: auto;
-      background: url("../static/Polly-graphics/general/general-bg.png")
+      background: url("/static/Polly-graphics/general/general-bg.png")
         no-repeat center center #eff7d7;
       background-size: cover;
       -o-background-size: cover;
@@ -180,7 +182,7 @@
     .botui-header {
         padding-top: 120px; 
         width: 100%;
-        background: url('../static/Polly-graphics/general/polly-full.png') no-repeat 30px 5px;
+        background: url('/static/Polly-graphics/general/polly-full.png') no-repeat 30px 5px;
         background-size: contain;
         -o-background-size: contain;
         -moz-background-size: contain;
@@ -230,7 +232,7 @@
         }
 
         .botui-header {
-            background: url(../static/Polly-graphics/general/polly-full.png) no-repeat 10px 5px;
+            background: url(/static/Polly-graphics/general/polly-full.png) no-repeat 10px 5px;
             background-size: contain;
             background-color: #fcb040; 
             padding-top: 120px;
@@ -310,5 +312,6 @@
 
 {% block footer_script %}
 {% endblock %}
+{% render_bundle 'main' 'js' %}
 </body>
 </html>

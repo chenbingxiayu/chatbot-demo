@@ -1,5 +1,5 @@
 
-{% extends "main/clientBase.html" %}
+{% extends "clientBase.html" %}
 {% load static %}
 
 {% block custom_style %}
@@ -245,9 +245,9 @@
     var polly = '{% static "Polly-graphics/general/polly.png" %}';
     var client = '{% static "Polly-graphics/general/student.png" %}';
     var service_list = true;
+    const isMainPage = true;
 
 </script>
-<script src="{% static 'js/main.js' %}"></script>
 {% endblock footer_script %}
 
 </html>

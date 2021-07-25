@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'webpack_loader',
     'channels',
     'main',
     'tasks',
@@ -193,4 +194,23 @@ CELERY_BEAT_SCHEDULE = {
         "task": "tasks.tasks.assignment_tasks",
         "schedule": timedelta(seconds=60),
     }
+}
+
+
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": not DEBUG,
+        "BUNDLE_DIR_NAME": "/",
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats.json"),
+        "POLL_INTERVAL": 0.1,
+        "TIMEOUT": None,
+        "IGNORE": [".*\.hot-update.js", ".+\.map"]
+    }
+}
+
+ZULIP = {
+    'ADMIN_EMAIL': 'catherinedeveloper989@gmail.com',
+    'DOMAIN_URL': 'https://zulip.cat/',
+    'EMAIL_SUBFFIX': '@zulip.com'
+
 }

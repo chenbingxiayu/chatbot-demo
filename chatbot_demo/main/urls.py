@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.views.i18n import JavaScriptCatalog
 
-from main import views, debug_api
+from main import views, debug_api, chat
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -41,4 +41,15 @@ debug_urls = [
     path('debug/dequeue_student/', debug_api.dequeue_task, name='dequeue_student'),
 ]
 
+chat_urls = [
+    path('chat/student/', chat.student, name='chat_student'),
+    path('chat/counsellor/', chat.counsellor, name='chat_counsellor'),
+    path('chat/subscribe_stream/', chat.subscribe_stream, name='chat_subscribe_stream'),
+    path('chat/unsubscribe_stream/', chat.unsubscribe_stream, name='chat_unsubscribe_stream'),
+    path('chat/delete_stream/', chat.delete_stream, name='chat_delete_stream'),
+    path('chat/delete_stream_in_topic/', chat.delete_stream_in_topic, name='chat_delete_stream_in_topic'),
+    path('chat/stream_room/', chat.stream_room, name='chat_stream_room'),
+]
+
 urlpatterns += debug_urls
+urlpatterns += chat_urls
