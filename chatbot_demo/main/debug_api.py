@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.forms.models import model_to_dict
 
 from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, ROLE_RANKING
 from tasks.tasks import reassign_counsellor, dequeue_student
@@ -59,17 +60,30 @@ def addstud(request):
 @require_http_methods(['GET'])
 def getstud(request):
     """
-    Get the info (netid and waiting time) of first student in the queue
+    Get the info (netid and waiting time) of first student in the queue.
+    Get a student if student_netid is specified.
 
     :param request:
+    :param student_netid:
     :return:
     """
-    res = StudentChatStatus.objects \
-        .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
-        .order_by('chat_request_time') \
-        .first()
-    serialized_data = serializers.serialize('python', [res])
-    return JsonResponse(serialized_data[0], safe=False, status=200)
+    student_netid = request.GET.get('student_netid')
+    if student_netid:
+        try:
+            student = StudentChatStatus.objects.get(student_netid=student_netid)
+            student_data = model_to_dict(student)
+        except StudentChatStatus.DoesNotExist as e:
+            logger.warning(e)
+            student_data = dict()
+
+        return JsonResponse(student_data, status=200)
+    else:
+        res = StudentChatStatus.objects \
+                  .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
+                  .order_by('chat_request_time') \
+                  .all()[:1]
+        serialized_data = serializers.serialize('python', res)
+        return JsonResponse(serialized_data[:1], safe=False, status=200)
 
 
 @csrf_exempt
