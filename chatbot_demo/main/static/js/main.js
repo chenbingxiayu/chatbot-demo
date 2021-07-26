@@ -729,7 +729,6 @@
         return botui.action
           .button({
             addMessage: false,
-            action: [{ text: "Mental Health Educational Materials" }],
             action: [{ text: "Mental Health Educational Materials/Resources" }],
           })
           .then(function (res) {
