@@ -1215,7 +1215,7 @@
     }
 
     function T_and_C_of_OCS() {
-      return Promise.resolve().then(questions_before_OCS);
+      // return Promise.resolve().then(questions_before_OCS);
       //Online Chat Services
       var myDate = new Date();
       pop_msg = "";
@@ -1233,7 +1233,7 @@
           "We'll be back at 0900(HKT) in the following working day. We look forward to meeting you !";
       }
 
-      pop_msg = "";
+      // pop_msg = "";
 
       if (pop_msg != "") {
         botui.message
@@ -1478,202 +1478,200 @@
                     if (res.value == false) {
                       // TODO student id
                       const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
-                      return (
-                        botui.message
-                          .human({
-                            delay: 500,
+                      return botui.message
+                        .human({
+                          delay: 500,
+                          photo: client,
+                          content: res.text,
+                        })
+                        .then(function() {
+                          return botui.message.bot({
+                            delay: 1000,
+                            photo: polly,
+                            content:
+                              "Please fill in the following information prior starting a conversation with SAO counsellor",
+                          });
+                        })
+                        .then(function() {
+                          return botui.action.text({
+                            addMessage: false,
+                            action: {
+                              size: 30,
+                              placeholder: "Personal Contact Number:",
+                            },
+                          });
+                        })
+                        .then(function(res) {
+                          personalInfo["contactNumber"] = res.value;
+                          console.log(personalInfo);
+                          return botui.message.add({
+                            human: true,
                             photo: client,
-                            content: res.text,
-                          })
-                          // .then(function() {
-                          //   return botui.message.bot({
-                          //     delay: 1000,
-                          //     photo: polly,
-                          //     content:
-                          //       "Please fill in the following information prior starting a conversation with SAO counsellor",
-                          //   });
-                          // })
-                          // .then(function() {
-                          //   return botui.action.text({
-                          //     addMessage: false,
-                          //     action: {
-                          //       size: 30,
-                          //       placeholder: "Personal Contact Number:",
-                          //     },
-                          //   });
-                          // })
-                          // .then(function(res) {
-                          //   personalInfo["contactNumber"] = res.value;
-                          //   console.log(personalInfo);
-                          //   return botui.message.add({
-                          //     human: true,
-                          //     photo: client,
-                          //     content: "Personal contact number is " + res.value,
-                          //   });
-                          // })
-                          // .then(function(res) {
-                          //   return botui.action.text({
-                          //     addMessage: false,
-                          //     action: {
-                          //       size: 30,
-                          //       placeholder: "Emergency Contact Name",
-                          //     },
-                          //   });
-                          // })
-                          // .then(function(res) {
-                          //   personalInfo["emergencyContactName"] = res.value;
-                          //   console.log(personalInfo);
-                          //   return botui.message.add({
-                          //     human: true,
-                          //     photo: client,
-                          //     content: "Emergency contact name is " + res.value,
-                          //   });
-                          // })
-                          // .then(function(res) {
-                          //   return botui.action.text({
-                          //     addMessage: false,
-                          //     action: {
-                          //       size: 30,
-                          //       placeholder: "Relationship",
-                          //     },
-                          //   });
-                          // })
-                          // .then(function(res) {
-                          //   personalInfo["relationship"] = res.value;
-                          //   console.log(personalInfo);
-                          //   return botui.message.add({
-                          //     human: true,
-                          //     photo: client,
-                          //     content: "Relationship is " + res.value,
-                          //   });
-                          // })
-                          // .then(function(res) {
-                          //   return botui.action.text({
-                          //     addMessage: false,
-                          //     action: {
-                          //       size: 30,
-                          //       placeholder: "Emergency Contact Number",
-                          //     },
-                          //   });
-                          // })
-                          // .then(function(res) {
-                          //   personalInfo["emergencyContactNumber"] = res.value;
-                          //   console.log(personalInfo);
-                          //   return botui.message.add({
-                          //     human: true,
-                          //     photo: client,
-                          //     content: "Emergency contact number is " + res.value,
-                          //   });
-                          // })
-                          .then(function() {
-                            return botui.message.bot({
-                              delay: 1000,
-                              photo: polly,
-                              content: "Proceeding to Online Chat Service",
-                            });
-                          })
-                          .then(async function() {
-                            await addToQueue(student_netid);
-                            await botui.message.add({
-                              delay: 1000,
-                              photo: polly,
-                              content:
-                                "Please wait, I am now finding a counsellor to chat with you.",
-                            });
+                            content: "Personal contact number is " + res.value,
+                          });
+                        })
+                        .then(function(res) {
+                          return botui.action.text({
+                            addMessage: false,
+                            action: {
+                              size: 30,
+                              placeholder: "Emergency Contact Name",
+                            },
+                          });
+                        })
+                        .then(function(res) {
+                          personalInfo["emergencyContactName"] = res.value;
+                          console.log(personalInfo);
+                          return botui.message.add({
+                            human: true,
+                            photo: client,
+                            content: "Emergency contact name is " + res.value,
+                          });
+                        })
+                        .then(function(res) {
+                          return botui.action.text({
+                            addMessage: false,
+                            action: {
+                              size: 30,
+                              placeholder: "Relationship",
+                            },
+                          });
+                        })
+                        .then(function(res) {
+                          personalInfo["relationship"] = res.value;
+                          console.log(personalInfo);
+                          return botui.message.add({
+                            human: true,
+                            photo: client,
+                            content: "Relationship is " + res.value,
+                          });
+                        })
+                        .then(function(res) {
+                          return botui.action.text({
+                            addMessage: false,
+                            action: {
+                              size: 30,
+                              placeholder: "Emergency Contact Number",
+                            },
+                          });
+                        })
+                        .then(function(res) {
+                          personalInfo["emergencyContactNumber"] = res.value;
+                          console.log(personalInfo);
+                          return botui.message.add({
+                            human: true,
+                            photo: client,
+                            content: "Emergency contact number is " + res.value,
+                          });
+                        })
+                        .then(function() {
+                          return botui.message.bot({
+                            delay: 1000,
+                            photo: polly,
+                            content: "Proceeding to Online Chat Service",
+                          });
+                        })
+                        .then(async function() {
+                          await addToQueue(student_netid);
+                          await botui.message.add({
+                            delay: 1000,
+                            photo: polly,
+                            content:
+                              "Please wait, I am now finding a counsellor to chat with you.",
+                          });
 
-                            const stu = await getStatusByStudentNetId(
+                          const stu = await getStatusByStudentNetId(
+                            student_netid
+                          );
+
+                          if (stu.student_chat_status === "waiting") {
+                            const queueList = await getQueueStatus(
                               student_netid
                             );
 
-                            if (stu.student_chat_status === "waiting") {
-                              const queueList = await getQueueStatus(
+                            const waitingNo = queueList.findIndex(
+                              (student) =>
+                                student.fields.student_netid == student_netid
+                            );
+                            await waitSubsribe(student_netid, waitingNo);
+                          }
+
+                          return Promise.resolve(stu.student_chat_status);
+                        })
+                        .then(async function(status) {
+                          let currentStatus = status;
+                          if (currentStatus == "waiting") {
+                            while (true) {
+                              // request after 2 mins(120000 = 2 * 60 * 1000)
+                              await new Promise((resolve) =>
+                                setTimeout(resolve, 120000)
+                              );
+
+                              const stu = await getStatusByStudentNetId(
                                 student_netid
                               );
 
-                              const waitingNo = queueList.findIndex(
-                                (student) =>
-                                  student.fields.student_netid == student_netid
-                              );
-                              await waitSubsribe(student_netid, waitingNo);
-                            }
+                              if (stu.student_chat_status === "waiting") {
+                                const queueList = await getQueueStatus(
+                                  student_netid
+                                );
 
-                            return Promise.resolve(stu.student_chat_status);
-                          })
-                          .then(async function(status) {
-                            let currentStatus = status;
-                            if (currentStatus == "waiting") {
-                              while (true) {
+                                const waitingNo = queueList.findIndex(
+                                  (student) =>
+                                    student.fields.student_netid ==
+                                    student_netid
+                                );
+                                await waitSubsribe(student_netid, waitingNo);
+                              } else {
+                                // assign or end
+                                currentStatus = stu.student_chat_status;
+                                break;
+                              }
+                            }
+                          }
+
+                          if (currentStatus.toLocaleLowerCase() === "end") {
+                            throw new Error(
+                              "Thank you for using our service, you may make an appointment with our counsellor via POSS or call 2766 6800 if needed."
+                            );
+                          }
+
+                          if (
+                            currentStatus.toLocaleLowerCase() === "assigned"
+                          ) {
+                            while (true) {
+                              const stu = await getStatusByStudentNetId(
+                                student_netid
+                              );
+                              if (stu.student_chat_status === "chatting") {
+                                await botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content: `please click the <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor_id}">link</a> to enter the chat room.`,
+                                });
+                                break;
+                              } else {
+                                await botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content:
+                                    "You have been assigned to a counsellor, please wait.",
+                                });
                                 // request after 2 mins(120000 = 2 * 60 * 1000)
                                 await new Promise((resolve) =>
-                                  setTimeout(resolve, 5000)
+                                  setTimeout(resolve, 120000)
                                 );
-
-                                const stu = await getStatusByStudentNetId(
-                                  student_netid
-                                );
-
-                                if (stu.student_chat_status === "waiting") {
-                                  const queueList = await getQueueStatus(
-                                    student_netid
-                                  );
-
-                                  const waitingNo = queueList.findIndex(
-                                    (student) =>
-                                      student.fields.student_netid ==
-                                      student_netid
-                                  );
-                                  await waitSubsribe(student_netid, waitingNo);
-                                } else {
-                                  // assign or end
-                                  currentStatus = stu.student_chat_status;
-                                  break;
-                                }
                               }
                             }
-
-                            if (currentStatus.toLocaleLowerCase() === "end") {
-                              throw new Error(
-                                "Thank you for using our service, you may make an appointment with our counsellor via POSS or call 2766 6800 if needed."
-                              );
-                            }
-
-                            if (
-                              currentStatus.toLocaleLowerCase() === "assigned"
-                            ) {
-                              while (true) {
-                                const stu = await getStatusByStudentNetId(
-                                  student_netid
-                                );
-                                if (stu.student_chat_status === "chatting") {
-                                  await botui.message.add({
-                                    delay: 1000,
-                                    photo: polly,
-                                    content: `please click the <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor_id}">link</a> to enter the chat room.`,
-                                  });
-                                  break;
-                                } else {
-                                  await botui.message.add({
-                                    delay: 1000,
-                                    photo: polly,
-                                    content:
-                                      "You have been assigned to a counsellor, please wait.",
-                                  });
-                                  // request after 2 mins(120000 = 2 * 60 * 1000)
-                                  await new Promise((resolve) =>
-                                    setTimeout(resolve, 5000)
-                                  );
-                                }
-                              }
-                            }
-                          })
-                          .catch(function(e) {
-                            return botui.message.add({
-                              delay: 1000,
-                              photo: polly,
-                              content: e.message,
-                            });
-                          })
-                      );
+                          }
+                        })
+                        .catch(function(e) {
+                          return botui.message.add({
+                            delay: 1000,
+                            photo: polly,
+                            content: e.message,
+                          });
+                        });
                       // .then(function () {
                       //   return botui.message.add({
                       //     delay: 1000,
@@ -2199,7 +2197,6 @@
     }
 
     function isSAOWorkingHours(now) {
-      return true;
       var weekday = now.getDay();
       var hours = now.getHours();
       // Mon - Fri
