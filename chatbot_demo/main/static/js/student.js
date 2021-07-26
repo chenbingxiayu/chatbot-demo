@@ -1,5 +1,5 @@
 (async () => {
-  if (isStudentPage) {
+  if ("undefined" != typeof isStudentPage && isStudentPage) {
     const zulip = require("zulip-js");
 
     // const isStudent = localStorage.getItem("is_student");

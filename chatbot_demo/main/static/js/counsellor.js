@@ -1,5 +1,5 @@
 (async () => {
-  if (isCounsellorPage) {
+  if ("undefined" != typeof isCounsellorPage && isCounsellorPage) {
     const zulip = require("zulip-js");
 
     const pollyImg = document.getElementById("polly-img").value;
@@ -117,7 +117,7 @@
         );
         if (result == true) {
           const response = await $.ajax({
-            url: "/chat/unsubscribe_stream",
+            url: "/main/chat/unsubscribe_stream/",
             method: "POST",
             dataType: "json",
             data: JSON.stringify({
@@ -128,7 +128,7 @@
 
           if (response.status == "success") {
             const response = await $.ajax({
-              url: "/chat/delete_stream_in_topic",
+              url: "/main/chat/delete_stream_in_topic/",
               method: "POST",
               dataType: "json",
               data: JSON.stringify({

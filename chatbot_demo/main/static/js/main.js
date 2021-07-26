@@ -1581,27 +1581,23 @@
                                 "Please wait, I am now finding a counsellor to chat with you.",
                             });
 
-                            const queueList = await getQueueStatus(
+                            const stu = await getStatusByStudentNetId(
                               student_netid
                             );
 
-                            const waitingNo = queueList.findIndex(
-                              (student) =>
-                                student.fields.student_netid == student_netid
-                            );
+                            if (stu.student_chat_status === "waiting") {
+                              const queueList = await getQueueStatus(
+                                student_netid
+                              );
 
-                            const stu = queueList.find(
-                              (student) =>
-                                student.fields.student_netid == student_netid
-                            );
-
-                            if (stu.fields.student_chat_status === "waiting") {
+                              const waitingNo = queueList.findIndex(
+                                (student) =>
+                                  student.fields.student_netid == student_netid
+                              );
                               await waitSubsribe(student_netid, waitingNo);
                             }
 
-                            return Promise.resolve(
-                              stu.fields.student_chat_status
-                            );
+                            return Promise.resolve(stu.student_chat_status);
                           })
                           .then(async function(status) {
                             let currentStatus = status;
@@ -1612,30 +1608,24 @@
                                   setTimeout(resolve, 5000)
                                 );
 
-                                const queueList = await getQueueStatus(
+                                const stu = await getStatusByStudentNetId(
                                   student_netid
                                 );
 
-                                const stu = queueList.find(
-                                  (student) =>
-                                    student.fields.student_netid ==
+                                if (stu.student_chat_status === "waiting") {
+                                  const queueList = await getQueueStatus(
                                     student_netid
-                                );
+                                  );
 
-                                const waitingNo = queueList.findIndex(
-                                  (student) =>
-                                    student.fields.student_netid ==
-                                    student_netid
-                                );
-
-                                if (
-                                  stu.fields.student_chat_status === "waiting"
-                                ) {
+                                  const waitingNo = queueList.findIndex(
+                                    (student) =>
+                                      student.fields.student_netid ==
+                                      student_netid
+                                  );
                                   await waitSubsribe(student_netid, waitingNo);
                                 } else {
                                   // assign or end
-                                  currentStatus =
-                                    stu.fields.student_chat_status;
+                                  currentStatus = stu.student_chat_status;
                                   break;
                                 }
                               }
@@ -1650,17 +1640,32 @@
                             if (
                               currentStatus.toLocaleLowerCase() === "assigned"
                             ) {
-                              // TODO
+                              while (true) {
+                                const stu = await getStatusByStudentNetId(
+                                  student_netid
+                                );
+                                if (stu.student_chat_status === "chatting") {
+                                  await botui.message.add({
+                                    delay: 1000,
+                                    photo: polly,
+                                    content: `please click the <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor_id}">link</a> to enter the chat room.`,
+                                  });
+                                  break;
+                                } else {
+                                  await botui.message.add({
+                                    delay: 1000,
+                                    photo: polly,
+                                    content:
+                                      "You have been assigned to a counsellor, please wait.",
+                                  });
+                                  // request after 2 mins(120000 = 2 * 60 * 1000)
+                                  await new Promise((resolve) =>
+                                    setTimeout(resolve, 5000)
+                                  );
+                                }
+                              }
                             }
                           })
-                          // .then(function() {
-                          //   return botui.message.add({
-                          //     delay: 3000,
-                          //     photo: polly,
-                          //     content:
-                          //       'For student, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">link</a> to enter the chat room.',
-                          //   });
-                          // })
                           .catch(function(e) {
                             return botui.message.add({
                               delay: 1000,
@@ -3828,6 +3833,16 @@
       return await $.ajax({
         url: "/main/debug/deletestud/",
         method: "POST",
+        data: {
+          student_netid: student_netid,
+        },
+      });
+    };
+
+    const getStatusByStudentNetId = async (student_netid) => {
+      return await $.ajax({
+        url: "/main/debug/getstud/",
+        method: "GET",
         data: {
           student_netid: student_netid,
         },

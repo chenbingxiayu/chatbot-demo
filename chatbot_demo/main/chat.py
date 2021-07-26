@@ -12,8 +12,8 @@ client = ZulipClient(config_file=config_file)
 email_suffix = settings.ZULIP['EMAIL_SUBFFIX']
 
 
-def _construct_stream_name(staff_email: str):
-    return f"{staff_email}"
+def _construct_stream_name(staff_netid: str):
+    return f"{staff_netid}_chatroom"
 
 
 def student(request):
@@ -22,7 +22,7 @@ def student(request):
         student_email = student_netid + email_suffix
         staff_netid = request.GET.get('staff_netid', '10')
         staff_email = staff_netid + email_suffix
-        stream_name = _construct_stream_name(staff_email)
+        stream_name = _construct_stream_name(staff_netid)
 
         users = client.get_users()
         
@@ -42,7 +42,6 @@ def student(request):
 
         return render(request, 'chat/chat_student.html', page_info)
     except Exception as e:
-        print("=======")
         print(e)
 
 
@@ -62,10 +61,10 @@ def counsellor(request):
 
         # We will use `${staff_email}` to construct the stream name.
         stream_name = _construct_stream_name(
-            staff_email=staff_email)
+            staff_netid=staff_netid)
 
         stream_id = client.get_stream_id(stream_name)
-        print('===', stream_id)
+
         if stream_id is None:
             client.create_stream(stream_name=stream_name, user_ids=[
                 student_email, staff_email])
@@ -118,7 +117,7 @@ def subscribe_stream(request):
         subscribers_email.append(subscriber_email)
 
     stream_name = _construct_stream_name(
-        staff_email=staff_email
+        staff_netid=staff_netid
     )
 
     try:
@@ -168,7 +167,7 @@ def unsubscribe_stream(request):
         subscribers_email.append(subscriber_email)
 
     stream_name = _construct_stream_name(
-        staff_email=staff_email,
+        staff_netid=staff_netid,
     )
 
     try:
@@ -201,7 +200,7 @@ def delete_stream(request):
     staff_email = staff_netid + email_suffix
 
     stream_name = _construct_stream_name(
-        staff_email=staff_email
+        staff_netid=staff_netid
     )
 
     try:
@@ -238,7 +237,7 @@ def stream_room(request):
         staff_email = staff_netid + email_suffix
 
         stream_name = _construct_stream_name(
-            staff_email=staff_email
+            staff_netid=staff_netid
         )
 
         stream_id = client.get_stream_id(stream_name)
@@ -277,7 +276,7 @@ def delete_stream_in_topic(request):
     staff_email = staff_netid + email_suffix
 
     stream_name = _construct_stream_name(
-        staff_email=staff_email
+        staff_netid=staff_netid
     )
 
     try:
