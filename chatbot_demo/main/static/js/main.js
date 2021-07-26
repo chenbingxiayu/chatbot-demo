@@ -9,6 +9,7 @@
   var finish_assessment = false;
   select_language();
 
+
   function select_language() {
     return botui.message
       .bot({
@@ -58,9 +59,6 @@
       });
   }
 
-  function init_choices_tc() {
-    alert("ok!");
-  }
 
   function init_choices() {
     var office_hour = isSAOWorkingHours(new Date());
@@ -860,7 +858,7 @@
               addMessage: false,
               action: [
                 { text: "Make Appointment with SAO Counsellors", value: 3 },
-                { text: "Mental Health Educational Materials", value: 1 },
+                { text: "Mental Health Educational Materials/Resources", value: 1 },
                 {
                   text:
                     "Immediate Contact with PolyU-Line Counsellors: (852)81001583",
@@ -1701,7 +1699,7 @@
       .bot({
         loading: true,
         photo: polly,
-        delay: 3000,
+        delay: 100,
         content:
           'Emergency Call: (852)999<br/>Social Welfare Department: (852)23432255<br/>Caritas Family Crisis Support Centre: (852)18288<br/>Suicide Prevention Services: (852)23820000<br/>The Samaritans Multi-lingual Suicide Prevention(852)2896-0000<br/>The Hong Kong Jockey Club Charities Trust, Open Up-24-hour online chat platform: <a href="www.openup.hk" target ="_blank">www.openup.hk</a><br/>',
       })
@@ -2040,7 +2038,7 @@
               addMessage: false,
               action: [
                 { text: "網上聊天機械人", value: 1 },
-                { text: "心理健康教育資訊", value: 2 },
+                { text: "心理健康教育資訊/資源", value: 2 },
                 { text: "預約輔導服務", value: 5 },
                 {
                   text: "立即與PolyU-Line輔導員聯絡 : (852) 8100 1583",
@@ -2956,7 +2954,7 @@
             '5. <a href="http://www.google.com" target ="_blank">精神健康</a><br/>' +
             '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS心理健康小組及工作坊</a><br>' +
             '7. <a href="http://www.google.com" target ="_blank">其他</a><br/>' +
-            "<br><br>*在緊急情況下，請即致電999或到鄰近的急症室求助。", //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
+            "<br><br>*如果你正身處緊急情況及/或險境，並有感自身及/或他人有即時的生命危險，請即致電999或到鄰近的急症室求助。", //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
         });
       })
       .then(function() {
@@ -3558,7 +3556,7 @@
       .bot({
         loading: true,
         photo: polly,
-        delay: 3000,
+        delay: 100,
         content:
           '緊急求助電話號碼：(852)999<br/>社會福利署熱線：(852)23432255<br/>明愛向晴熱線：(852)18288<br/>生命熱線中心：(852)23820000<br/>撒瑪利亞會 － 24小時中文及多種語言防止自殺服務：(852)2896-0000<br/>賽馬會青少年情緒健康24小時網上支援平台「Open噏」：<a href="www.openup.hk" target ="_blank">www.openup.hk</a><br/>',
       })
