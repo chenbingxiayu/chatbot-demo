@@ -730,6 +730,7 @@
           .button({
             addMessage: false,
             action: [{ text: "Mental Health Educational Materials" }],
+            action: [{ text: "Mental Health Educational Materials/Resources" }],
           })
           .then(function (res) {
             return botui.message.human({
@@ -771,7 +772,7 @@
               addMessage: false,
               action: [
                 { text: "Make Appointment with SAO Counsellors", value: 3 },
-                { text: "Mental Health Educational Materials", value: 1 },
+                { text: "Mental Health Educational Materials/Resources", value: 1 },
                 { text: "Immediate Contact with SAO Counsellors", value: 4 },
                 { text: "Online Chat Service(Live)", value: 2 },
                 { text: "Community Helpline", value: 6 },
@@ -1082,7 +1083,7 @@
             '4. <a href="http://www.google.com" target ="_blank">Family</a><br/>'+
             '5. <a href="http://www.google.com" target ="_blank">Mental Health</a><br/>'+
             '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS Psychological workshops and groups</a><br>'+
-            '7. <a href="http://www.google.com" target ="_blank">Other</a><br/>' +
+            '7. <a href="http://www.google.com" target ="_blank">Others</a><br/>' +
             '<br><br>*In case of emergency, please call 999 or go to the nearest emergency  / A&E service.',
         });
       })
@@ -1361,7 +1362,7 @@
             delay: 1500,
             photo: polly,
             content:
-              "Q1. Have you ever seen SAO counsellor(s) in the last three months or/and at present?",
+              "Q1. Have you ever received counselling from SAO counsellor(s) in the last three months and/or at present?",
           })
           .then(function () {
             return botui.action.button({
@@ -1744,7 +1745,7 @@
                       photo: polly,
                       delay: 1000,
                       content: (content =
-                        "<font color=black>In case of emergency and when there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency service / A&E service.</font>"),
+                        "<font color=black>In case of emergency, please call 999 or go to the nearest emergency  / A&E service.</font>"),
                     });
                   }
                 })
@@ -1921,10 +1922,10 @@ function init_choices_tc() {
               addMessage: false,
               action: [
                 { text: "網上聊天機械人", value: 1 },
-                { text: "心理健康教育資訊", value: 2 },
+                { text: "心理健康教育資訊/資源", value: 2 },
                 { text: "線上聊天", value: 4 },
                 { text: "預約輔導服務", value: 5 },
-                { text: "立即與SAO輔導員聯絡", value: 3 },
+                { text: "立即與學生事務處 (SAO)輔導員聯絡", value: 3 },
                 { text: "緊急支援", value: 6 },
               ],
             })
@@ -2089,7 +2090,7 @@ function init_choices_tc() {
         loading: true,
         delay: 3000,
         content:
-          'Hello! This is Polly. 我會根據你以下所提供的訊息，為你建議合適的服務。<br/><br/>如欲查詢有關學生事務處的其他服務，請參閱以下連結 <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
+          '你好，我是Polly。我會根據你以下所提供的訊息，為你建議合適的服務。<br/><br/>如欲查詢有關學生事務處的其他服務，請參閱以下連結 <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
       })
       .then(function () {
         return botui.message.bot({
@@ -2565,7 +2566,7 @@ function init_choices_tc() {
         return botui.action
           .button({
             addMessage: false,
-            action: [{ text: "心理健康教育 " }],
+            action: [{ text: "心理健康教育資訊/資源" }],
           })
           .then(function (res) {
             return botui.message.human({
@@ -3451,7 +3452,7 @@ function init_choices_tc() {
         photo: polly,
         delay: 1500,
         content:
-          '<font color=black>在緊急情況下，請即致電999或到鄰近的急症室求助。</font>',//? In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.
+          '<font color=black>如你正身處緊急情況, 請致電999或到鄰近的急症室求助。</font>',//? In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.
       }).then(function(){
         var office_hour = isSAOWorkingHours(new Date());
         if (office_hour == true) {
