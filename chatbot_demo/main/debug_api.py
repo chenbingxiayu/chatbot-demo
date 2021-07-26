@@ -15,7 +15,7 @@ from main.models import (
     StaffStatus,
     StudentChatStatus,
     StudentChatHistory,
-    CounsellingServiceSession,
+    ChatBotSession,
     ROLE_RANKING
 )
 from main.utils import hk_time
@@ -358,7 +358,7 @@ def add_survey_data(request):
     survey_data = json.loads(request.body.decode('utf-8'))
     now = timezone.now().astimezone(hk_time) - timedelta(days=1)
     today = now.date()
-    CounsellingServiceSession(
+    ChatBotSession(
         date=today,
         start_time=now.time(),
         end_time=(now + timedelta(seconds=15 * 60)).time(),
@@ -391,7 +391,16 @@ def export_statistics(request):
     from_date = timezone.now().date() - timedelta(days=1)
     to_date = timezone.now().date()
 
-    CounsellingServiceSession.statis_overview(from_date, to_date)
+    ChatBotSession.statis_overview(from_date, to_date)
+    return JsonResponse({'status': 'success'}, status=200)
+
+
+@csrf_exempt
+@require_http_methods(['GET'])
+def get_red_route(request):
+    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
+
+    ChatBotSession.get_red_route(from_date)
     return JsonResponse({'status': 'success'}, status=200)
 
 
@@ -400,5 +409,5 @@ def export_statistics(request):
 def export_red_route(request):
     from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
 
-    CounsellingServiceSession.get_red_route(from_date)
+    ChatBotSession.get_red_route_to_excel(from_date)
     return JsonResponse({'status': 'success'}, status=200)

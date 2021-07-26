@@ -3,6 +3,7 @@ from __future__ import unicode_literals, annotations
 import logging
 from datetime import datetime
 
+import xlwt
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -139,15 +140,19 @@ class StudentChatStatus(models.Model):
 class StudentChatHistory(models.Model):
     """
     Attributes
-        session_id:                     Primary key of this table
-        student_netid:          Student's net ID
-        student_chat_status:    Student's chat status
-        chat_request_time:      The time that this student make the chat request
-        chat_start_time:        The time that the chat starts
-        chat_end_time:          The time that the chat ends
-        assigned_counsellor:    The counsellor assigned to this student
-        is_supervisor_join:     Whether a supervisory joined or not
-        is_no_show:             Whether the student is no show
+        session_id:                 Primary key of this table
+        student_netid:              Student's net ID
+        student_chat_status:        Student's chat status
+        chat_request_time:          The time that this student make the chat request
+        chat_start_time:            The time that the chat starts
+        chat_end_time:              The time that the chat ends
+        assigned_counsellor:        The counsellor assigned to this student
+        is_supervisor_join:         Whether a supervisory joined or not
+        is_no_show:                 Whether the student is no show
+        personal_contact_number:    Contact number of the student
+        emergency_contact_name:     Emergency contact of the student
+        relationship:               The relationship between contact person and the student
+        emergency_contact_number:   Contact number of the emergency contact person
     """
 
     class Meta:
@@ -162,6 +167,10 @@ class StudentChatHistory(models.Model):
     assigned_counsellor = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)
     is_supervisor_join = models.BooleanField(default=False)
     is_no_show = models.BooleanField(default=False)
+    personal_contact_number = models.CharField(max_length=32, null=True)
+    emergency_contact_name = models.CharField(max_length=32, null=True)
+    relationship = models.CharField(max_length=32, null=True)
+    emergency_contact_number = models.CharField(max_length=32, null=True)
 
     def __str__(self):
         return f"ChatHistory({self.student_netid})"
@@ -176,7 +185,7 @@ class StudentChatHistory(models.Model):
             assigned_counsellor=student.assigned_counsellor).save()
 
 
-class CounsellingServiceSession(models.Model):
+class ChatBotSession(models.Model):
     """
     Attributes
         session_id:                     Id of this counselling service session. UUID.hex format
@@ -246,7 +255,6 @@ class CounsellingServiceSession(models.Model):
     score = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(13)])
     first_option = models.CharField(max_length=128, choices=RecommendOptions.choices, null=True)
     feedback_rating = models.IntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
-    chat_record = models.ForeignKey(StudentChatHistory, null=True, on_delete=models.DO_NOTHING)
 
     @classmethod
     def statis_overview(cls, start: datetime, end: datetime):
@@ -277,15 +285,18 @@ class CounsellingServiceSession(models.Model):
         return res
 
     @classmethod
-    def statis_red_students(cls, start_date: datetime):
+    def get_red_route(cls, start_date: datetime):
         res = cls.objects \
             .filter(date__gte=start_date, score__gte=11) \
             .values('student_netid', 'date', 'start_time', 'end_time')
 
         return res
 
-    @staticmethod
-    def to_excel(result):
+    def get_red_route_to_excel(self, start_date: datetime):
+        data = self.get_red_route(start_date)
+
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('Users')
         return
 
 

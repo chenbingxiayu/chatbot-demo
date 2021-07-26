@@ -42,6 +42,7 @@ debug_urls = [
     path('debug/dequeue_student/', debug_api.dequeue_task, name='dequeue_student'),
     path('debug/add_survey_data/', debug_api.add_survey_data, name='add_survey_data'),
     path('debug/export_statistics/', debug_api.export_statistics, name='export_statistics'),
+    path('debug/get_red_route/', debug_api.get_red_route, name='get_red_route'),
     path('debug/export_red_route/', debug_api.export_red_route, name='export_red_route'),
 ]
 
