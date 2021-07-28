@@ -58,5 +58,3 @@ services:
       - .env.docker
     depends_on:
       - redis
-
-
