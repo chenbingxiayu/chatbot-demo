@@ -1572,31 +1572,26 @@
                           });
                         })
                         .then(async function() {
-                          await addToQueue(student_netid);
-                          await botui.message.add({
-                            delay: 1000,
-                            photo: polly,
-                            content:
-                              "Please wait, I am now finding a counsellor to chat with you.",
-                          });
-
-                          const stu = await getStatusByStudentNetId(
+                          const responseMessage = await addToQueue(
                             student_netid
                           );
+                          const isAssigned =
+                            responseMessage.indexOf(
+                              "Student is assigned to a staff"
+                            ) > -1;
 
-                          if (stu.student_chat_status === "waiting") {
-                            const queueList = await getQueueStatus(
-                              student_netid
-                            );
+                          if (isAssigned) {
+                            return Promise.resolve("assigned");
+                          } else {
+                            await botui.message.add({
+                              delay: 1000,
+                              photo: polly,
+                              content:
+                                "Please wait, I am now finding a counsellor to chat with you.",
+                            });
 
-                            const waitingNo = queueList.findIndex(
-                              (student) =>
-                                student.fields.student_netid == student_netid
-                            );
-                            await waitSubsribe(student_netid, waitingNo);
+                            return Promise.resolve("waiting");
                           }
-
-                          return Promise.resolve(stu.student_chat_status);
                         })
                         .then(async function(status) {
                           let currentStatus = status;
@@ -1647,7 +1642,7 @@
                                 await botui.message.add({
                                   delay: 1000,
                                   photo: polly,
-                                  content: `please click the <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor_id}">link</a> to enter the chat room.`,
+                                  content: `please click the <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor}">link</a> to enter the chat room.`,
                                 });
                                 break;
                               } else {
@@ -3801,11 +3796,10 @@
 
     const addToQueue = async (student_netid) => {
       const response = await $.ajax({
-        url: "/main/debug/addstud/",
+        url: "/main/api/addstud/",
         method: "POST",
         data: {
           student_netid: student_netid,
-          status: "waiting",
         },
       });
 

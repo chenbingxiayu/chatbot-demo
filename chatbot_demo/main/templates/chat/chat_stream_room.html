@@ -1,0 +1,152 @@
+{% extends "clientBase.html" %}
+{% load static %}
+
+
+{% block custom_style %}
+<style type="text/css">
+
+  .row.justify-content-center {
+      margin: 0;
+      width: 100%;
+  }
+
+
+    .top-sao-logo-img {
+        width: 100%;
+        height: 185px;
+        position: absolute;
+        top: 0px;
+    }
+
+    .top-banner-1 {
+        display: flex;
+        height: 185px;
+        background-color: #fefae4;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .top-sao-logo-1 {
+        height: 50px;
+        z-index: 10;
+        margin: 0px 20px;
+    }
+
+    .top-banner-header-1 {
+        z-index: 10;
+        font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+        text-align: center;
+        font-weight: bold;
+        font-size: 40px;
+    }
+
+    .top-banner-header-1 p {
+        margin-bottom: 0;
+    }
+
+     @media (max-width: 768px) {
+      .top-banner-header-1 {
+        font-size: 25px;
+      }
+    }
+
+    @media (max-width: 468px) {
+        .top-banner-header-1 {
+            font-size: 16px;
+
+        }
+    }
+</style>
+{% endblock %}
+
+{% block top_banner_content %}
+<section>
+  <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/top-banner.png' %}"></img>
+  <div class="top-banner-1">
+    <img src="/static/Polly-graphics/general/SAO-logo.png" class="top-sao-logo-1"></img>
+    <div class="top-banner-header-1">
+        <p>Integrated Counselling Service</p>
+    </div>
+  </div>
+</section>
+{% endblock top_banner_content %}
+
+{% block main_content %}
+    <section class="main-content">
+      <div class="container">
+        <div class="max-width-2">
+          <div class="row justify-content-center">
+            <div class="col-sm col-md-10 col-lg-8">
+              <div class="chatbox-wrapper">
+                <div id="chatbox" class="botui">
+                  <div class="botui-header">
+                    <div class="botui-header-text">
+                        <p>Welcome to the <i>Integrated Counselling Service</i>!</p>
+                        <p>We are here to recommend to you our </p>
+                        <p>psychological services. Let’s start and explore!</p>
+                    </div>
+                  </div>
+                  <bot-ui></bot-ui>
+                </div>
+            <div id="send-message-div">
+              <div class="input-area input-group mb-3">
+                <input
+                  type="text"
+                  class="form-control botui-actions-text-input"
+                  placeholder="Enter your text here"
+                  aria-label="Enter your text here"
+                  aria-describedby="button-addon2"
+                  id="message-text"
+                />
+                <input hidden id="polly-img" value={% static "Polly-graphics/general/counsellor.png" %}/> 
+                <input hidden id="client-img" value={% static "Polly-graphics/general/student.png" %}/>
+                <input hidden id="supervisor-img" value={% static "Polly-graphics/general/supervisor.png" %}/>
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    id="send-message-btn"
+                  >
+                    Send
+                  </button>
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    id="stream-leave-chatroom-btn"
+                  >
+                    Leave
+                  </button>
+                </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+   
+  {% endblock main_content %} 
+  
+  {% block footer_script %} 
+  <script>
+    const isSupervisorPage = true;
+    const isCounsellorPage = false;
+    const isStudentPage = false;
+    const stream_id = {{stream_id}};
+    const stream_name = "{{stream_name}}";
+    const staffNetid = "{{staff_netid}}";
+    const staffEmail = "{{staff_email}}";
+    const key = "{{key}}";
+    const supervisor_email = "{{supervisor_email}}";
+    const supervisor_netid = "{{supervisor_netid}}";
+
+    localStorage.setItem("supervisor_email", supervisor_email);
+    localStorage.setItem("stream_name", stream_name);
+    localStorage.setItem("key", key);
+
+    const botui = new BotUI("chatbox");
+    const content = document.getElementsByTagName("chatbox");
+  </script>
+   {% endblock footer_script %}
+</html>

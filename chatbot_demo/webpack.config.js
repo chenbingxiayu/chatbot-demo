@@ -54,6 +54,7 @@ module.exports = {
     "./main/static/js/main.js",
     "./main/static/js/student.js",
     "./main/static/js/counsellor.js",
+    "./main/static/js/stream_room.js",
   ],
   output: {
     path: path.resolve("./main/static/"),

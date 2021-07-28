@@ -116,7 +116,7 @@
           "Are you sure you want to end the conversation?"
         );
         if (result == true) {
-          const response = await $.ajax({
+          const unsubscribePromise = $.ajax({
             url: "/main/chat/unsubscribe_stream/",
             method: "POST",
             dataType: "json",
@@ -126,22 +126,41 @@
             }),
           });
 
-          if (response.status == "success") {
-            const response = await $.ajax({
-              url: "/main/chat/delete_stream_in_topic/",
-              method: "POST",
-              dataType: "json",
-              data: JSON.stringify({
-                staff_netid: staffNetid,
-              }),
-            });
+          const deleteChatHistoryPromise = $.ajax({
+            url: "/main/chat/delete_stream_in_topic/",
+            method: "POST",
+            dataType: "json",
+            data: JSON.stringify({
+              staff_netid: staffNetid,
+            }),
+          });
 
-            if (response.status == "success") {
-              console.log("Successfully delete the history");
+          // debug/endchat/
+          const endChatPromise = $.ajax({
+            url: "/main/debug/endchat/",
+            method: "POST",
+            data: {
+              staff_netid: staffNetid,
+              student_netid: studentNetid,
+            },
+          });
+
+          try {
+            const results = await Promise.all([
+              unsubscribePromise,
+              deleteChatHistoryPromise,
+              endChatPromise,
+            ]);
+            const hasError = !!results.find(
+              (result) => result.status !== "success"
+            );
+            if (hasError) {
+              throw new Error(results);
             }
-
+            console.log("Successfully delete the history");
             alert("You have successfully end the conversation.");
-          } else {
+          } catch (error) {
+            console.log(error);
             alert("Ops, Something wrong happened.");
           }
         }
