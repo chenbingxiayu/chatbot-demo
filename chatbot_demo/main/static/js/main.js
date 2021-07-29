@@ -315,7 +315,7 @@
       .select({
         addMessage: false,
         action: {
-          placeholder: "Select a option",
+          placeholder: "Please select your answer(s)",
           multipleselect: true,
           options: [
             { text: "Academic" },
@@ -772,7 +772,7 @@
           delay: 1000,
           photo: polly,
           content:
-            "We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health 101<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline",
+            "We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Materials/Resources<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline",
         })
         .then(function() {
           return botui.action
@@ -1085,13 +1085,13 @@
           delay: 2500,
           photo: polly,
           content:
-            '1. <a href="http://www.google.com" target ="_blank">Academic</a><br/>'+
-            '2. <a href="http://www.google.com" target ="_blank">Interpersonal Relationship</a><br/>'+
-            '3. <a href="http://www.google.com" target ="_blank">Career</a><br/>'+
-            '4. <a href="http://www.google.com" target ="_blank">Family</a><br/>'+
-            '5. <a href="http://www.google.com" target ="_blank">Mental Health</a><br/>'+
+            '1. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/academic/" target ="_blank">Academic</a><br/>'+
+            '2. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/interpersonal-relationship/" target ="_blank">Interpersonal Relationship</a><br/>'+
+            '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">Career</a><br/>'+
+            '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">Family</a><br/>'+
+            '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">Mental Health</a><br/>'+
             '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS Psychological workshops and groups</a><br>'+
-            '7. <a href="http://www.google.com" target ="_blank">Others</a><br/>' +
+            '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">Others</a><br/>' +
             '<br><br>*In case of emergency, please call 999 or go to the nearest emergency  / A&E service.',
         });
       })
@@ -1250,9 +1250,8 @@
           "<br/>\n" +
           "<p>(The Terms and Conditions are only available in English.)</p>\n" +
           "<br/>\n" +
-          "<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n" +
-          "<br/>\n" +
-          "<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/ face-to- face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n",
+          "<p>Initiated by the SAO Counselling & Wellness Section (CWS), Online Chat Service (the Service) is available to all registered students of The Hong Kong Polytechnic University (PolyU) aged 18 or above.</p>\n" +
+
       })
       .then(function() {
         return botui.action.button({
@@ -1272,9 +1271,9 @@
           delay: 2000,
           content:
             "<br/>\n" +
-            "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+            "<p>The Service intends to render remote support through the secured online communication.  However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected.  If possible, staff of CWS may contact the user for the service follow-up whenever necessary.  </p>\n" +
             "<br/>\n" +
-            "<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n",
+            "<p>The staff of CWS will follow its protocol in providing the Service.  By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n",
         });
       })
       .then(function() {
@@ -1295,7 +1294,7 @@
           delay: 2000,
           content:
             "<br/>\n" +
-            "<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n" +
+            "<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user of the Service or others from harm including disclosing the personal particulars of the user to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police.   To the extent practicable, counsellor of CWS will discuss with the user prior taking such actions.</p>\n" +
             "<br/>\n" +
             "<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n" +
             "<br/>\n" +
@@ -2947,13 +2946,13 @@
           delay: 2500,
           photo: polly,
           content:
-            '1. <a href="http://www.google.com" target ="_blank">學業</a><br/>' +
-            '2. <a href="http://www.google.com" target ="_blank">人際關係</a><br/>' +
-            '3. <a href="http://www.google.com" target ="_blank">工作</a><br/>' +
-            '4. <a href="http://www.google.com" target ="_blank">家庭</a><br/>' +
-            '5. <a href="http://www.google.com" target ="_blank">精神健康</a><br/>' +
+            '1. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/academic/" target ="_blank">學業</a><br/>' +
+            '2. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/interpersonal-relationship/" target ="_blank">人際關係</a><br/>' +
+            '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">工作</a><br/>' +
+            '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">家庭</a><br/>' +
+            '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">精神健康</a><br/>' +
             '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS心理健康小組及工作坊</a><br>' +
-            '7. <a href="http://www.google.com" target ="_blank">其他</a><br/>' +
+            '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">其他</a><br/>' +
             "<br><br>*如果你正身處緊急情況及/或險境，並有感自身及/或他人有即時的生命危險，請即致電999或到鄰近的急症室求助。", //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
         });
       })
