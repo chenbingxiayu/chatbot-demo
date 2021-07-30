@@ -1250,7 +1250,7 @@
           "<br/>\n" +
           "<p>(The Terms and Conditions are only available in English.)</p>\n" +
           "<br/>\n" +
-          "<p>Initiated by the SAO Counselling & Wellness Section (CWS), Online Chat Service (the Service) is available to all registered students of The Hong Kong Polytechnic University (PolyU) aged 18 or above.</p>\n" +
+          "<p>Initiated by the SAO Counselling & Wellness Section (CWS), Online Chat Service (the Service) is available to all registered students of The Hong Kong Polytechnic University (PolyU) aged 18 or above.</p>\n"
 
       })
       .then(function() {
