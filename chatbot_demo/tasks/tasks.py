@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.utils import timezone
 from django.db import transaction
+from django.db.transaction import TransactionManagementError
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
@@ -9,6 +10,7 @@ from main.models import StaffStatus, StudentChatStatus, ROLE_RANKING
 from main.signals import update_queue
 
 logger = get_task_logger(__name__)
+WAIT_LIMIT = 5  # in minutes
 
 
 def reassign_counsellor():
@@ -22,7 +24,7 @@ def reassign_counsellor():
 
     students = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.ASSIGNED,
-                last_assign_time__lt=now - timedelta(minutes=5)) \
+                last_assign_time__lt=now - timedelta(minutes=WAIT_LIMIT)) \
         .order_by('chat_request_time') \
         .all()
 
@@ -38,9 +40,8 @@ def reassign_counsellor():
                         staff.assign_to(student)
                         logger.info(f"{staff} assigned to {student}")
                         staff.notify_assignment()
-            except Exception as e:
+            except TransactionManagementError as e:
                 logger.warning(e)
-                raise
 
 
 def assign_staff(student: StudentChatStatus) -> bool:
@@ -60,9 +61,8 @@ def assign_staff(student: StudentChatStatus) -> bool:
                     logger.info(f"{staff} assigned to {student}")
                     staff.notify_assignment()
                     return True
-            except Exception as e:
+            except TransactionManagementError as e:
                 logger.warning(e)
-                raise
 
     return False
 
@@ -73,10 +73,11 @@ def dequeue_student():
 
     :return:
     """
+
     now = timezone.now()
     students = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING,
-                chat_request_time__lt=now - timedelta(minutes=5)) \
+                chat_request_time__lt=now - timedelta(minutes=WAIT_LIMIT)) \
         .order_by('chat_request_time') \
         .all()
 
