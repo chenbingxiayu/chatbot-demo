@@ -1246,8 +1246,6 @@
         delay: 2000,
         content:
           "<p>Please accept the Terms and Conditions of using the Online Chat service:</p><br/>" +
-          "<p><b>My Polly Counselling Chatbot Service</b></p>\n" +
-          "<br/>\n" +
           "<p>(The Terms and Conditions are only available in English.)</p>\n" +
           "<br/>\n" +
           "<p>Initiated by the SAO Counselling & Wellness Section (CWS), Online Chat Service (the Service) is available to all registered students of The Hong Kong Polytechnic University (PolyU) aged 18 or above.</p>\n"
