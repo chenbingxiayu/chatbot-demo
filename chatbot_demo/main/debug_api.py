@@ -5,7 +5,7 @@ from datetime import timedelta
 import requests
 from django.core import serializers
 from django.db import IntegrityError, transaction
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -407,7 +407,11 @@ def get_red_route(request):
 @csrf_exempt
 @require_http_methods(['GET'])
 def export_red_route(request):
-    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="red_route.xls"'
 
-    ChatBotSession.get_red_route_to_excel(from_date)
-    return JsonResponse({'status': 'success'}, status=200)
+    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
+    wb = ChatBotSession.get_red_route_to_excel(from_date)
+
+    wb.save(response)
+    return response

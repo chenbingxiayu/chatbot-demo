@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, annotations
 import logging
-from datetime import datetime
+from datetime import datetime, date
 
 import xlwt
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -16,6 +17,7 @@ from main.email_service import email_service
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
+DB_NAME = settings.DATABASES['default']['NAME']
 
 
 class StaffStatus(models.Model):
@@ -213,7 +215,7 @@ class ChatBotSession(models.Model):
     """
 
     class Meta:
-        db_table = 'counselling-service-session'
+        db_table = 'chatbot-session'
 
     class Language(models.TextChoices):
         en_us = 'en-us', _('English')
@@ -266,9 +268,9 @@ class ChatBotSession(models.Model):
                 SELECT 
                     *
                 FROM
-                    chatbot.`chat-survey-data`
+                    `{DB_NAME}`.`{cls._meta.db_table}`
                 WHERE
-                    chatbot.`chat-survey-data`.`date` BETWEEN '{start}' AND '{end}')
+                    `{DB_NAME}`.`{cls._meta.db_table}`.`date` BETWEEN '{start}' AND '{end}')
             SELECT 
              (SELECT count(*) FROM selected_table) AS no_of_access,
              (SELECT count(*) FROM selected_table WHERE start_time > '09:00:00' AND start_time < '19:00:00' AND weekday(start_time) IN (0, 1, 2, 3, 4) 
@@ -279,25 +281,48 @@ class ChatBotSession(models.Model):
              (SELECT count(*) FROM selected_table WHERE score>=11 AND score<=13 ) AS score_red_count,
              (SELECT count(*) FROM selected_table WHERE first_option='mental_health_101' ) AS first_option,
              (SELECT count(*) FROM selected_table WHERE first_option='online_chat_service' ) AS first_option,
-             (SELECT count(*) FROM selected_table LEFT JOIN chatbot.`student-chat-history` USING (session_id) WHERE student_chat_status='end' ) AS first_option
+             (SELECT count(*) FROM selected_table LEFT JOIN `{DB_NAME}`.`{StudentChatHistory._meta.db_table}` USING (session_id) WHERE student_chat_status='end' ) AS first_option
             """)
 
         return res
 
     @classmethod
-    def get_red_route(cls, start_date: datetime):
-        res = cls.objects \
-            .filter(date__gte=start_date, score__gte=11) \
-            .values('student_netid', 'date', 'start_time', 'end_time')
-
+    def get_red_route(cls, start_date: date):
+        res = cls.objects.raw(f"""
+        SELECT 
+            `{cls._meta.db_table}`.`session_id`,
+            `{cls._meta.db_table}`.`student_netid`,
+            CAST(`{cls._meta.db_table}`.`start_time` AS DATE) AS `date`,
+            CAST(`{cls._meta.db_table}`.`start_time` AS TIME) AS `start_time`,
+            CAST(`{cls._meta.db_table}`.`end_time` AS TIME) AS `end_time`
+        FROM
+            `{DB_NAME}`.`chatbot-session`
+        WHERE
+            `{cls._meta.db_table}`.`start_time` > '{start_date.isoformat()}'
+        """)
         return res
 
-    def get_red_route_to_excel(self, start_date: datetime):
-        data = self.get_red_route(start_date)
+    @classmethod
+    def get_red_route_to_excel(cls, start_date: datetime) -> xlwt.Workbook:
+        data = cls.get_red_route(start_date)
 
         wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet('Users')
-        return
+        ws = wb.add_sheet('red_route')
+
+        # Sheet header, first row
+        row_num = 0
+        font_style = xlwt.XFStyle()
+        columns = ['Student ID', 'Date', 'Start Time', 'End Time']
+        for col_num in range(len(columns)):
+            ws.write(0, col_num, columns[col_num], font_style)
+
+        for row_num, row in enumerate(data):
+            ws.write(row_num + 1, 0, getattr(row, 'student_netid'), font_style)
+            ws.write(row_num + 1, 1, getattr(row, 'date').strftime("%Y/%m/%d"), font_style)
+            ws.write(row_num + 1, 2, getattr(row, 'start_time').strftime('%H:%M'), font_style)
+            ws.write(row_num + 1, 3, getattr(row, 'end_time').strftime('%H:%M'), font_style)
+
+        return wb
 
 
 ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,
