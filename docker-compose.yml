@@ -62,4 +62,4 @@ services:
       - redis
 
 volumes:
-  mysql_volume:
+  mysql_volume: {}
