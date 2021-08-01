@@ -1233,7 +1233,7 @@
           "We'll be back at 0900(HKT) in the following working day. We look forward to meeting you !";
       }
 
-      // pop_msg = "";
+      pop_msg = "";
 
       if (pop_msg != "") {
         botui.message
