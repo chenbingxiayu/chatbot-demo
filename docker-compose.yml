@@ -15,14 +15,16 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '123456'
     command: [ "--default-authentication-plugin=mysql_native_password" ]
+    volumes:
+      - mysql_volume:/var/lib/mysql
 
   django:
     build: ./chatbot_demo
-    command: runserver 0.0.0.0:8000
+    command: runserver 0.0.0.0:8899
     volumes:
       - ./chatbot_demo:/app
     ports:
-      - 80:8000
+      - 8899:8899
     env_file:
       - .env.docker
     depends_on:
@@ -59,4 +61,5 @@ services:
     depends_on:
       - redis
 
-
+volumes:
+  mysql_volume:
