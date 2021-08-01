@@ -60,47 +60,10 @@
       height: 100%;
     }
 
-    {% comment %} .top-banner {
-        height: auto;
-        width: 100%;
-        background-color: #fefae4;
-        background-size: cover;
-    }
-
-    .top-sao-logo {
-        background: url('/static/Polly-graphics/general/SAO-logo.png') no-repeat center center;
-        background-size: contain;
-        width: 33vw;
-        height: 5vw;
-        display: inline-block;
-        position: absolute;
-        z-index: 10;
-        top: 5vw;
-        left: 5vw;
-    }
-    .top-sao-logo-img {
-        width: 100%;
-        height: 100%;
-    }
-
-    .top-banner-header {
-        font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
-        text-align: center;
-        font-weight: bold;
-        font-size: 40px;
-        position: absolute;
-        z-index: 10;
-        top: 20vw;
-        left: 50%;
-        margin-left: -170px;
-        margin-top: -75px;
-    } {% endcomment %}
-
     .copyright {
       overflow-x: hidden;
       background-color: #ca3f6a;
       height: auto;
-      {% comment %} overflow: scroll; {% endcomment %}
       padding: 20px 50px;
     }
 
@@ -180,13 +143,13 @@
     }
 
     .botui-header {
-        padding-top: 120px; 
+        {% comment %} padding-top: 120px;  {% endcomment %}
         width: 100%;
-        background: url('/static/Polly-graphics/general/polly-full.png') no-repeat 30px 5px;
-        background-size: contain;
+        {% comment %} background: url('/static/Polly-graphics/general/polly-full.png') no-repeat 30px 5px; {% endcomment %}
+        {% comment %} background-size: contain;
         -o-background-size: contain;
         -moz-background-size: contain;
-        -webkit-background-size: contain;
+        -webkit-background-size: contain; {% endcomment %}
         position: sticky;
         z-index: 1;
         top: 0;
@@ -194,7 +157,7 @@
         border-radius: 10px 10px 30px 30px;
     }
 
-    .botui-header-text {
+    {% comment %} .botui-header-text {
         position: absolute;
         top: 20px;
         background: #522d54;
@@ -209,8 +172,8 @@
     }
 
     .botui-header-text p {
-      {% comment %} margin-bottom: 10px; {% endcomment %}
-    }
+      margin-bottom: 10px;
+    } {% endcomment %}
 
     .botui-message-content {
       background-color: #c2c890;
@@ -227,26 +190,26 @@
     }
 
     @media (max-width: 678px) {
-        .top-banner-header-1 {
+        {% comment %} .top-banner-header-1 {
             font-size: 24px;
-        }
+        } {% endcomment %}
 
-        .botui-header {
+        {% comment %} .botui-header {
             background: url(/static/Polly-graphics/general/polly-full.png) no-repeat 10px 5px;
             background-size: contain;
             background-color: #fcb040; 
             padding-top: 120px;
-        }
-        .botui-header-text {
+        } {% endcomment %}
+        {% comment %} .botui-header-text {
             font-size: 10px;
             width: 300px;
             padding: 10px 0 0 0;
             line-height: 10px;
-        }
+        } {% endcomment %}
     }
 
     @media (max-width: 530px) {
-      .botui-header { 
+      {% comment %} .botui-header { 
         padding-top: 90px;
       }
 
@@ -255,7 +218,7 @@
             width: 156px;
             padding: 10px 0 0 0;
             line-height: 0px;
-        }
+        } {% endcomment %}
 
         .copyright ul {
           flex-direction: column;
@@ -266,15 +229,15 @@
         }
     }
 
-    @media (max-width: 420px) {
-        .top-banner-header-1 {
+    {% comment %} @media (max-width: 420px) { {% endcomment %}
+        {% comment %} .top-banner-header-1 {
             font-size: 16px;
         }
 
         .top-sao-logo-1 {           
             height: 30px;
         }
-    }
+    } {% endcomment %}
   </style>
 
 {% block custom_style %}
