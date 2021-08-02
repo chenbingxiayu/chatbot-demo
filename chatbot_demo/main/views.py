@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import loader
-from django.views.decorators.csrf import csrf_exempt
-import os
-import json
+import logging
 import requests
-import jwt
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -16,14 +10,19 @@ from django.views.decorators.http import require_http_methods
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from django.db import IntegrityError
-from django.core import serializers
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, permission_required
 
-from main.models import StaffStatus, StudentChatStatus
+from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, SELECTABLE_STATUS
 from main.forms import LoginForm
+from main.utils import today_start
+from main.signals import update_queue
+from tasks.tasks import assign_staff
+from main.auth import sso_auth
 
+logger = logging.getLogger('django')
 COOKIE_MAX_AGE = 8 * 60 * 60
 
 
@@ -73,328 +72,290 @@ def response_api(request):
 def login_page(request):
     if request.method == "GET":
         form = LoginForm(auto_id=True)
-        return render(request, 'main/login.html', {'form': form})
+        return render(request, 'main/login_staff.html', {'form': form})
     elif request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            staff = form.cleaned_data['netid']  # this return StaffStatus object
-            password = form.cleaned_data['password']
-            role = form.cleaned_data['role']
-            status = form.cleaned_data['status']
 
-            if staff.staff_role in ('online_triage', 'do', 'counsellor'):
-                staff.staff_role = role
-            staff.status = status
-            staff.save()
+        staff_netid = request.POST.get('netid')
+        role = request.POST.get('role')
+        status = request.POST.get('status')
+        user = authenticate(requests, username=staff_netid)
 
+        if not user:
+            return redirect('login_page')
+
+        try:
+            staff = StaffStatus.objects.get(staff_netid=staff_netid)
+        except StaffStatus.DoesNotExist:
+            staff = StaffStatus(staff_netid=staff_netid)
+
+        # check which user group does the user belongs to
+        if 'counsellor' in [group.name for group in user.groups.all()]:
+            staff.staff_role = role
+        elif 'app_admin' in [group.name for group in user.groups.all()]:
+            staff.staff_role = StaffStatus.Role.SUPERVISOR
         else:
-            return render(request, 'main/login.html', {'form': form})
+            return redirect('login_page')
+
+        staff.staff_chat_status = status
+        staff.status_change_time = timezone.now()
+        staff.save()
+        staff.refresh_from_db()
+
+        login(request, user)
 
         if staff.staff_role in ('online_triage', 'do', 'counsellor'):
-            response = redirect('counsellor')
+            return redirect('counsellor')
         elif staff.staff_role == 'supervisor':
-            response = redirect('supervisor')
+            return redirect('supervisor')
+        elif staff.staff_role == 'administrator':
+            return redirect('administrator')
         else:
-            response = redirect('administrator')
-        response.set_cookie("staff_netid", staff.staff_netid, max_age=COOKIE_MAX_AGE)
-        return response
+            return redirect('login_page')
 
 
-@csrf_exempt
+@login_required
+@require_http_methods(['GET'])
+def logout_view(request):
+    logout(request)
+
+    return redirect('login_page')
+
+
+@login_required
 @require_http_methods(['GET'])
 def counsellor(request):
-    staff_netid = request.COOKIES.get('staff_netid')
+    staff_netid = request.user.username
     now = timezone.now()
-    today = now.date()
-    offset = request.GET.get('offset', 0)
-    limit = request.GET.get('limit', 20)
 
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist as e:
-        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
+        logger.warning(f"Staff {staff_netid} does not exist.")
+        logger.warning(e)
+        return render(request, 'main/404.html')
 
     students = StudentChatStatus.objects \
-                   .filter(chat_request_time__date=today) \
-                   .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
-                           Q(assigned_counsellor=staff)) \
-                   .order_by('chat_request_time')[offset:offset + limit]  # need to load timezone table for mysql
+        .filter(chat_request_time__gte=today_start()) \
+        .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
+                Q(assigned_counsellor=staff)) \
+        .order_by('chat_request_time')
+
+    histories = StudentChatHistory.objects \
+        .filter(chat_request_time__gte=today_start()) \
+        .filter(Q(assigned_counsellor=staff)) \
+        .order_by('chat_request_time')
+
     return render(request, 'main/counsellor.html',
-                  {'staff': staff, 'students': students, 'now': now})
+                  {'staff': staff,
+                   'students': students,
+                   'histories': histories,
+                   'now': now,
+                   'selectable_status': SELECTABLE_STATUS})
 
 
-@csrf_exempt
+@login_required
 @require_http_methods(['GET'])
 def supervisor(request):
-    staff_netid = request.COOKIES.get('staff_netid')
+    staff_netid = request.user.username
     now = timezone.now()
-    today = now.date()
-    offset = request.GET.get('offset', 0)
-    limit = request.GET.get('limit', 20)
 
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist as e:
-        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
+        logger.warning(f"Staff {staff_netid} does not exist.")
+        logger.warning(e)
+        return render(request, 'main/404.html')
 
     students = StudentChatStatus.objects \
                    .filter(chat_request_time__date=today) \
                    .order_by('chat_request_time')[offset:offset + limit]
     return render(request, 'main/supervisor.html',
-                  {'staff': staff, 'students': students, 'now': now})
+                  {'staff': staff,
+                   'students': students,
+                   'histories': histories,
+                   'now': now,
+                   'selectable_status': SELECTABLE_STATUS})
 
 
-@csrf_exempt
+@login_required
 @require_http_methods(['GET'])
 def administrator(request):
-    staff_netid = request.COOKIES.get('staff_netid')
+    staff_netid = request.user.username
     now = timezone.now()
-    today = now.date()
-    offset = request.GET.get('offset', 0)
-    limit = request.GET.get('limit', 20)
 
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist as e:
-        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
+        logger.warning(f"Staff {staff_netid} does not exist.")
+        logger.warning(e)
+        return render(request, 'main/404.html')
 
     students = StudentChatStatus.objects \
-                   .filter(chat_request_time__date=today) \
-                   .order_by('chat_request_time')[offset:offset + limit]
+        .filter(chat_request_time__gte=today_start()) \
+        .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
+                Q(assigned_counsellor=staff)) \
+        .order_by('chat_request_time')
+
+    histories = StudentChatHistory.objects \
+        .filter(chat_request_time__gte=today_start()) \
+        .order_by('chat_request_time')
     return render(request, 'main/administrator.html',
-                  {'staff': staff, 'students': students, 'now': now})
+                  {'staff': staff,
+                   'students': students,
+                   'histories': histories,
+                   'now': now,
+                   'selectable_status': SELECTABLE_STATUS})
 
 
-@csrf_exempt
+@login_required
+@permission_required('main.view_staffstatus', raise_exception=True)
 @require_http_methods(['GET'])
 def staffstatus(request):
-    staff_netid = request.COOKIES.get('staff_netid')
-    offset = request.GET.get('offset', 0)
-    limit = request.GET.get('limit', 20)
+    staff_netid = request.user.username
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist as e:
         return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
 
-    staff_list = StaffStatus.objects.all()[offset:offset + limit]
+    staff_list = StaffStatus.objects.all()
     now = timezone.now()
     return render(request, 'main/staffstatus.html',
-                  {'staff': staff, 'staff_list': staff_list, 'now': now})
+                  {'staff': staff, 'staff_list': staff_list, 'now': now,
+                   'selectable_status': SELECTABLE_STATUS})
 
 
-@csrf_exempt
 @require_http_methods(['GET'])
-def getseq(request):
-    res = StudentChatStatus.objects \
-        .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
-        .order_by('-chat_request_time')
-    serialized_data = serializers.serialize('python', res)
+def findstaff(request):
+    """
+    Find counsellor when the student enter the queue.
+    Follow the staff ranking order
 
-    return JsonResponse(serialized_data, safe=False, status=200)
+    :return:
+    """
+
+    assignment_order = [StaffStatus.Role.ONLINETRIAGE,
+                        StaffStatus.Role.DO,
+                        StaffStatus.Role.COUNSELLOR]
+    try:
+        student = StudentChatStatus.objects.get(student_netid=request.GET.get('student_netid'))
+    except StudentChatStatus.DoesNotExist as e:
+        logger.warning("Student does not exist.")
+        return JsonResponse({'assignment': 'fail'}, status=400)
+
+    for role in assignment_order:
+        staff = StaffStatus.objects \
+            .filter(staff_chat_status=StaffStatus.ChatStatus.AVAILABLE,
+                    staff_role=role) \
+            .order_by('?') \
+            .first()
+        if staff:
+            staff.assign_to(student)
+            staff.notify_assignment()
+            return JsonResponse({'assignment': 'success'}, status=200)
+
+    student.add_to_queue()
+
+    return JsonResponse({'assignment': 'fail'}, status=400)
+
+
+@login_required
+@require_http_methods(['POST'])
+def updatestaff(request):
+    """
+    Staff can change their status between Availabe <-> Away.
+    If staff's status now is Assigned, the assignment will lose for both the staff and the student.
+
+    :param request:
+    :return:
+    """
+    new_status = request.POST.get('status')
+    staff_netid = request.user.username
+    try:
+        staff = StaffStatus.objects.get(staff_netid=staff_netid)
+    except StaffStatus.DoesNotExist:
+        logger.warning('Staff does not exist.')
+        return JsonResponse({"status": "status update fail"}, status=400)
+
+    if staff.staff_chat_status == StaffStatus.ChatStatus.ASSIGNED and new_status == StaffStatus.ChatStatus.AWAY:
+        student = StudentChatStatus.objects \
+            .filter(student_chat_status=StudentChatStatus.ChatStatus.ASSIGNED,
+                    assigned_counsellor=staff) \
+            .first()
+        student.add_to_queue()
+    staff.staff_chat_status = new_status
+    staff.save()
+
+    return JsonResponse({"status": "update success"}, status=200)
 
 
 @csrf_exempt
 @require_http_methods(['POST'])
 def addstud(request):
-    student_netid = request.POST.get('student_netid')
-    if not student_netid:
-        return JsonResponse({"error": "Invalid student ID"}, status=400)
-
-    student_status = StudentChatStatus(
-        student_netid=student_netid.upper(),
-        student_chat_status=StudentChatStatus.ChatStatus.WAITING,
-    )
-    try:
-        student_status.save()
-    except IntegrityError as e:
-        return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
-    return JsonResponse({'status': 'success'}, status=201)
-
-
-@csrf_exempt
-@require_http_methods(['GET'])
-def getstud(request):
-    res = StudentChatStatus.objects \
-        .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
-        .order_by('-chat_request_time') \
-        .first()
-    serialized_data = serializers.serialize('python', [res])
-    return JsonResponse(serialized_data[0], safe=False, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['POST'])
-def deletestud(request):
-    """Remove a student from the waiting queue or change her/his status to “End”
+    """
+    Assign staff to new coming student.
+    Or add student to waiting queue.
 
     :param request:
     :return:
     """
     student_netid = request.POST.get('student_netid')
-    student_status = StudentChatStatus.objects \
-        .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
-        .get(student_netid=student_netid)
-    student_status.student_chat_status = StudentChatStatus.ChatStatus.END
-    student_status.save()
 
-    return JsonResponse({'status': 'success'}, status=200)
+    # TODO validate studentID
+    if not student_netid:
+        return JsonResponse({"error": "Invalid student ID"}, status=400)
 
+    student, created = StudentChatStatus.objects \
+        .update_or_create(student_netid=student_netid.upper(),
+                          defaults={"student_chat_status": None,
+                                    "chat_request_time": timezone.now(),
+                                    "last_assign_time": None,
+                                    "chat_start_time": None,
+                                    "assigned_counsellor": None})
+    msg = f"Student is {'created' if created else 'updated'}."
 
-@csrf_exempt
-@require_http_methods(['POST'])
-def updatestud(request):
-    student_netid = request.POST.get('student_netid')
-    new_status = request.POST.get('new_status')
-    student = StudentChatStatus.objects.get(tudent_netid=student_netid)
-    student.student_chat_status = new_status
-    student.chat_end_time = timezone.now()
-    student.save()
-
-    return JsonResponse({'status': 'success'}, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['GET'])
-def getstafflist(request):
-    res = StaffStatus.objects \
-        .filter(staff_chat_status=StaffStatus.ChatStatus.AVAILABLE) \
-        .values('staff_netid', 'staff_role', 'status_change_time')
-    return JsonResponse(list(res), safe=False, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['GET'])
-def getstaff(request):
-    role = request.GET.get('role')
-    qset = StaffStatus.objects.filter(staff_chat_status=StaffStatus.ChatStatus.AVAILABLE)
-    if role:
-        qset = qset.filter(staff_role=role)
-    res = qset.values('staff_netid').first()
-    return JsonResponse(res, safe=False, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['POST'])
-def updatestaff(request):
-    staff_netid = request.POST.get('staff_netid')
-    new_status = request.POST.get('staff_chat_status')
-    staff = StaffStatus.objects.get(staff_netid=staff_netid)
-    staff.staff_chat_status = new_status
-    staff.status_change_time = timezone.now()
-    staff.save()
-
-    return JsonResponse({'status': 'success'}, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['POST'])
-def addstaff(request):
-    staff_netid = request.POST.get('staff_netid')
-    if not staff_netid:
-        return JsonResponse({"error": "Invalid staff ID"}, status=400)
-
-    now = timezone.now()
-    staff_status = StaffStatus(
-        staff_name=request.POST.get('staff_name'),
-        staff_netid=staff_netid.upper(),
-        staff_role=request.POST.get('staff_role'),
-        staff_chat_status=request.POST.get('staff_chat_status'),
-        status_change_time=now
-    )
-    try:
-        staff_status.save()
-    except IntegrityError as e:
-        return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
-    return JsonResponse({'status': 'success'}, status=201)
-
-
-@csrf_exempt
-@require_http_methods(['POST'])
-def deletestaff(request):
-    staff_netid = request.POST.get('staff_netid')
-    delete = request.POST.get('delete')
-    staff = StaffStatus.objects.get(staff_netid=staff_netid)
-    if delete:
-        staff.delete()
+    if assign_staff(student):
+        msg += f" Student is assigned to a staff."
+        return JsonResponse({'status': 'success', 'message': msg}, status=201)
     else:
-        staff.staff_chat_status = StaffStatus.ChatStatus.OFFLINE
-        staff.save()
-
-    return JsonResponse({'status': 'success'}, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['POST'])
-def assignstaff(request):
-    student_netid = request.POST.get('student_netid')
-    staff_netid = request.POST.get('staff_netid')
-    now = timezone.now()
-    staff = StaffStatus.objects.get(staff_netid=staff_netid)
-    student = StudentChatStatus.objects.get(student_netid=student_netid)
-
-    student.student_chat_status = StudentChatStatus.ChatStatus.ASSIGNED
-    student.assigned_counsellor_id = staff
-    staff.staff_chat_status = StaffStatus.ChatStatus.ASSIGNED
-    staff.status_change_time = now
-    student.save()
-    staff.save()
-
-    return JsonResponse({'status': 'success'}, status=200)
+        student.add_to_queue()
+        update_queue.send(sender=None)
+        msg += f" No staff available, added student to queue."
+        return JsonResponse({'status': 'success', 'message': msg}, status=201)
 
 
-@csrf_exempt
-@require_http_methods(['POST'])
-def startchat(request):
-    student_netid = request.POST.get('student_netid')
-    staff_netid = request.POST.get('staff_netid')
-    now = timezone.now()
-    staff = StaffStatus.objects.get(staff_netid=staff_netid)
-    student = StudentChatStatus.objects.get(student_netid=student_netid)
-    student.chat_start_time = now
-
-    student.student_chat_status = StudentChatStatus.ChatStatus.CHATTING
-    student.chat_start_time = now
-    staff.staff_chat_status = StaffStatus.ChatStatus.CHATTING
-    staff.status_change_time = now
-    student.save()
-    staff.save()
-
-    return JsonResponse({'status': 'success'}, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['POST'])
-def endchat(request):
-    student_netid = request.POST.get('student_netid')
-    staff_netid = request.POST.get('staff_netid')
-    now = timezone.now()
-    staff = StaffStatus.objects.get(staff_netid=staff_netid)
-    student = StudentChatStatus.objects.get(student_netid=student_netid)
-
-    student.student_chat_status = StudentChatStatus.ChatStatus.END
-    student.chat_end_time = now
-    staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
-    staff.status_change_time = now
-    student.save()
-    staff.save()
-
-    return JsonResponse({'status': 'success'}, status=200)
-
-
-
-def login(request):
+def login_all(request):
     return render(request, 'main/login_sso.html')
 
 
 @csrf_exempt
 def login_sso(request):
-    # TODO redirect to rapid connect server
-    return render(request, 'main/login_sso.html')
+    # redirect to rapid connect server
+    response = redirect(sso_auth.destination)
+    return response
 
 
+@csrf_exempt
+@require_http_methods(['POST'])
 def login_sso_callback(request):
-    encoded_jwt = jwt.encode({"hi": "payload"}, 'secret', algorithm='HS256')
-    decoded_jwt = jwt.decode(encoded_jwt, 'secret', algorithms="HS256")
-    print(decoded_jwt)
-    # TODO jwt decode
-    return render(request, 'main/login_sso.html')
+    try:
+        encoded_jwt = request.POST.get('data')
+        if not encoded_jwt:
+            return render(request, 'main/login_sso.html', {
+                'error_message': "Cannot get JWT"
+            })
+
+        decoded_jwt = sso_auth.decode(encoded_jwt)
+
+        if decoded_jwt['polyuUserType'] == 'Student':
+            return render(request, 'main/login_sso.html', {
+                'decoded_jwt': decoded_jwt
+            })
+        elif decoded_jwt['polyuUserType'] == 'Staff':
+            return render(request, 'main/login_staff.html', {
+                'decoded_jwt': decoded_jwt
+            })
+
+    except Exception as e:
+        render(request, 'main/login_sso.html', {
+            'error_message': str(e)
+        })

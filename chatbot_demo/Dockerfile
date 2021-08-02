@@ -1,11 +1,20 @@
-FROM python:3.8
+FROM python:3.8-slim-buster
 
-ARG BUILD_DIR
+# set work directory
+WORKDIR /app
 
-COPY ${BUILD_DIR} /code/chatbot_demo
+# set environment variables
+ENV PYTHONUNBUFFERED 1
 
-RUN cd /code/chatbot_demo && \
-    pip install -r requirements.txt
+# update vm
+RUN apt-get update \
+    && apt-get install -y libpython3-dev default-libmysqlclient-dev build-essential \
+    && python -m pip install --upgrade pip
 
-RUN chgrp -R 0 /code/chatbot_demo && \
-    chmod -R g=u /code/chatbot_demo
+# install dependencies
+COPY ./requirements.txt /app/requirements.txt
+RUN pip install -r requirements.txt
+
+# copy src code
+COPY . /app
+ENTRYPOINT ["./entrypoint.sh"]

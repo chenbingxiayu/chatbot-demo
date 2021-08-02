@@ -1,0 +1,65 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:5-alpine
+    ports:
+      - 6379:6379
+
+  mysql:
+    image: mysql:8.0.25
+    ports:
+      - '3306:3306'
+    env_file:
+      - .env.docker
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+    command: [ "--default-authentication-plugin=mysql_native_password" ]
+    volumes:
+      - mysql_volume:/var/lib/mysql
+
+  django:
+    build: ./chatbot_demo
+    command: runserver 0.0.0.0:8899
+    volumes:
+      - ./chatbot_demo:/app
+    ports:
+      - 8899:8899
+    env_file:
+      - .env.docker
+    depends_on:
+      - mysql
+      - redis
+
+  celery:
+    build: ./chatbot_demo
+    command: ./run_celery.sh
+    volumes:
+      - ./chatbot_demo:/app
+    env_file:
+      - .env.docker
+    depends_on:
+      - redis
+
+  celery_beat:
+    build: ./chatbot_demo
+    command: ./run_celery_beat.sh
+    volumes:
+      - ./chatbot_demo:/app
+    env_file:
+      - .env.docker
+    depends_on:
+      - redis
+
+  dashboard:
+    build: ./chatbot_demo
+    command: ./run_flower.sh
+    ports:
+      - 5555:5555
+    env_file:
+      - .env.docker
+    depends_on:
+      - redis
+
+volumes:
+  mysql_volume: {}

@@ -1,8 +1,13 @@
 .idea/
 venv
-.env
+node_modules/
+.env*
+!.env.sample
 *.pyc
 **__pycache__/
 
 **.DS_Store
 **migrations/
+
+**.sqlite3
+celerybeat*

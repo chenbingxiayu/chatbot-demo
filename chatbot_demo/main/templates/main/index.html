@@ -1,5 +1,5 @@
 
-{% extends "main/clientBase.html" %}
+{% extends "clientBase.html" %}
 {% load static %}
 
 {% block custom_style %}
@@ -112,75 +112,43 @@
 
     .botui-header-icon {
         position: absolute;
-        top: 5px;
-        right: 10px;
+        top: 10%;
+        right: 2.5%;
         z-index: 10;
-
+        display: flex;
+        flex-direction: row;
+        width: 10%;
+        height: 25%;
     }
 
     .icon-home {
-        background: url('/static/Polly-graphics/general/home.png') no-repeat ;
-        width: 25px;
-        height: 25px;
-        z-index: 1000;
-        background-size: contain;
         cursor: pointer;
+        flex: 1;
+        margin-bottom: 0;
     }
     .icon-leave {
-        background: url('/static/Polly-graphics/general/close-icon.png') no-repeat ;
-        width: 25px;
-        height: 25px;
-        z-index: 1000;
-        background-size: contain;
         cursor: pointer;
+        flex: 1;
+        margin-bottom: 0;
     }
 
+    .main-content {
+        padding-top: 10px;
+    }
+
+    .top-banner {
+        padding-top: 37%; 
+        position: relative;
+        background-color: #fefae4;
+    }
     
     .top-sao-logo-img {
         width: 100%;
-        height: 185px;
+        height: 100%;
         position: absolute;
         top: 0px;
     }
 
-    .top-banner-1 {
-        display: flex;
-        height: 185px;
-        background-color: #fefae4;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .top-sao-logo-1 {
-        height: 50px;
-        z-index: 10;
-        margin: 0px 20px;
-    }
-
-    .top-banner-header-1 {
-        z-index: 10;
-        font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
-        text-align: center;
-        font-weight: bold;
-        font-size: 40px;
-    }
-
-    .top-banner-header-1 p {
-        margin-bottom: 0;
-    }
-
-     @media (max-width: 768px) {
-      .top-banner-header-1 {
-        font-size: 25px;
-      }
-    }
-
-    @media (max-width: 468px) {
-        .top-banner-header-1 {
-            font-size: 16px;
-
-        }
-    }
     
     
 </style>
@@ -189,14 +157,8 @@
 
 
 {% block top_banner_content %}
-<section>
-  <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/top-banner.png' %}"></img>
-  <div class="top-banner-1">
-    <img src="/static/Polly-graphics/general/SAO-logo.png" class="top-sao-logo-1"></img>
-    <div class="top-banner-header-1">
-        <p>Integrated Counselling Service</p>
-    </div>
-  </div>
+<section class="top-banner">
+  <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/polly-landing-topbanner.png' %}"></img>
 </section>
 {% endblock top_banner_content %}
 {% block main_content %}
@@ -209,14 +171,10 @@
                     <div class="chatbox-wrapper">
                         <div id="chatbox" class="botui">
                             <div class="botui-header">
-                                <div class="botui-header-text">
-                                    <p>Welcome to the <i>Integrated Counselling Service</i>!</p>
-                                    <p>We are here to recommend to you our </p>
-                                    <p>psychological services. Let’s start and explore!</p>
-                                </div>
+                                <img src="{% static 'Polly-graphics/general/polly-chatbot-top.png' %}" style="width: 100%; height: 100%"/>
                                 <div class="botui-header-icon">
-                                    <label class="icon-home"></label>    
-                                    <label class="icon-leave"></label>    
+                                    <label class="icon-home"></label>
+                                    <label class="icon-leave"></label>
                                 </div>
                             </div>
                             <bot-ui ></bot-ui>
@@ -245,9 +203,9 @@
     var polly = '{% static "Polly-graphics/general/polly.png" %}';
     var client = '{% static "Polly-graphics/general/student.png" %}';
     var service_list = true;
+    const isMainPage = true;
 
 </script>
-<script src="{% static 'js/main.js' %}"></script>
 {% endblock footer_script %}
 
 </html>
