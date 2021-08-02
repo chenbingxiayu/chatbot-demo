@@ -50,7 +50,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    netid = models.CharField(_('polyu Net ID'), max_length=30, unique=True)
+    netid = models.CharField(_('polyU Net ID'), max_length=30, unique=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     is_staff = models.BooleanField(
