@@ -10,64 +10,57 @@
       width: 100%;
   }
 
-
-    .top-sao-logo-img {
-        width: 100%;
-        height: 185px;
+  .botui-header-icon {
         position: absolute;
-        top: 0px;
-    }
-
-    .top-banner-1 {
+        top: 10%;
+        right: 2.5%;
+        z-index: 10;
         display: flex;
-        height: 185px;
-        background-color: #fefae4;
-        align-items: center;
-        justify-content: center;
+        flex-direction: row;
+        width: 10%;
+        height: 25%;
     }
 
-    .top-sao-logo-1 {
-        height: 50px;
-        z-index: 10;
-        margin: 0px 20px;
+    .icon-home {
+        cursor: pointer;
+        flex: 1;
+        margin-bottom: 0;
     }
-
-    .top-banner-header-1 {
-        z-index: 10;
-        font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
-        text-align: center;
-        font-weight: bold;
-        font-size: 40px;
-    }
-
-    .top-banner-header-1 p {
+    .icon-leave {
+        cursor: pointer;
+        flex: 1;
         margin-bottom: 0;
     }
 
-     @media (max-width: 768px) {
-      .top-banner-header-1 {
-        font-size: 25px;
-      }
+    .main-content {
+        padding-top: 10px;
+        padding-bottom: 60px;
     }
 
-    @media (max-width: 468px) {
-        .top-banner-header-1 {
-            font-size: 16px;
 
-        }
+  .top-banner {
+      padding-top: 37%; 
+      position: relative;
+      background-color: #fefae4;
+  }
+  
+  .top-sao-logo-img {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0px;
+  }
+
+  .main-content {
+        padding-top: 10px;
     }
+
 </style>
 {% endblock %}
 
 {% block top_banner_content %}
-<section>
-  <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/top-banner.png' %}"></img>
-  <div class="top-banner-1">
-    <img src="/static/Polly-graphics/general/SAO-logo.png" class="top-sao-logo-1"></img>
-    <div class="top-banner-header-1">
-        <p>Integrated Counselling Service</p>
-    </div>
-  </div>
+<section class="top-banner">
+  <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/polly-landing-topbanner.png' %}"></img>
 </section>
 {% endblock top_banner_content %}
 
@@ -80,10 +73,10 @@
               <div class="chatbox-wrapper">
                 <div id="chatbox" class="botui">
                   <div class="botui-header">
-                    <div class="botui-header-text">
-                        <p>Welcome to the <i>Integrated Counselling Service</i>!</p>
-                        <p>We are here to recommend to you our </p>
-                        <p>psychological services. Let’s start and explore!</p>
+                    <img src="{% static 'Polly-graphics/general/polly-chatbot-top.png' %}" style="width: 100%; height: 100%"/>
+                    <div class="botui-header-icon">
+                        <label class="icon-home"></label>
+                        <label class="icon-leave"></label>
                     </div>
                   </div>
                   <bot-ui></bot-ui>
