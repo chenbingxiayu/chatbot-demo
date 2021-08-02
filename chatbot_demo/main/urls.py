@@ -8,6 +8,7 @@ urlpatterns = [
     path('response', views.auto_response, name='auto_response'),
     path('response_api', views.response_api, name='response_api'),
     path('login/staff/', views.login_page, name='login_staff'),
+    path('page/chatconsole/', views.chat_console, name='chat_console'),
     path('page/counsellor/', views.counsellor, name='counsellor'),
     path('page/supervisor/', views.supervisor, name='supervisor'),
     path('page/administrator/', views.administrator, name='administrator'),

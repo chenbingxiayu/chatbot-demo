@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
 ]
 
+AUTH_USER_MODEL = 'main.User'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'main.auth.AuthBackend',
@@ -106,7 +107,7 @@ DATABASES = {
 }
 
 # Session settings
-LOGIN_URL = '/main/login/staff/'  # redirect url if not logged in
+LOGIN_URL = '/main/user/login/'  # redirect url if not logged in
 SESSION_COOKIE_AGE = 12 * 60 * 60
 
 # Password validation
