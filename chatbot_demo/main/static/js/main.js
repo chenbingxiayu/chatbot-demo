@@ -3397,6 +3397,8 @@
                     });
                   })
                   .then(function(res) {
+                    // TODO student id
+                    const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
                     if (res.value == false) {
                       return botui.message
                         .human({
@@ -3494,8 +3496,101 @@
                           return botui.message.add({
                             delay: 1000,
                             photo: polly,
-                            // TODO
                             content: "請稍等，我正在找輔導員與您聊天。", //? Please wait, I am now finding a counsellor to chat with you.
+                          });
+                        })
+                        .then(async function() {
+                          const responseMessage = await addToQueue(
+                            student_netid
+                          );
+                          const isAssigned =
+                            responseMessage.indexOf(
+                              "Student is assigned to a staff"
+                            ) > -1;
+
+                          if (isAssigned) {
+                            return Promise.resolve("assigned");
+                          } else {
+                            await botui.message.add({
+                              delay: 1000,
+                              photo: polly,
+                              content: "請稍等，我正在找輔導員與您聊天。",
+                            });
+
+                            return Promise.resolve("waiting");
+                          }
+                        })
+                        .then(async function(status) {
+                          let currentStatus = status;
+                          if (currentStatus == "waiting") {
+                            while (true) {
+                              // request after 2 mins(120000 = 2 * 60 * 1000)
+                              await new Promise((resolve) =>
+                                setTimeout(resolve, 120000)
+                              );
+
+                              const stu = await getStatusByStudentNetId(
+                                student_netid
+                              );
+
+                              if (stu.student_chat_status === "waiting") {
+                                const queueList = await getQueueStatus(
+                                  student_netid
+                                );
+
+                                const waitingNo = queueList.findIndex(
+                                  (student) =>
+                                    student.fields.student_netid ==
+                                    student_netid
+                                );
+                                await waitSubsribe(student_netid, waitingNo);
+                              } else {
+                                // assign or end
+                                currentStatus = stu.student_chat_status;
+                                break;
+                              }
+                            }
+                          }
+
+                          if (currentStatus.toLocaleLowerCase() === "end") {
+                            throw new Error(
+                              "謝謝使用我們的服務，你可以通過POSS或者打電話 2766 6800 預約我們的服務。"
+                            );
+                          }
+
+                          if (
+                            currentStatus.toLocaleLowerCase() === "assigned"
+                          ) {
+                            while (true) {
+                              const stu = await getStatusByStudentNetId(
+                                student_netid
+                              );
+                              if (stu.student_chat_status === "chatting") {
+                                await botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content: `請點擊 <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor}">連結</a> 進入聊天室.`,
+                                });
+                                break;
+                              } else {
+                                await botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content: "你已經分配到一個輔導員，請稍等",
+                                });
+                                // request after 2 mins(120000 = 2 * 60 * 1000)
+                                await new Promise((resolve) =>
+                                  setTimeout(resolve, 120000)
+                                );
+                              }
+                            }
+                          }
+                        })
+                        .catch(function(e) {
+                          return botui.message.add({
+                            delay: 1000,
+                            photo: polly,
+                            content: e.message,
                           });
                         });
                       // .then(function() {
