@@ -55,7 +55,7 @@
    Add staff
    ![add_staff](img/add_staff.png)
    
-   Assign user group (assign rights)
+   Assign group to users (access rights)
    ![assign_groups.png](img/assign_groups.png)
    
 6. Run All service
