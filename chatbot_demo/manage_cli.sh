@@ -4,7 +4,7 @@ set -a
 source ../.env.docker
 set +a
 
-export MYSQL_HOST=localhost
+export MYSQL_HOST=127.0.0.1
 
 if [[ "$1" == 'createsuperuser' ]]; then
   python manage.py createsuperuser --no-input --netid=admin

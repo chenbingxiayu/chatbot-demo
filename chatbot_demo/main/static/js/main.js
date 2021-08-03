@@ -2170,6 +2170,9 @@
     }
 
     function isSAOWorkingHours(now) {
+      // TODO: always return true in dev
+      return true
+
       var weekday = now.getDay();
       var hours = now.getHours();
       // Mon - Fri

@@ -22,7 +22,8 @@
    
 
 3. Create superuser for django server
-
+   
+   please create and activate virtual environment before running the following  
    ```shell
    cd chatbot_demo
    ./manage_cli.sh createsuperuser

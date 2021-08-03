@@ -20,7 +20,5 @@ gevent~=21.1
 flower~=1.0
 pyjwt==2.1.0
 celery==5.1.2
-channels~=3.0
 zulip==0.7.1
-django_celery_results==2.2.0
 django-webpack-loader
