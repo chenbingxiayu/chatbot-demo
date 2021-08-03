@@ -6,12 +6,13 @@
     ```shell
     docker-compose up -d --build django
     ```
-    Then the database will be created together with user defined as `MYSQL_USER`.
+    Then the database will be created together with the user defined by `MYSQL_USER`.
 
     Stop Django and move to next step.
     ```shell
     docker-compose stop django
     ```
+
 
 2. Grant privilege to db user
     
@@ -19,20 +20,23 @@
    
    ![dba_role](img/dba.png)
    
+
 3. Create superuser for django server
 
    ```shell
    cd chatbot_demo
-   ./manage_cli.py createsuperuser
+   ./manage_cli.sh createsuperuser
    
    # Run test if needed
-   ./manage_cli.py test tasks.tests
+   ./manage_cli.sh test tasks.tests
+   ./manage_cli.sh test main.tests.test_login
    
    # After creating superuser successfully
    cd ../
    docker-compose up -d --build django
    ```
-   Login `http://localhost:8899/admin/` with `username=admin` and `password=admin`
+   Login [admin_page](http://localhost:8899/admin/) with `PolyU Net ID=admin` and `Password=admin`
+
 
 4. Add User Group
    
@@ -50,8 +54,8 @@
    
    Add staff
    ![add_staff](img/add_staff.png)
-
-   Assign user group (assign rights)
+   
+   Assign group to users (access rights)
    ![assign_groups.png](img/assign_groups.png)
    
 6. Run All service

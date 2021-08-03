@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 import logging
@@ -15,8 +14,9 @@ from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 
+from main.exceptions import UnauthorizedException
 from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, SELECTABLE_STATUS
-from main.forms import LoginForm
+from main.forms import StaffLoginForm
 from main.utils import today_start
 from main.signals import update_queue
 from tasks.tasks import assign_staff
@@ -68,49 +68,12 @@ def response_api(request):
     return HttpResponse(response.json()['response'])
 
 
-@require_http_methods(['GET', 'POST'])
+@login_required
+@require_http_methods(['GET'])
 def login_page(request):
     if request.method == "GET":
-        form = LoginForm(auto_id=True)
+        form = StaffLoginForm(auto_id=True)
         return render(request, 'main/login_staff.html', {'form': form})
-    elif request.method == "POST":
-
-        staff_netid = request.POST.get('netid')
-        role = request.POST.get('role')
-        status = request.POST.get('status')
-        user = authenticate(requests, username=staff_netid)
-
-        if not user:
-            return redirect('login_page')
-
-        try:
-            staff = StaffStatus.objects.get(staff_netid=staff_netid)
-        except StaffStatus.DoesNotExist:
-            staff = StaffStatus(staff_netid=staff_netid)
-
-        # check which user group does the user belongs to
-        if 'counsellor' in [group.name for group in user.groups.all()]:
-            staff.staff_role = role
-        elif 'app_admin' in [group.name for group in user.groups.all()]:
-            staff.staff_role = StaffStatus.Role.SUPERVISOR
-        else:
-            return redirect('login_page')
-
-        staff.staff_chat_status = status
-        staff.status_change_time = timezone.now()
-        staff.save()
-        staff.refresh_from_db()
-
-        login(request, user)
-
-        if staff.staff_role in ('online_triage', 'do', 'counsellor'):
-            return redirect('counsellor')
-        elif staff.staff_role == 'supervisor':
-            return redirect('supervisor')
-        elif staff.staff_role == 'administrator':
-            return redirect('administrator')
-        else:
-            return redirect('login_page')
 
 
 @login_required
@@ -118,14 +81,46 @@ def login_page(request):
 def logout_view(request):
     logout(request)
 
-    return redirect('login_page')
+    return redirect('login')
+
+
+@login_required
+@require_http_methods(['POST', 'GET'])
+def chat_console(request):
+    staff_netid = request.user.netid
+    user_group = request.session['user_group']
+    try:
+        staff = StaffStatus.objects.get(staff_netid=staff_netid)
+    except StaffStatus.DoesNotExist:
+        staff = StaffStatus(staff_netid=staff_netid)
+
+    if request.method == 'POST':
+        # check which user group does the user belongs to
+        if user_group == 'counsellor':
+            staff.staff_role = request.POST.get('role')
+        elif user_group == 'app_admin':
+            staff.staff_role = StaffStatus.Role.SUPERVISOR
+
+        staff.staff_chat_status = request.POST.get('status')
+        staff.status_change_time = timezone.localtime()
+        staff.save()
+        staff.refresh_from_db()
+
+    if staff.staff_role in ('online_triage', 'do', 'counsellor'):
+        return redirect('counsellor')
+    elif staff.staff_role == 'supervisor':
+        return redirect('supervisor')
+    elif staff.staff_role == 'administrator':
+        return redirect('administrator')
+    else:
+        return redirect('login_page')
 
 
 @login_required
 @require_http_methods(['GET'])
 def counsellor(request):
-    staff_netid = request.user.username
-    now = timezone.now()
+    staff_netid = request.user.netid
+    now = timezone.localtime()
 
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
@@ -156,8 +151,8 @@ def counsellor(request):
 @login_required
 @require_http_methods(['GET'])
 def supervisor(request):
-    staff_netid = request.user.username
-    now = timezone.now()
+    staff_netid = request.user.netid
+    now = timezone.localtime()
 
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
@@ -167,8 +162,15 @@ def supervisor(request):
         return render(request, 'main/404.html')
 
     students = StudentChatStatus.objects \
-                   .filter(chat_request_time__date=today) \
-                   .order_by('chat_request_time')[offset:offset + limit]
+        .filter(chat_request_time__gte=today_start()) \
+        .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
+                Q(assigned_counsellor=staff)) \
+        .order_by('chat_request_time')
+
+    histories = StudentChatHistory.objects \
+        .filter(chat_request_time__gte=today_start()) \
+        .order_by('chat_request_time')
+
     return render(request, 'main/supervisor.html',
                   {'staff': staff,
                    'students': students,
@@ -180,7 +182,7 @@ def supervisor(request):
 @login_required
 @require_http_methods(['GET'])
 def administrator(request):
-    staff_netid = request.user.username
+    staff_netid = request.user.netid
     now = timezone.now()
 
     try:
@@ -211,7 +213,7 @@ def administrator(request):
 @permission_required('main.view_staffstatus', raise_exception=True)
 @require_http_methods(['GET'])
 def staffstatus(request):
-    staff_netid = request.user.username
+    staff_netid = request.user.netid
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist as e:
@@ -269,7 +271,7 @@ def updatestaff(request):
     :return:
     """
     new_status = request.POST.get('status')
-    staff_netid = request.user.username
+    staff_netid = request.user.netid
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist:
@@ -335,7 +337,7 @@ def login_sso(request):
 
 
 @csrf_exempt
-@require_http_methods(['POST'])
+@require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
         encoded_jwt = request.POST.get('data')
@@ -343,19 +345,21 @@ def login_sso_callback(request):
             return render(request, 'main/login_sso.html', {
                 'error_message': "Cannot get JWT"
             })
-
         decoded_jwt = sso_auth.decode(encoded_jwt)
 
         if decoded_jwt['polyuUserType'] == 'Student':
             return render(request, 'main/index.html', {
                 'decoded_jwt': decoded_jwt
             })
-        elif decoded_jwt['polyuUserType'] == 'Staff':
-            return render(request, 'main/login_staff.html', {
-                'decoded_jwt': decoded_jwt
-            })
 
-    except Exception as e:
-        render(request, 'main/login_sso.html', {
-            'error_message': str(e)
-        })
+        elif decoded_jwt['polyuUserType'] == 'Staff':
+            staff_netid = decoded_jwt['cn']
+            user = authenticate(requests, netid=staff_netid)
+            user_group = user.get_groups()
+            request.session['user_group'] = user_group
+            login(request, user)
+            return redirect('login_staff')
+
+    except (Exception, UnauthorizedException) as e:
+        logger.warning(e)
+        return redirect('login')
