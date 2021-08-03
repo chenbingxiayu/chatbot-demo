@@ -162,8 +162,9 @@
 </section>
 {% endblock top_banner_content %}
 {% block main_content %}
-
+    {% csrf_token %}
     <section class="main-content">
+    <input type="hidden" value="{{decoded_jwt}}"/>
     <div class="container">
         <div class="max-width-2">
             <div class="row justify-content-center">

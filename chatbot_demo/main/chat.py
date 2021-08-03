@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 
 config_file = './.zuliprc'
@@ -15,7 +16,7 @@ email_suffix = settings.ZULIP['EMAIL_SUBFFIX']
 def _construct_stream_name(staff_netid: str):
     return f"{staff_netid}_chatroom"
 
-
+@login_required
 def student(request):
     try:
         student_netid = request.GET.get('student_netid', '21')
@@ -44,7 +45,7 @@ def student(request):
     except Exception as e:
         print(e)
 
-
+@login_required
 def counsellor(request):
     try:
         staff_netid = request.GET.get('staff_netid', '10')
@@ -224,7 +225,7 @@ def delete_stream(request):
     except Exception as e:
         return JsonResponse({'status': "error", "error": str(e)})
 
-
+@login_required
 @require_http_methods(['GET'])
 def stream_room(request):
     try:
