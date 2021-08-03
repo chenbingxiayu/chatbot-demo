@@ -1455,8 +1455,7 @@
                   })
                   .then(function(res) {
                     if (res.value == false) {
-                      // TODO student id
-                      const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
+                      // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
                       return botui.message
                         .human({
                           delay: 500,
@@ -3397,8 +3396,7 @@
                     });
                   })
                   .then(function(res) {
-                    // TODO student id
-                    const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
+                    // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
                     if (res.value == false) {
                       return botui.message
                         .human({

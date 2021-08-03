@@ -164,7 +164,6 @@
 {% block main_content %}
     {% csrf_token %}
     <section class="main-content">
-    <input type="hidden" value="{{student_netid}}"/>
     <div class="container">
         <div class="max-width-2">
             <div class="row justify-content-center">
@@ -191,7 +190,7 @@
 
 {% block footer_script %}
 <script>
-
+    var student_netid = "{{student_netid}}";
     var botui = new BotUI('chatbox');
     var content = document.getElementsByTagName('chatbox');
     var user_input = 'default';
