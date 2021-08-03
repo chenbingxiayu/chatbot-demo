@@ -25,9 +25,11 @@ from main.auth import sso_auth
 logger = logging.getLogger('django')
 COOKIE_MAX_AGE = 8 * 60 * 60
 
-
-# def index(request):
-#     return render(request, 'main/index.html')
+@login_required
+def index(request, student_netid):
+    return render(request, 'main/index.html', {
+        "student_netid": student_netid
+    })
 
 
 @csrf_exempt
@@ -348,9 +350,7 @@ def login_sso_callback(request):
         decoded_jwt = sso_auth.decode(encoded_jwt)
 
         if decoded_jwt['polyuUserType'] == 'Student':
-            return render(request, 'main/index.html', {
-                'decoded_jwt': decoded_jwt
-            })
+            return redirect('index', student_netid=decoded_jwt.sub)
 
         elif decoded_jwt['polyuUserType'] == 'Staff':
             staff_netid = decoded_jwt['cn']
