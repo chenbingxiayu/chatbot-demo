@@ -351,9 +351,9 @@ def login_sso_callback(request):
 
         if decoded_jwt['polyuUserType'] == 'Student':
             return render(request, 'main/index.html', {
-                "student_netid": decoded_jwt.sub
+                "student_netid": decoded_jwt['sub']
             })
-            # return redirect('index', student_netid=decoded_jwt.sub)
+            # return redirect('index', student_netid=decoded_jwt['sub'])
 
         elif decoded_jwt['polyuUserType'] == 'Staff':
             staff_netid = decoded_jwt['cn']
