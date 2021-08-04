@@ -1,3 +1,4 @@
+import os
 import json
 from .zulip.zulip import ZulipClient
 from django.shortcuts import render
@@ -39,6 +40,7 @@ def student(request):
             'stream_name': stream_name,
             'staff_netid': staff_netid,
             'staff_email': staff_email,
+            'zulip_realm': os.environ.get('DOMAIN_URL'),
         }
 
         return render(request, 'chat/chat_student.html', page_info)
@@ -84,6 +86,7 @@ def counsellor(request):
             'student_email': student_email,
             'student_netid': student_netid,
             'stream_id': stream_id,
+            'zulip_realm': os.environ.get('DOMAIN_URL'),
         }
 
         return render(request, 'chat/chat_counsellor.html', page_info)
@@ -261,6 +264,7 @@ def stream_room(request):
             'stream_id': stream_id,
             'staff_netid': staff_netid,
             'staff_email': staff_email,
+            'zulip_realm': os.environ.get('DOMAIN_URL'),
         }
 
         return render(request, 'chat/chat_stream_room.html', page_info)

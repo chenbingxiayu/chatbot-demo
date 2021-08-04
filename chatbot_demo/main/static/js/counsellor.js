@@ -68,7 +68,7 @@
     const config = {
       username: staffEmail,
       apiKey: apiKey,
-      realm: "https://zulip.cat",
+      realm: zulipRealm,
     };
     const client = await zulip(config);
 

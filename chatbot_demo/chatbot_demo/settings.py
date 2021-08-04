@@ -210,8 +210,8 @@ WEBPACK_LOADER = {
 }
 
 ZULIP = {
-    'ADMIN_EMAIL': 'catherinedeveloper989@gmail.com',
-    'DOMAIN_URL': 'https://zulip.cat/',
+    'ADMIN_EMAIL': os.getenv('ADMIN_EMAIL', 'catherinedeveloper989@gmail.com'),
+    'DOMAIN_URL': os.getenv('DOMAIN_URL', 'https://zulip.cat/'),
     'EMAIL_SUBFFIX': '@zulip.com'
 
 }

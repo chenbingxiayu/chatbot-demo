@@ -97,7 +97,7 @@
     const config = {
       username: studentEmail,
       apiKey: apiKey,
-      realm: "https://zulip.cat",
+      realm: zulipRealm,
     };
     const client = await zulip(config);
 
