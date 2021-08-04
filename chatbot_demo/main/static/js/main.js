@@ -54,6 +54,14 @@
                     content: res.text,
                   })
                   .then(init_choices_tc);
+              } else if (res.value == "zh-hans") {
+                return botui.message
+                  .human({
+                    photo: client,
+                    delay: 500,
+                    content: res.text,
+                  })
+                  .then(init_choices_sc);
               }
             });
         });
@@ -2009,6 +2017,8 @@
         location.reload();
       });
 
+
+
     // Traditional chinese
 
     function init_choices_tc() {
@@ -2711,7 +2721,7 @@
             delay: 1000,
             photo: polly,
             content:
-              "我們建議你與學生事務處(SAO)的輔導員聯絡。<br/><br/>1. 預約輔導服務<br/><br/>除此之外，您還可以選擇以下服務：<br/><br/>2. 心理健康教育資訊/資源<br/>3. 立即與學生事務處 (SAO)輔導員聯絡<br/>4. 線上聊天室<br/>5. 社區支援熱線",
+              "我們建議你與學生事務處(SAO)的輔導員聯絡。<br/><br/>1. 預約輔導服務<br/><br/>除此之外，您還可以選擇以下服務：<br/><br/>2. 心理健康教育資訊/資源<br/>3. 立即與學生事務處 (SAO)輔導員聯絡<br/>4. 線上聊天<br/>5. 社區支援熱線",
           })
           .then(function() {
             return botui.action
@@ -2720,7 +2730,7 @@
                 action: [
                   { text: "預約輔導服務", value: 3 },
                   { text: "心理健康教育資訊/資源", value: 1 },
-                  { text: "立即與SAO 輔導員聯絡", value: 4 },
+                  { text: "立即與學生事務處 (SAO) 輔導員聯絡", value: 4 },
                   { text: "線上聊天", value: 2 },
                   { text: "社區支援熱線", value: 6 },
                 ],
@@ -2959,7 +2969,7 @@
                     text: "立即與PolyU-Line輔導員聯絡 : (852) 8100 1583",
                     value: 5,
                   },
-                  { text: "立即與SAO 輔導員聯絡", value: 3 },
+                  { text: "預約輔導服務", value: 3 },
                   { text: "社區支援熱線", value: 6 },
                 ],
               })
@@ -3028,7 +3038,7 @@
               '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">精神健康</a><br/>' +
               '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS心理健康小組及工作坊</a><br>' +
               '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">其他</a><br/>' +
-              "<br><br>*如果你正身處緊急情況及/或險境，並有感自身及/或他人有即時的生命危險，請即致電999或到鄰近的急症室求助。", //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
+              "<br><br>*如你正身處緊急情況, 請致電999或到鄰近的急症室求助。", //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
           });
         })
         .then(function() {
@@ -3674,10 +3684,10 @@
                 delay: 1500,
                 content:
                   "1. 與 PolyU-Line 輔導員聯絡: (852)81001583 <br>" + //? Contact with PolyU-Line Counsellors
-                  "*所有電話將由 Vital Employee Service Consultancy Christian Family Service Centre 接聽。<br/><br/>" + //? All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.
-                  "2. 我們校園最近的公立醫院是：伊利沙伯醫院<br>" + //? The nearest public hospital of our campus is: Queen Elizabeth Hospital
-                  "-香港九龍加士居道30號" +
-                  "<br>-Tel: (852)35068888", //? 30 Gascoigne Road, Kowloon, Hong Kong
+                  "*基督教家庭服務中心（盈力僱員服務顧問）將會接聽所有電話。<br/><br/>" + //? All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.
+                  "2. 到鄰近的急症室求助: 伊利沙伯醫院<br>" + //? The nearest public hospital of our campus is: Queen Elizabeth Hospital
+                  "香港九龍加士居道30號" +
+                  "<br>電話: (852)35068888", //? 30 Gascoigne Road, Kowloon, Hong Kong
               })
               .then(further_help_tc);
           }
@@ -3866,6 +3876,1866 @@
         })
         .then(_close);
     }
+
+
+    // Simplified chinese
+
+    function init_choices_sc() {
+      var office_hour = isSAOWorkingHours(new Date());
+      if (office_hour == true) {
+        return botui.message
+          .bot({
+            loading: true,
+            delay: 1000,
+            photo: polly,
+            content: "请选择以下服务: ",
+          })
+          .then(function() {
+            return botui.action
+              .button({
+                addMessage: false,
+                action: [
+                  { text: "网上聊天机械人", value: 1 },
+                  { text: "心理健康教育资讯/资源", value: 2 },
+                  { text: "线上聊天", value: 4 },
+                  { text: "预约辅导服务", value: 5 },
+                  { text: "立即与学生事务处 (SAO)辅导员联络", value: 3 },
+                  { text: "紧急支援", value: 6 },
+                ],
+              })
+              .then(function(res) {
+                if (res.value == 1) {
+                  service_list = false;
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(get_name_sc)
+                    .then(questions_sc);
+                }
+                if (res.value == 2) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(mental_health_101_sc);
+                }
+                if (res.value == 3) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(contact_with_counsellors_sc);
+                }
+                if (res.value == 4) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(T_and_C_of_OCS_sc);
+                }
+                if (res.value == 5) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(make_appointment_with_counsellors_sc);
+                }
+                if (res.value == 6) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(emergency_support_sc);
+                }
+              });
+          });
+      } else {
+        return botui.message
+          .bot({
+            loading: true,
+            delay: 1000,
+            photo: polly,
+            content: "请选择以下服务:",
+          })
+          .then(function() {
+            return botui.action
+              .button({
+                addMessage: false,
+                action: [
+                  { text: "网上聊天机械人", value: 1 },
+                  { text: "心理健康教育资讯/资源", value: 2 },
+                  { text: "预约辅导服务", value: 5 },
+                  {
+                    text: "立即与PolyU-Line辅导员联络 : (852) 8100 1583",
+                    value: 3,
+                  },
+                  { text: "紧急支援", value: 6 },
+                ],
+              })
+              .then(function(res) {
+                if (res.value == 1) {
+                  service_list = false;
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(get_name_sc)
+                    .then(questions_sc);
+                }
+                if (res.value == 2) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(mental_health_101_sc);
+                }
+                if (res.value == 3) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(polyu_line_sc);
+                }
+                if (res.value == 5) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(make_appointment_with_counsellors_sc);
+                }
+                if (res.value == 6) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(emergency_support_sc);
+                }
+              });
+          });
+      }
+    }
+
+    function isSAOWorkingHours(now) {
+      // TODO: always return true in dev
+      return true
+
+      var weekday = now.getDay();
+      var hours = now.getHours();
+      // Mon - Fri
+      if (weekday >= 1 && weekday <= 5) {
+        // 9:00-19:00
+        if (hours >= 9 && hours < 19) {
+          return true;
+        }
+      }
+
+      // Sat
+      if (weekday == 6) {
+        // 9:00 - 12:00
+        if (hours >= 9 && hours < 12) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function get_name_sc() {
+      return botui.message
+        .bot({
+          photo: polly,
+          loading: true,
+          delay: 3000,
+          content:
+            '你好，我是Polly。我会根据你以下所提供的讯息，为你建议合适的服务。<br/><br/>如欲查询有关学生事务处的其他服务，请参阅以下连结： <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
+        })
+        .then(function() {
+          return botui.message.bot({
+            loading: true,
+            photo: polly,
+            delay: 1000,
+            content: "你的名字是?",
+          });
+        })
+        .then(function() {
+          return botui.action.text({
+            addMessage: false,
+            action: {
+              size: 30,
+              placeholder: "输入名字",
+            },
+          });
+        })
+        .then(function(res) {
+          name = res.value;
+          return botui.message.human({
+            photo: client,
+            delay: 500,
+            content: res.value,
+          });
+        });
+    }
+
+    function questions_sc() {
+      botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 1500,
+          content:
+            "你好﹗" +
+            name +
+            "，请回答以下问题，我会总结所得出的答案，提出切合你所需的服务建议。<br/><br/> 以下提问并不能视之为取代专业临床的心理评估和诊断",
+        })
+        .then(function() {
+          botui.message
+            .bot({
+              loading: true,
+              delay: 1500,
+              photo: polly,
+              content: "Q1. 你此刻想倾谈的内容是？ (可选一或多项)",
+            })
+            .then(q1_ans_sc);
+        });
+    }
+
+    function q1_ans_sc() {
+      $(".botui-container").animate(
+        { scrollTop: $(".botui-container").prop("scrollHeight") },
+        1000
+      );
+      return botui.action
+        .select({
+          addMessage: false,
+          action: {
+            placeholder: "请选择",
+            multipleselect: true,
+            options: [
+              { text: "学业" },
+              { text: "人际关系" },
+              { text: "工作" },
+              { text: "家庭" },
+              { text: "精神健康" },
+              { text: "其他" },
+            ],
+            button: {
+              icon: "check",
+              label: "OK",
+            },
+          },
+        })
+        .then(function(res) {
+          if (res.text == "") {
+            alert("您必须至少选择一项！");
+            q1_ans();
+          } else {
+            answers[1] =
+              'Q1. 你此刻想倾谈的内容是？ (可选一或多项)<br/><b><font color="#FF0000">' +
+              res.text +
+              "</font></b><br/>";
+            return botui.message
+              .human({
+                photo: client,
+                delay: 500,
+                content: res.text,
+              })
+              .then(function() {
+                return botui.message.bot({
+                  loading: true,
+                  delay: 1000,
+                  photo: polly,
+                  content: "好的，你先正面对有关" + res.text + "的事情。",
+                });
+              })
+              .then(q2_sc);
+          }
+        });
+    }
+
+    function q2_sc() {
+      botui.message
+        .bot({
+          loading: true,
+          delay: 1500,
+          photo: polly,
+          content: "Q2. 面对以上的事情，你有没有感到不愉快、担心或紧张？",
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: "有", value: 1 },
+                { text: "沒有", value: 0 },
+              ],
+            })
+            .then(function(res) {
+              answers[2] =
+                'Q2. 面对以上的事情，你有没有感到不愉快、担心或紧张？<br/><b><font color="#FF0000">' +
+                res.text +
+                "</font></b><br/>";
+              if (res.value == 0) {
+                return botui.message
+                  .human({
+                    photo: client,
+                    delay: 500,
+                    content: res.text,
+                  })
+                  .then(function(res) {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        delay: 1500,
+                        photo: polly,
+                        content:
+                          "我建议你可以参阅心理健康教育资讯/资源，获取更多提升心理健康的小贴士。",
+                      })
+                      .then(mental_health_101_sc);
+                  })
+                  .then(end__sc);
+              }
+              score += res.value;
+              console.log(score);
+              return botui.message
+                .human({
+                  photo: client,
+                  delay: 500,
+                  content: res.text,
+                })
+                .then(function() {
+                  return botui.message.bot({
+                    loading: true,
+                    delay: 1500,
+                    photo: polly,
+                    content:
+                      "感谢你让我知道。我们在日常生活中经验这些感觉是很自然的事。",
+                  });
+                });
+            });
+        })
+        .then(q3_sc);
+    }
+
+    function q3_sc() {
+      botui.message
+        .bot({
+          loading: true,
+          delay: 1500,
+          photo: polly,
+          content: "Q3. 你有多经常因为上述的事情而感到不愉快、担心或紧张？",
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: "极少", value: 1 },
+                { text: "颇少", value: 2 },
+                { text: "一般", value: 3 },
+                { text: "颇多", value: 4 },
+                { text: "极多", value: 5 },
+              ],
+            })
+            .then(function(res) {
+              answers[3] =
+                'Q3. 你有多经常因为上述的事情而感到不愉快、担心或紧张？<br/><b><font color="#FF0000">' +
+                res.text +
+                "</font></b><br/>";
+              score += res.value;
+              console.log(score);
+
+              return botui.message
+                .human({
+                  photo: client,
+                  delay: 500,
+                  content: res.text,
+                })
+                .then(function() {
+                  return botui.message
+                    .bot({
+                      delay: 2500,
+                      loading: true,
+                      photo: polly,
+                      content:
+                        "觉察是改变的第一步，能够提升自我了解及促进复原。",
+                    })
+                    .then(function() {
+                      return botui.message.bot({
+                        delay: 1000,
+                        loading: true,
+                        photo: polly,
+                        content: "我看得出你能够觉察到自己正受不同的情绪困扰。",
+                      });
+                    });
+                });
+            });
+        })
+        .then(q4_sc);
+    }
+
+    function q4_sc() {
+      botui.message
+        .bot({
+          loading: true,
+          delay: 2000,
+          photo: polly,
+          content: "Q4. 这些情绪有多经常影响你的日常生活？",
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: "极少", value: 1 },
+                { text: "颇少", value: 2 },
+                { text: "一般", value: 3 },
+                { text: "颇多", value: 4 },
+                { text: "极多", value: 5 },
+              ],
+            })
+            .then(function(res) {
+              answers[4] =
+                'Q4. 这些情绪有多经常影响你的日常生活？<br/><b><font color="#FF0000">' +
+                res.text +
+                "</font></b><br/>";
+              score += res.value;
+              console.log(score);
+              return botui.message
+                .human({
+                  photo: client,
+                  delay: 500,
+                  content: res.text,
+                })
+                .then(function() {
+                  return botui.message.bot({
+                    loading: true,
+                    photo: polly,
+                    delay: 1500,
+                    content: "我明白这些情绪正在影响着你的日常生活。",
+                  });
+                });
+            });
+        })
+        .then(q5_q6_sc);
+    }
+
+    function q5_q6_sc() {
+      botui.message
+        .bot({
+          loading: true,
+          delay: 2500,
+          photo: polly,
+          content:
+            "Q5. 你你曾否采用一些积极的应对方法 (例如: 运动、呼吸练习、听音乐等）去面对/纾缓这些情绪吗?",
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: "有", value: 0 },
+                { text: "沒有", value: 1 },
+              ],
+            })
+            .then(function(res) {
+              answers[5] =
+                'Q5. 你曾否采用一些积极的应对方法 (例如: 运动、呼吸练习、听音乐等）去面对/纾缓这些情绪吗?<br/><b><font color="#FF0000">' +
+                res.text +
+                "</font></b><br/>";
+              score += res.value;
+              console.log(score);
+              botui.message.human({
+                photo: client,
+                delay: 500,
+                content: res.text,
+              });
+              if (res.value == 0) {
+                return botui.message
+                  .bot({
+                    loading: true,
+                    delay: 2000,
+                    photo: polly,
+                    content:
+                      "我们能发掘一些积极的应对方法去纾缓上述的情绪是非常重要的啊!",
+                  })
+                  .then(function() {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        delay: 1500,
+                        photo: polly,
+                        content:
+                          "Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?",
+                      })
+                      .then(function() {
+                        return botui.action
+                          .button({
+                            addMessage: false,
+                            action: [
+                              { text: "能够", value: 0 },
+                              { text: "不能够", value: 1 },
+                            ],
+                          })
+                          .then(function(res) {
+                            answers[6] =
+                              'Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?<br/><b><font color="#FF0000">' +
+                              res.text +
+                              "</font></b><br/>";
+                            score += res.value;
+                            console.log(score);
+                            botui.message.human({
+                              photo: client,
+                              delay: 500,
+                              content: res.text,
+                            });
+                          });
+                      });
+                  });
+              } else {
+                return botui.message
+                  .bot({
+                    loading: true,
+                    delay: 2000,
+                    photo: polly,
+                    content:
+                      "我们能发掘一些积极的应对方法去纾缓上述的情绪是非常重要的啊!",
+                  })
+                  .then(function() {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        delay: 1500,
+                        photo: polly,
+                        content:
+                          "Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？",
+                      })
+                      .then(function() {
+                        return botui.action
+                          .button({
+                            addMessage: false,
+                            action: [
+                              { text: "能夠", value: 0 },
+                              { text: "不能夠", value: 1 },
+                            ],
+                          })
+                          .then(function(res) {
+                            answers[6] =
+                              'Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？<br/><b><font color="#FF0000">' +
+                              res.text +
+                              "</font></b><br/>";
+                            score += res.value;
+                            console.log(score);
+                            return botui.message.human({
+                              photo: client,
+                              delay: 500,
+                              content: res.text,
+                            });
+                          });
+                      });
+                  });
+              }
+            });
+        })
+        .then(dispatch_sc); //.then(confirm_answer);
+    }
+
+    function confirm_answer_sc() {
+      return botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 2000,
+          content: "请确认您的回答:",
+        })
+        .then(function() {
+          var temp = "";
+          for (var i = 1; i <= 6; i++) {
+            temp += "<br/>" + answers[i];
+          }
+          return botui.message.bot({
+            loading: true,
+            delay: 2000,
+            photo: polly,
+            content: temp,
+          });
+        })
+        .then(function() {
+          return botui.action.button({
+            addMessage: false,
+            action: [
+              { text: "取消（重定向到 Q1）", value: false },
+              { text: "确认", value: true },
+            ],
+          });
+        })
+        .then(function(res) {
+          if (res.value == false) {
+            score = 0;
+            answers = {};
+            return botui.message
+              .human({
+                photo: client,
+                delay: 500,
+                content: res.text,
+              })
+              .then(questions_sc);
+          } else {
+            return botui.message
+              .human({
+                photo: client,
+                delay: 500,
+                content: res.text,
+              })
+              .then(dispatch_sc);
+          }
+        });
+    }
+
+    function dispatch_sc() {
+      finish_assessment = true;
+      if (score <= 6) {
+        low_sc();
+      } else if (score <= 10) {
+        medium_sc();
+      } else {
+        high_sc();
+      }
+    }
+
+    function low_sc() {
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 3000,
+          photo: polly,
+          content:
+            "你所选择的答案显示你当下鲜有或甚少经历上述的情绪状况，并能有效地管理情绪。",
+        })
+        .then(function() {
+          return botui.message.bot({
+            loading: true,
+            delay: 3500,
+            photo: polly,
+            content:
+              "做得好﹗请继续保持心理健康！我建议你可以参阅心理健康教育资讯/资源，获取更多提升心理健康的小贴士。",
+          });
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [{ text: "心理健康教育资讯/资源" }],
+            })
+            .then(function(res) {
+              return botui.message.human({
+                photo: client,
+                delay: 500,
+                content: res.text,
+              });
+            });
+        })
+        .then(mental_health_101_sc);
+    }
+
+    function medium_sc() {
+      botui.message
+        .bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content:
+            "你所选择的答案显示你有时候会经历上述的情绪，而这些情绪状况<strong>有时侯会影响到你的日常生活。</strong>",
+        })
+        .then(mid_recommendations_sc);
+    }
+
+    function mid_recommendations_sc() {
+      var office_hour = isSAOWorkingHours(new Date());
+      if (office_hour == true) {
+        return botui.message
+          .bot({
+            loading: true,
+            delay: 1000,
+            photo: polly,
+            content:
+              "我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. 立即与学生事务处 (SAO)辅导员联络<br/>4. 线上聊天<br/>5. 社区支援热线",
+          })
+          .then(function() {
+            return botui.action
+              .button({
+                addMessage: false,
+                action: [
+                  { text: "预约辅导服务", value: 3 },
+                  { text: "心理健康教育资讯/资源", value: 1 },
+                  { text: "立即与学生事务处 (SAO)辅导员联络 ", value: 4 },
+                  { text: "线上聊天", value: 2 },
+                  { text: "社区支援热线", value: 6 },
+                ],
+              })
+              .then(function(res) {
+                if (res.value == 1) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(mental_health_101_sc);
+                }
+                if (res.value == 2) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(T_and_C_of_OCS_sc);
+                }
+                if (res.value == 3) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(make_appointment_with_counsellors_sc);
+                }
+                if (res.value == 4) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(contact_with_counsellors_sc);
+                }
+                if (res.value == 5) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(polyu_line_sc);
+                }
+                if (res.value == 6) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(community_helpline_sc);
+                }
+              });
+          });
+      } else {
+        return botui.message
+          .bot({
+            loading: true,
+            delay: 1000,
+            photo: polly,
+            content:
+              "我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. 立即与PolyU-Line辅导员联络 : (852) 81001583 <br/>4. 社区支援热线",
+          })
+          .then(function() {
+            return botui.action
+              .button({
+                addMessage: false,
+                action: [
+                  { text: "预约辅导服务", value: 3 },
+                  { text: "心理健康教育资讯/资源", value: 1 },
+                  {
+                    text: "立即与PolyU-Line辅导员联络 : (852) 81001583",
+                    value: 5,
+                  },
+                  { text: "社区支援热线", value: 6 },
+                ],
+              })
+              .then(function(res) {
+                if (res.value == 1) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(mental_health_101_sc);
+                }
+                if (res.value == 2) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(T_and_C_of_OCS_sc);
+                }
+                if (res.value == 3) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(make_appointment_with_counsellors_sc);
+                }
+                if (res.value == 4) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(contact_with_counsellors_sc);
+                }
+                if (res.value == 5) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(polyu_line_sc);
+                }
+                if (res.value == 6) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(community_helpline_sc);
+                }
+              });
+          });
+      }
+    }
+
+    function high_sc() {
+      score = 20;
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 2000,
+          photo: polly,
+          content:
+            "你所选择的答案显示你当下经常会经历到上述的情绪，而这些情绪状况亦不时影响着你的日常生活。",
+        })
+        .then(high_recommendations_sc);
+    }
+
+    function high_recommendations_sc() {
+      var office_hour = isSAOWorkingHours(new Date());
+      if (office_hour == true) {
+        return botui.message
+          .bot({
+            loading: true,
+            photo: polly,
+            delay: 3000,
+            content:
+              "我们建议你尽快向专业人士寻求协助。<br/><br/>" +
+              "<font color=blue>如果你正身处紧急情况或/及险境，并有感自身及/或他人有实时的生命危险，请即致电999或到邻近的急症室求助。</font><br/></br>" +
+              "1. 立即与学生事务处 (SAO)辅导员联络<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 预约辅导服务<br/>3. 社区支援热线",
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              action: [
+                { text: "立即与学生事务处 (SAO)辅导员联络", value: 4 },
+                { text: "预约辅导服务", value: 3 },
+                { text: "社区支援热线", value: 6 },
+              ],
+            });
+          })
+          .then(function(res) {
+            if (res.value == 3) {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(make_appointment_with_counsellors_sc);
+            }
+            if (res.value == 4) {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(contact_with_counsellors_sc);
+            }
+            if (res.value == 5) {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(polyu_line_sc);
+            }
+            if (res.value == 6) {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(community_helpline_sc);
+            }
+          });
+      } else {
+        return botui.message
+          .bot({
+            loading: true,
+            delay: 3000,
+            photo: polly,
+            content:
+              "我们建议你尽快向专业人士寻求协助。<br/><br/>" +
+              "<font color=blue>如果你正身处紧急情况或/及险境，并有感自身及/或他人有实时的生命危险，请即致电999或到邻近的急症室求助。</font><br/></br>" +
+              "1. 立即与PolyU-Line辅导员联络 : (852) 81001583 <br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 预约辅导服务<br/>3. 社区支援热线",
+          })
+          .then(function() {
+            return botui.action
+              .button({
+                addMessage: false,
+                action: [
+                  {
+                    text: "立即与PolyU-Line辅导员联络 : (852) 81001583",
+                    value: 5,
+                  },
+                  { text: "预约辅导服务", value: 3 },
+                  { text: "社区支援热线 ", value: 6 },
+                ],
+              })
+              .then(function(res) {
+                if (res.value == 3) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(make_appointment_with_counsellors_sc);
+                }
+                if (res.value == 4) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(contact_with_counsellors_sc);
+                }
+                if (res.value == 5) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(polyu_line_sc);
+                }
+                if (res.value == 6) {
+                  return botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(community_helpline_sc);
+                }
+              });
+          });
+      }
+    }
+
+    function mental_health_101_sc() {
+      var office_hour = isSAOWorkingHours(new Date());
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 1500,
+          photo: polly,
+          content:
+            "以下连结将转接至第三方网站。有关第三方网站的内容，我们概不负责，请参阅该网站的条款和政策。",
+        })
+        .then(function() {
+          return botui.message.bot({
+            loading: true,
+            delay: 2500,
+            photo: polly,
+            content:
+              '1. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/academic/" target ="_blank">学业</a><br/>' +
+              '2. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/interpersonal-relationship/" target ="_blank">人际关系</a><br/>' +
+              '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">工作</a><br/>' +
+              '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">家庭</a><br/>' +
+              '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">精神健康</a><br/>' +
+              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS心理健康小组及工作坊</a><br>' +
+              '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">其他</a><br/>' +
+              "<br><br>*如你正身处紧急情况, 请致电999或到邻近的急症室求助。", //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
+          });
+        })
+        .then(function() {
+          return botui.message.bot({
+            loading: true,
+            delay: 3000,
+            photo: polly,
+            content: "多谢你使用我们的服务。请问你还有其他需要吗?",
+          });
+        })
+        .then(function() {
+          return botui.action.button({
+            addMessage: false,
+            action: [
+              { text: "不需要了，谢谢。", value: false },
+              { text: "我仍需要其他服务。", value: true },
+            ],
+          });
+        })
+        .then(function(res) {
+          if (res.value == false) {
+            return botui.message
+              .human({
+                delay: 500,
+                photo: client,
+                content: res.text,
+              })
+              .then(function() {
+                return botui.message.bot({
+                  loading: true,
+                  delay: 1000,
+                  photo: polly,
+                  content: "请分享你对本服务的体验",
+                });
+              })
+              .then(end_sc);
+          } else {
+            if (service_list == true || finish_assessment == false) {
+              botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(init_choices_sc);
+              return;
+            }
+            if (office_hour == true) {
+              return botui.action
+                .button({
+                  addMessage: false,
+                  action: [
+                    { text: "预约辅导服务", value: 1 },
+                    { text: "立即与学生事务处 (SAO)辅导员联络", value: 2 },
+                  ],
+                })
+                .then(function(res) {
+                  if (res.value == 1) {
+                    return botui.message
+                      .human({
+                        delay: 500,
+                        photo: client,
+                        content: res.text,
+                      })
+                      .then(make_appointment_with_counsellors_sc);
+                  }
+                  if (res.value == 2) {
+                    return botui.message
+                      .human({
+                        delay: 500,
+                        photo: client,
+                        content: res.text,
+                      })
+                      .then(contact_with_counsellors_sc);
+                  }
+                });
+            } else {
+              return botui.action
+                .button({
+                  addMessage: false,
+                  action: [
+                    { text: "预约辅导服务", value: 1 },
+                    {
+                      text: "立即与PolyU-Line辅导员联络 : (852) 81001583 ",
+                      value: 3,
+                    },
+                  ],
+                })
+                .then(function(res) {
+                  if (res.value == 1) {
+                    return botui.message
+                      .human({
+                        delay: 500,
+                        photo: client,
+                        content: res.text,
+                      })
+                      .then(make_appointment_with_counsellors_sc);
+                  }
+                  if (res.value == 3) {
+                    return botui.message
+                      .human({
+                        delay: 500,
+                        photo: client,
+                        content: res.text,
+                      })
+                      .then(polyu_line_sc);
+                  }
+                });
+            }
+          }
+        });
+    }
+
+    function T_and_C_of_OCS_sc() {
+      //Online Chat Services
+      var myDate = new Date();
+      pop_msg = "";
+
+      if (myDate.getDay() >= 1 && myDate.getDay() <= 5) {
+        if (myDate.getHours() >= 12 && myDate.getHours() <= 13) {
+          pop_msg =
+            "我们会在下午二时(香港时间)提供服务，期待届时与你在线上聊天。";
+        } else if (myDate.getHours() == 18) {
+          pop_msg =
+            "我们会在星期一至星期五，上午9时至中午12时(香港时间)和下午2时至下午6时(香港时间)提供服务，期待届时与你在线上聊天。";
+        }
+      } else {
+        pop_msg =
+          "我们会在下一个工作天的上午9时(香港时间)提供服务，期待届时与你在线上聊天。";
+      }
+
+      if (pop_msg != "") {
+        botui.message
+          .bot({
+            loading: true,
+            delay: 1500,
+            photo: polly,
+            content: pop_msg,
+          })
+          .then(end_sc)
+          .then(_close);
+      }
+
+      //----
+      botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 2000,
+          content:
+            "<p>请阅读以下服务条款及私隐政策：</p><br/>" + //? Please accept the Terms and Conditions of using the Online Chat service
+            "<p><b>My Polly Counselling Chatbot Service</b></p>\n" +
+            "<br/>\n" +
+            "<p>(The Terms and Conditions are only available in English.)</p>\n" +
+            "<br/>\n" +
+            "<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n" +
+            "<br/>\n" +
+            "<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/face-to-face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n",
+        })
+        .then(function() {
+          return botui.action.button({
+            addMessage: false,
+            photo: client,
+            action: [
+              {
+                text: "Read more",
+              },
+            ],
+          });
+        })
+        .then(function() {
+          return botui.message.bot({
+            loading: true,
+            photo: polly,
+            delay: 2000,
+            content:
+              "<br/>\n" +
+              "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+              "<br/>\n" +
+              "<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n",
+          });
+        })
+        .then(function() {
+          return botui.action.button({
+            addMessage: false,
+            photo: client,
+            action: [
+              {
+                text: "Read more",
+              },
+            ],
+          });
+        })
+        .then(function() {
+          return botui.message.bot({
+            loading: true,
+            photo: polly,
+            delay: 2000,
+            content:
+              "<br/>\n" +
+              "<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n" +
+              "<br/>\n" +
+              "<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n" +
+              "<br/>\n" +
+              "<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n" +
+              "<br/>\n" +
+              '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
+              "<br/>\n" +
+              '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
+          });
+        })
+        //----
+        /*
+    botui.message
+      .bot({
+        loading: true,
+        delay: 1000,
+        photo: polly,
+        content:
+          "We noted that you have accepted the Terms and Conditions of using Counselling ChatBot. Before starting the Online Chat, here are a few reminders:<br/><br/>" +
+          "1. In case of emergency and when " +
+          "there is an imminent hazard posed to you and others, please call 999 or go to the nearest emergency / A&E service.<br/><br/>" +
+          "2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>" +
+          "3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>",
+      })*/
+        .then(function() {
+          return botui.action.button({
+            addMessage: false,
+            action: [
+              { text: "不需要了，谢谢。", value: false },
+              { text: "同意", value: true },
+            ],
+          });
+        })
+        .then(function(res) {
+          if (res.value == false) {
+            return botui.message
+              .human({
+                delay: 500,
+                photo: client,
+                content: res.text,
+              })
+              .then(function() {
+                return botui.message
+                  .bot({
+                    loading: true,
+                    delay: 1500,
+                    photo: polly,
+                    content:
+                      "如有需要，欢迎你致电 (852)27666800 与学生事务处 (SAO) 辅导员联络。",
+                  })
+                  .then(further_help_sc);
+              });
+          } else {
+            return botui.message
+              .human({
+                delay: 500,
+                photo: client,
+                content: res.text,
+              })
+              .then(questions_before_OCS_sc);
+          }
+        });
+    }
+
+    function questions_before_OCS_sc() {
+      var office_hour = isSAOWorkingHours(new Date());
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 1500,
+          photo: polly,
+          content: "请回答以下问题，并选择「是」或「否」作答：",
+        })
+        .then(function() {
+          return botui.message
+            .bot({
+              loading: true,
+              delay: 1500,
+              photo: polly,
+              content:
+                "Q1. 在过去的三个月或至现在，你曾否或正接受 身心健康及辅导部 的辅导服务吗?",
+            })
+            .then(function() {
+              return botui.action.button({
+                addMessage: false,
+                action: [
+                  { text: "有", value: true },
+                  { text: "沒有", value: false },
+                ],
+              });
+            })
+            .then(function(res) {
+              botui.message.human({
+                delay: 500,
+                photo: client,
+                content: res.text,
+              });
+
+              if (res.value == true) {
+                return botui.message
+                  .bot({
+                    loading: true,
+                    delay: 3000,
+                    photo: polly,
+                    content:
+                      '我们鼓励你与正跟进你的SAO辅导员直接联络。你可以致电(852)27666800、透过电邮或网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a> 与你的辅导员预约面谈时间。',
+                  })
+                  .then(function() {
+                    return botui.message.bot({
+                      loading: true,
+                      delay: 1500,
+                      photo: polly,
+                      content: "与此同时，欢迎浏览我们的心理健康教育资讯。",
+                    });
+                  })
+                  .then(function() {
+                    return botui.action.button({
+                      addMessage: false,
+                      action: [
+                        {
+                          text: "心理健康教育资讯/资源",
+                          value: true,
+                        },
+                        { text: "不需要了，谢谢。", value: false },
+                      ],
+                    });
+                  })
+                  .then(function(res) {
+                    if (res.value == false) {
+                      return botui.message
+                        .human({
+                          delay: 500,
+                          photo: client,
+                          content: res.text,
+                        })
+                        .then(further_help_sc);
+                    } else {
+                      return botui.message
+                        .human({
+                          delay: 500,
+                          photo: client,
+                          content: res.text,
+                        })
+                        .then(mental_health_101_sc);
+                    }
+                  });
+              } else {
+                return botui.message
+                  .bot({
+                    loading: true,
+                    photo: polly,
+                    delay: 3000,
+                    content:
+                      "Q2.请问你曾否经历以下状况:<br/><br/>" +
+                      "- 自我伤害及/或伤害他人及/或暴力的意念和行为；<br/>及/或<br/><br/>" +
+                      "- 因精神病患而入住医院；<br/>及/或<br/><br/>" +
+                      "- 经心理学家及/或精神科医生及/或家庭医生确诊一种或多于一种的精神病患，如: 抑郁症 / 焦虑症 / 思觉失调/精神分裂症 /人格障碍等<br/>及/或<br/><br/>" +
+                      "- 正在服用医生处方的精神科药物",
+                  })
+                  .then(function() {
+                    return botui.action.button({
+                      addMessage: false,
+                      action: [
+                        { text: "有", value: true },
+                        { text: "沒有", value: false },
+                      ],
+                    });
+                  })
+                  .then(function(res) {
+                    // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
+                    if (res.value == false) {
+                      return botui.message
+                        .human({
+                          delay: 500,
+                          photo: client,
+                          content: res.text,
+                        })
+                        .then(function() {
+                          return botui.message.bot({
+                            delay: 1000,
+                            photo: polly,
+                            content: "在进入线上聊天前，请填写以下资讯：",
+                          });
+                        })
+                        .then(function() {
+                          return botui.action.text({
+                            addMessage: false,
+                            action: {
+                              size: 30,
+                              placeholder: "你的电话",
+                            },
+                          });
+                        })
+                        .then(function(res) {
+                          personalInfo["contactNumber"] = res.value;
+                          console.log(personalInfo);
+                          return botui.message.add({
+                            human: true,
+                            photo: client,
+                            content: "你的电话是" + res.value, //? Personal contact number is
+                          });
+                        })
+                        .then(function(res) {
+                          return botui.action.text({
+                            addMessage: false,
+                            action: {
+                              size: 30,
+                              placeholder: "紧急联络人的名字",
+                            },
+                          });
+                        })
+                        .then(function(res) {
+                          personalInfo["emergencyContactName"] = res.value;
+                          console.log(personalInfo);
+                          return botui.message.add({
+                            human: true,
+                            photo: client,
+                            content: "紧急联络人的名字是" + res.value, //? Emergency contact name is
+                          });
+                        })
+                        .then(function(res) {
+                          return botui.action.text({
+                            addMessage: false,
+                            action: {
+                              size: 30,
+                              placeholder: "与紧急联络人的关系",
+                            },
+                          });
+                        })
+                        .then(function(res) {
+                          personalInfo["relationship"] = res.value;
+                          console.log(personalInfo);
+                          return botui.message.add({
+                            human: true,
+                            photo: client,
+                            content: "与紧急联络人的关系是" + res.value, //? Relationship is
+                          });
+                        })
+                        .then(function(res) {
+                          return botui.action.text({
+                            addMessage: false,
+                            action: {
+                              size: 30,
+                              placeholder: "紧急联络人的电话",
+                            },
+                          });
+                        })
+                        .then(function(res) {
+                          personalInfo["emergencyContactNumber"] = res.value;
+                          console.log(personalInfo);
+                          return botui.message.add({
+                            human: true,
+                            photo: client,
+                            content: "紧急联络人的电话是" + res.value, //? Emergency contact number is
+                          });
+                        })
+                        .then(function() {
+                          return botui.message.bot({
+                            delay: 1000,
+                            photo: polly,
+                            content: "继续在线聊天服务", //? Proceeding to Online Chat Service
+                          });
+                        })
+                        .then(function() {
+                          return botui.message.add({
+                            delay: 1000,
+                            photo: polly,
+                            content: "请稍等，我正在找辅导员与您聊天。", //? Please wait, I am now finding a counsellor to chat with you.
+                          });
+                        })
+                        .then(async function() {
+                          const responseMessage = await addToQueue(
+                            student_netid
+                          );
+                          const isAssigned =
+                            responseMessage.indexOf(
+                              "Student is assigned to a staff"
+                            ) > -1;
+
+                          if (isAssigned) {
+                            return Promise.resolve("assigned");
+                          } else {
+                            await botui.message.add({
+                              delay: 1000,
+                              photo: polly,
+                              content: "请稍等，我正在找辅导员与您聊天。",
+                            });
+
+                            return Promise.resolve("waiting");
+                          }
+                        })
+                        .then(async function(status) {
+                          let currentStatus = status;
+                          if (currentStatus == "waiting") {
+                            while (true) {
+                              // request after 2 mins(120000 = 2 * 60 * 1000)
+                              await new Promise((resolve) =>
+                                setTimeout(resolve, 120000)
+                              );
+
+                              const stu = await getStatusByStudentNetId(
+                                student_netid
+                              );
+
+                              if (stu.student_chat_status === "waiting") {
+                                const queueList = await getQueueStatus(
+                                  student_netid
+                                );
+
+                                const waitingNo = queueList.findIndex(
+                                  (student) =>
+                                    student.fields.student_netid ==
+                                    student_netid
+                                );
+                                await waitSubsribe(student_netid, waitingNo);
+                              } else {
+                                // assign or end
+                                currentStatus = stu.student_chat_status;
+                                break;
+                              }
+                            }
+                          }
+
+                          if (currentStatus.toLocaleLowerCase() === "end") {
+                            throw new Error(
+                              "谢谢使用我们的服务，你可以通过POSS或者打电话 2766 6800 预约我们的服务。"
+                            );
+                          }
+
+                          if (
+                            currentStatus.toLocaleLowerCase() === "assigned"
+                          ) {
+                            while (true) {
+                              const stu = await getStatusByStudentNetId(
+                                student_netid
+                              );
+                              if (stu.student_chat_status === "chatting") {
+                                await botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content: `请点击 <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor}">连结</a> 进入聊天室。`,
+                                });
+                                break;
+                              } else {
+                                await botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content: "你已经分配到一个辅导员，请稍等",
+                                });
+                                // request after 2 mins(120000 = 2 * 60 * 1000)
+                                await new Promise((resolve) =>
+                                  setTimeout(resolve, 120000)
+                                );
+                              }
+                            }
+                          }
+                        })
+                        .catch(function(e) {
+                          return botui.message.add({
+                            delay: 1000,
+                            photo: polly,
+                            content: e.message,
+                          });
+                        });
+                      // .then(function() {
+                      //   return botui.message.add({
+                      //     delay: 3000,
+                      //     photo: polly,
+                      //     content:
+                      //       '學生請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For student, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">link</a> to enter the chat room.
+                      //   });
+                      // })
+                      // .then(function() {
+                      //   return botui.message.add({
+                      //     delay: 1000,
+                      //     photo: polly,
+                      //     content:
+                      //       '[Demo only] 輔導員請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For counsellor, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">link</a> to enter the chat room.
+                      //   });
+                      // });
+                    } else {
+                      return botui.message
+                        .human({
+                          delay: 500,
+                          photo: client,
+                          content: res.text,
+                        })
+                        .then(function() {
+                          return botui.message.bot({
+                            loading: true,
+                            delay: 2000,
+                            photo: polly,
+                            content:
+                              "为了更全面的了解你的需要，请预约辅导服务。",
+                          });
+                        })
+                        .then(function() {
+                          if (office_hour == true) {
+                            return botui.message.bot({
+                              loading: true,
+                              delay: 1000,
+                              photo: polly,
+                              content:
+                                '1. 在办公时间内致电 (852)27666800 (星期一至五: 09.00 - 19.00, 星期六: 09.00 -12.00)<br/>2. 在办公时间內前往 QT308 接待处作预约(入口在T栋)<br/>3. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
+                            });
+                          } else {
+                            return botui.message.bot({
+                              loading: true,
+                              delay: 2000,
+                              photo: polly,
+                              content:
+                                '1. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
+                            });
+                          }
+                        });
+                    }
+                  })
+                  .then(end_sc);
+              }
+            });
+        });
+    }
+
+    function emergency_support_sc() {
+      return botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 1500,
+          content:
+            "<font color=black>在紧急情况下，请即致电999或到邻近的急症室求助。</font>", //? In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.
+        })
+        .then(function() {
+          var office_hour = isSAOWorkingHours(new Date());
+          if (office_hour == true) {
+            contact_with_counsellors_sc();
+          } else {
+            return botui.message
+              .bot({
+                loading: true,
+                photo: polly,
+                delay: 1500,
+                content:
+                  "1. 立即与PolyU-Line辅导员联络 : (852) 8100 1583 <br>" + //? Contact with PolyU-Line Counsellors
+                  "*基督教家庭服务中心（盈力雇员服务顾问）将会接听所有电话。<br/><br/>" + //? All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.
+                  "2. 到邻近的急症室求助: 伊利沙伯医院<br>" + //? The nearest public hospital of our campus is: Queen Elizabeth Hospital
+                  "九龙加士居道 30 号" +
+                  "<br>电话: (852)35068888", //? 30 Gascoigne Road, Kowloon, Hong Kong
+              })
+              .then(further_help_sc);
+          }
+        });
+    }
+
+    function make_appointment_with_counsellors_sc() {
+      return botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 1500,
+          content:
+            '1. 电邮预约: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. 网上系统POSS预约辅导服务: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+        })
+        .then(further_help_sc);
+    }
+
+    function contact_with_counsellors_sc() {
+      return botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 100,
+          content:
+            "1. 在办公时间内致电: (852)27666800<br/>2. 在办公时间内前往 QT308 接待处(入口在T栋)</br>",
+        })
+        .then(further_help_sc());
+    }
+
+    function polyu_line_sc() {
+      return botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 3000,
+          content:
+            "立即与PolyU-Line辅导员联络: (852) 8100 1583<br/><br/>*基督教家庭服务中心（盈力雇员服务顾问）将会接听所有电话。",
+        })
+        .then(further_help_sc());
+    }
+
+    function community_helpline_sc() {
+      return botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 3000,
+          content:
+            '紧急求助电话号码：(852)999<br/>社会福利署热线：(852)23432255<br/>明爱向晴热线：(852)18288<br/>生命热线中心：(852)23820000<br/>撒玛利亚会 － 24小时中文及多种语言防止自杀服务：(852)2896-0000<br/>赛马会青少年情绪健康24小时网上支援平台「Open噏」：<a href="www.openup.hk" target ="_blank">www.openup.hk</a><br/>',
+        })
+        .then(further_help_sc());
+    }
+
+    function further_help_sc() {
+      return botui.message
+        .bot({
+          loading: true,
+          photo: polly,
+          delay: 3000,
+          content: "多谢你使用我们的服务。请问你还有其他需要吗?",
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: "我仍需要其他服务。", value: true },
+                { text: "不需要了，谢谢。", value: false },
+              ],
+            })
+            .then(function(res) {
+              if (res.value == true) {
+                if (service_list == true || finish_assessment == false) {
+                  botui.message
+                    .human({
+                      delay: 500,
+                      photo: client,
+                      content: res.text,
+                    })
+                    .then(init_choices_sc);
+                  return;
+                }
+
+                if (score <= 10) {
+                  return botui.message
+                    .human({
+                      photo: client,
+                      delay: 500,
+                      content: res.text,
+                    })
+                    .then(mid_recommendations_sc);
+                } else {
+                  return botui.message
+                    .human({
+                      photo: client,
+                      delay: 500,
+                      content: res.text,
+                    })
+                    .then(high_recommendations_sc);
+                }
+              } else {
+                return botui.message
+                  .human({
+                    photo: client,
+                    delay: 500,
+                    content: res.text,
+                  })
+                  .then(function() {
+                    if (score > 10 || service_list == true) {
+                      botui.message.bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 1000,
+                        content: (content =
+                          "<font color=black>如你正身处紧急情况, 请致电999或到邻近的急症室求助。</font>"),
+                      });
+                    }
+                  })
+                  .then(end_sc);
+              }
+            });
+        });
+    }
+
+    function end_sc() {
+      rating_sc();
+    }
+
+    function rating_sc() {
+      botui.message
+        .add({
+          type: "html",
+          delay: 1000,
+          photo: polly,
+          content:
+            "<p>请分享你对本服务的体验:</p >" +
+            '<div class="wrap">\n' +
+            '  <div class="stars">\n' +
+            '    <label class="rate">\n' +
+            '      <input type="radio" name="radio1" id="star1" value="star1">\n' +
+            '      <i class="far fa-star star one-star available"></i>\n' +
+            "    </label>\n" +
+            '    <label class="rate">\n' +
+            '      <input type="radio" name="radio1" id="star2" value="star2">\n' +
+            '      <i class="far fa-star star two-star available"></i>\n' +
+            "    </label>\n" +
+            '    <label class="rate">\n' +
+            '      <input type="radio" name="radio1" id="star3" value="star3">\n' +
+            '      <i class="far fa-star star three-star available"></i>\n' +
+            "    </label>\n" +
+            '    <label class="rate">\n' +
+            '      <input type="radio" name="radio1" id="star4" value="star4">\n' +
+            '      <i class="far fa-star star four-star available"></i>\n' +
+            "    </label>\n" +
+            '    <label class="rate">\n' +
+            '      <input type="radio" name="radio1" id="star5" value="star5">\n' +
+            '      <i class="far fa-star star five-star available"></i>\n' +
+            "    </label>\n" +
+            "  </div>\n" +
+            "</div>",
+        })
+        .then(function() {
+          botui.action
+            .button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: "提交",
+                },
+              ],
+            })
+            .then(function() {
+              // fix the stars
+              console.log($(".far"));
+
+              $(".far").removeClass("available");
+              botui.message.bot({
+                loading: true,
+                delay: 1000,
+                photo: polly,
+                content: "感谢您宝贵的意见!",
+              });
+            });
+        })
+        .then(_close);
+    }
+
 
     const addToQueue = async (student_netid) => {
       const response = await $.ajax({
