@@ -191,6 +191,7 @@
 {% block footer_script %}
 <script>
     var student_netid = "{{student_netid}}";
+    student_netid = student_netid.toLocaleUpperCase()
     var botui = new BotUI('chatbox');
     var content = document.getElementsByTagName('chatbox');
     var user_input = 'default';
