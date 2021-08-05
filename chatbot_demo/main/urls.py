@@ -1,10 +1,11 @@
 from django.urls import path, include
+from django.conf.urls import url
 from django.views.i18n import JavaScriptCatalog
 
 from main import views, debug_api, chat
 
 urlpatterns = [
-    path('(?P<student_netid>\w+)/$', views.index, name='index'),
+    url('(?P<student_netid>\w+)/$', views.index, name='index'),
     path('response', views.auto_response, name='auto_response'),
     path('response_api', views.response_api, name='response_api'),
     path('login/staff/', views.login_page, name='login_staff'),
