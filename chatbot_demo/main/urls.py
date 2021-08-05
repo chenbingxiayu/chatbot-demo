@@ -5,7 +5,6 @@ from django.views.i18n import JavaScriptCatalog
 from main import views, debug_api, chat
 
 urlpatterns = [
-    url('(?P<student_netid>\w+)/$', views.index, name='index'),
     path('response', views.auto_response, name='auto_response'),
     path('response_api', views.response_api, name='response_api'),
     path('login/staff/', views.login_page, name='login_staff'),
@@ -22,7 +21,8 @@ urlpatterns = [
     path('user/login-sso/', views.login_sso, name='login_sso'),
     path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback'),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-    path('i18n/', include('django.conf.urls.i18n'))
+    path('i18n/', include('django.conf.urls.i18n')),
+    url('(?P<student_netid>[\w-]+)/$', views.index, name='index'),
 ]
 
 debug_urls = [
