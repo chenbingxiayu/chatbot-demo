@@ -57,7 +57,7 @@ class ZulipClient:
 
         # TODO
         # replace the url
-        response = requests.post(self.domain_url + "api/v1/fetch_api_key",
+        response = requests.post(self.domain_url + "/api/v1/fetch_api_key",
                                  data=payload, verify='./ssl/zulip.combined-chain.crt')
         result = response.json()
         if response.status_code != 200:
