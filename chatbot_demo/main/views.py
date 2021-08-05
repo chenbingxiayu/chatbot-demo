@@ -358,7 +358,7 @@ def login_sso_callback(request):
                 student_user = User.objects.create_user(netid=student_netid, is_active=True)
             
             authenticate(requests, netid=student_netid)
-            login(request, student_user)
+            login(request, student_user, backend='django.contrib.auth.backends.ModelBackend')
 
             return redirect('index', student_netid=student_netid)
 
