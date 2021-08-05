@@ -1,9 +1,12 @@
+import logging
 from typing import List
 import zulip
 import requests
 
 from django.conf import settings
 
+
+logger = logging.getLogger('django')
 class ZulipClient:
     def __init__(self, config_file):
         self.client = zulip.Client(config_file=config_file)
@@ -92,7 +95,7 @@ class ZulipClient:
     def get_stream_id(self, stream_name):
         response = self.client.get_stream_id(stream_name)
         if response['result'] == 'error':
-            print(f'stream name: {stream_name} not found')
+            logger.error(f'stream name: {stream_name} not found when get stream id')
             return None
         return response['stream_id']
 
