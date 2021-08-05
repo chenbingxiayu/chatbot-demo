@@ -82,6 +82,10 @@ class ZulipClient:
             authorization_errors_fatal=False,
         )
 
+        if response['result'] == 'error':
+            logger.error(f'subscribe {stream_name} failed: {response.msg}')
+            raise Exception(f'Cannot create new stream: {response.msg}')
+
         return response
 
     def unsubscribe_stream(self, stream_name: str, unsubscribers: List[str]):
@@ -95,7 +99,7 @@ class ZulipClient:
     def get_stream_id(self, stream_name):
         response = self.client.get_stream_id(stream_name)
         if response['result'] == 'error':
-            logger.error(f'stream name: {stream_name} not found when get stream id')
+            logger.error(f'stream name: {stream_name} not found when get stream id: {response.msg}')
             return None
         return response['stream_id']
 

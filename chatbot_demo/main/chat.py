@@ -95,7 +95,7 @@ def counsellor(request):
 
         return render(request, 'chat/chat_counsellor.html', page_info)
     except Exception as e:
-        print(e)
+        logger.error(e)
 
 
 @csrf_exempt
