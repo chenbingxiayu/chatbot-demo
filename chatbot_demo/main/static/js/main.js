@@ -1621,6 +1621,7 @@
                           if (
                             currentStatus.toLocaleLowerCase() === "assigned"
                           ) {
+                            let count = 0;
                             while (true) {
                               const stu = await getStatusByStudentNetId(
                                 student_netid
@@ -1633,15 +1634,19 @@
                                 });
                                 break;
                               } else {
-                                await botui.message.add({
-                                  delay: 1000,
-                                  photo: polly,
-                                  content:
-                                    "You have been assigned to a counsellor, please wait.",
-                                });
-                                // request after 2 mins(120000 = 2 * 60 * 1000)
+                                // count % 23 === 0 means 2 * n mins
+                                if (count === 0 || count % 23 === 0) {
+                                  await botui.message.add({
+                                    delay: 1000,
+                                    photo: polly,
+                                    content:
+                                      "You have been assigned to a counsellor, please wait.",
+                                  });
+                                }
+                                count++;
+                                // request after 5 sec
                                 await new Promise((resolve) =>
-                                  setTimeout(resolve, 120000)
+                                  setTimeout(resolve, 5000)
                                 );
                               }
                             }
