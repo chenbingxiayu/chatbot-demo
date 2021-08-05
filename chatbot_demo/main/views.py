@@ -27,7 +27,8 @@ logger = logging.getLogger('django')
 COOKIE_MAX_AGE = 8 * 60 * 60
 
 @login_required
-def index(request, student_netid):
+def index(request):
+    student_netid = request.user.netid
     return render(request, 'main/index.html', {
         "student_netid": student_netid
     })
@@ -360,7 +361,7 @@ def login_sso_callback(request):
             authenticate(requests, netid=student_netid)
             login(request, student_user, backend='django.contrib.auth.backends.ModelBackend')
 
-            return redirect('index', student_netid=student_netid)
+            return redirect('index')
 
         elif decoded_jwt['polyuUserType'] == 'Staff':
             staff_netid = decoded_jwt['cn']
