@@ -83,8 +83,9 @@ class ZulipClient:
         )
 
         if response['result'] == 'error':
-            logger.error(f'subscribe {stream_name} failed: {response.msg}')
-            raise Exception(f'Cannot create new stream: {response.msg}')
+            error_msg = response['msg']
+            logger.error(f'subscribe {stream_name} failed: {error_msg}')
+            raise Exception(f'Cannot create new stream: {error_msg}')
 
         return response
 
@@ -99,7 +100,8 @@ class ZulipClient:
     def get_stream_id(self, stream_name):
         response = self.client.get_stream_id(stream_name)
         if response['result'] == 'error':
-            logger.error(f'stream name: {stream_name} not found when get stream id: {response.msg}')
+            error_msg = response['msg']
+            logger.error(f'stream name: {stream_name} not found when get stream id: {error_msg}')
             return None
         return response['stream_id']
 
