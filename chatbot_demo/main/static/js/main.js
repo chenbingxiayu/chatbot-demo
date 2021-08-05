@@ -5780,11 +5780,11 @@
         );
       } else {
         // wait
+        const currentWaitingNumber = waitingNo + 1;
         await botui.message.add({
           delay: 1000,
           photo: polly,
-          content: `Your waiting no. is ${waitingNo +
-            1}, I will redirect you to our counsellor as soon as possible.`,
+          content: `Your waiting no. is ${currentWaitingNumber}, I will redirect you to our counsellor as soon as possible.`,
         });
       }
     };
