@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
+from main.models import User
 
 from main.exceptions import UnauthorizedException
 from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, SELECTABLE_STATUS
@@ -25,11 +26,11 @@ from main.auth import sso_auth
 logger = logging.getLogger('django')
 COOKIE_MAX_AGE = 8 * 60 * 60
 
-# @login_required
-# def index(request, student_netid):
-#     return render(request, 'main/index.html', {
-#         "student_netid": student_netid
-#     })
+@login_required
+def index(request, student_netid):
+    return render(request, 'main/index.html', {
+        "student_netid": student_netid
+    })
 
 
 @csrf_exempt
@@ -350,10 +351,16 @@ def login_sso_callback(request):
         decoded_jwt = sso_auth.decode(encoded_jwt)
 
         if decoded_jwt['polyuUserType'] == 'Student':
-            return render(request, 'main/index.html', {
-                "student_netid": decoded_jwt['sub']
-            })
-            # return redirect('index', student_netid=decoded_jwt['sub'])
+            try:
+                student_netid = decoded_jwt['sub']
+                student_user = User.objects.get(netid=student_netid)
+            except User.DoesNotExist:
+                student_user = User.objects.create_user(netid=student_netid, is_active=True)
+            
+            authenticate(requests, netid=student_netid)
+            login(request, student_user)
+
+            return redirect('index', student_netid=student_netid)
 
         elif decoded_jwt['polyuUserType'] == 'Staff':
             staff_netid = decoded_jwt['cn']
