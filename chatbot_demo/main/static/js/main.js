@@ -2017,8 +2017,6 @@
         location.reload();
       });
 
-
-
     // Traditional chinese
 
     function init_choices_tc() {
@@ -2181,7 +2179,7 @@
 
     function isSAOWorkingHours(now) {
       // TODO: always return true in dev
-      return true
+      return true;
 
       var weekday = now.getDay();
       var hours = now.getHours();
@@ -3877,7 +3875,6 @@
         .then(_close);
     }
 
-
     // Simplified chinese
 
     function init_choices_sc() {
@@ -4036,30 +4033,6 @@
               });
           });
       }
-    }
-
-    function isSAOWorkingHours(now) {
-      // TODO: always return true in dev
-      return true
-
-      var weekday = now.getDay();
-      var hours = now.getHours();
-      // Mon - Fri
-      if (weekday >= 1 && weekday <= 5) {
-        // 9:00-19:00
-        if (hours >= 9 && hours < 19) {
-          return true;
-        }
-      }
-
-      // Sat
-      if (weekday == 6) {
-        // 9:00 - 12:00
-        if (hours >= 9 && hours < 12) {
-          return true;
-        }
-      }
-      return false;
     }
 
     function get_name_sc() {
@@ -5735,7 +5708,6 @@
         })
         .then(_close);
     }
-
 
     const addToQueue = async (student_netid) => {
       const response = await $.ajax({
