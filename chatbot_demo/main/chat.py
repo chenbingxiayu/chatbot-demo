@@ -1,3 +1,4 @@
+import logging
 import os
 import json
 from .zulip.zulip import ZulipClient
@@ -9,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
 
+logger = logging.getLogger('django')
 config_file = './.zuliprc'
 client = ZulipClient(config_file=config_file)
 email_suffix = settings.ZULIP['EMAIL_SUBFFIX']
@@ -71,7 +73,9 @@ def counsellor(request):
         if stream_id is None:
             client.create_stream(stream_name=stream_name, user_ids=[
                 student_email, staff_email])
+            logger.info(f'created stream: {stream_name}')
             stream_id = client.get_stream_id(stream_name)
+            logger.info(f'stream id: {stream_id}')
         else:
             client.subscribe_stream(stream_name=stream_name,
                                     subscribers=[staff_email, student_email])
