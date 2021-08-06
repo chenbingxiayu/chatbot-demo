@@ -215,6 +215,17 @@ class StudentChatStatus(models.Model):
         self.student_chat_status = StudentChatStatus.ChatStatus.WAITING
         self.save()
 
+    @classmethod
+    def unassign_from(cls, staff: StaffStatus):
+        student = cls.objects \
+            .filter(student_chat_status=cls.ChatStatus.ASSIGNED,
+                    assigned_counsellor=staff) \
+            .first()
+        if student:
+            student.assigned_counsellor = None
+            student.add_to_queue()
+            logger.info(f'Unassigned {student}')
+
 
 class StudentChatHistory(models.Model):
     """

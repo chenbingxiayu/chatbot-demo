@@ -92,6 +92,8 @@ def logout_view(request):
         staff.staff_chat_status = StaffStatus.ChatStatus.OFFLINE
         staff.status_change_time = timezone.localtime()
         staff.save()
+
+        StudentChatStatus.unassign_from(staff)
     except StaffStatus.DoesNotExist:
         return render(request, 'main/404.html')
 
@@ -292,12 +294,9 @@ def updatestaff(request):
         logger.warning('Staff does not exist.')
         return JsonResponse({"status": "status update fail"}, status=400)
 
-    if staff.staff_chat_status == StaffStatus.ChatStatus.ASSIGNED and new_status == StaffStatus.ChatStatus.AWAY:
-        student = StudentChatStatus.objects \
-            .filter(student_chat_status=StudentChatStatus.ChatStatus.ASSIGNED,
-                    assigned_counsellor=staff) \
-            .first()
-        student.add_to_queue()
+    if staff.staff_chat_status == StaffStatus.ChatStatus.ASSIGNED \
+            and new_status == StaffStatus.ChatStatus.AWAY:
+        StudentChatStatus.unassign_from(staff)
     staff.staff_chat_status = new_status
     staff.save()
 
