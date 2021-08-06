@@ -23,10 +23,10 @@ def _construct_stream_name(staff_netid: str):
 @login_required
 def student(request):
     try:
-        student_netid = request.user.netid
+        student_netid = request.user.netid.upper()
         student_email = student_netid + email_suffix
         student_status = StudentChatStatus.objects.filter(student_netid=student_netid).first()
-        staff_netid = student_status.assigned_counsellor
+        staff_netid = student_status.assigned_counsellor.staff_netid
         staff_email = staff_netid + email_suffix
 
         stream_name = _construct_stream_name(staff_netid)
