@@ -26,6 +26,7 @@ from main.auth import sso_auth
 logger = logging.getLogger('django')
 COOKIE_MAX_AGE = 8 * 60 * 60
 
+
 @login_required
 def index(request):
     student_netid = request.user.netid
@@ -83,7 +84,16 @@ def login_page(request):
 @login_required
 @require_http_methods(['GET'])
 def logout_view(request):
+    staff_netid = request.user.netid
     logout(request)
+
+    try:
+        staff = StaffStatus.objects.get(staff_netid=staff_netid)
+        staff.staff_chat_status = StaffStatus.ChatStatus.OFFLINE
+        staff.status_change_time = timezone.localtime()
+        staff.save()
+    except StaffStatus.DoesNotExist:
+        return render(request, 'main/404.html')
 
     return redirect('login')
 
@@ -357,7 +367,7 @@ def login_sso_callback(request):
                 student_user = User.objects.get(netid=student_netid)
             except User.DoesNotExist:
                 student_user = User.objects.create_user(netid=student_netid, is_active=True)
-            
+
             authenticate(requests, netid=student_netid)
             login(request, student_user, backend='django.contrib.auth.backends.ModelBackend')
 
