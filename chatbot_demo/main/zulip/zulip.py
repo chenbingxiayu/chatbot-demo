@@ -10,11 +10,16 @@ logger = logging.getLogger('django')
 class ZulipClient:
     def __init__(self, config_file):
         self.client = zulip.Client(config_file=config_file)
-        self.admin_email = settings.ZULIP['ADMIN_EMAIL']
-        self.domain_url = settings.ZULIP['DOMAIN_URL']
+        self.admin_email = settings.ZULIP['ZULIP_ADMIN_EMAIL']
+        self.domain_url = settings.ZULIP['ZULIP_DOMAIN_URL']
+        self.ssl_path = settings.ZULIP['ZULIP_SSL_PATH']
 
     def get_users(self):
         users = self.client.get_users()
+
+        if users['result'] == 'error':
+            raise Exception('Cannot get users : {error}'.format(
+                error=users['msg']))
         return users
 
     def create_user(self, username, name):
@@ -58,7 +63,7 @@ class ZulipClient:
         # TODO
         # replace the url
         response = requests.post(self.domain_url + "/api/v1/fetch_api_key",
-                                 data=payload, verify='./ssl/zulip.combined-chain.crt')
+                                 data=payload, verify=self.ssl_path)
         result = response.json()
         if response.status_code != 200:
             raise Exception("Cannot get {username}'s api key: {error}".format(

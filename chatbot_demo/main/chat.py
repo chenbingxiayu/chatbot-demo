@@ -7,13 +7,14 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
+from main.models import StudentChatStatus,
 from django.contrib.auth.decorators import login_required
 
 
 logger = logging.getLogger('django')
 config_file = './.zuliprc'
 client = ZulipClient(config_file=config_file)
-email_suffix = settings.ZULIP['EMAIL_SUBFFIX']
+email_suffix = settings.ZULIP['ZULIP_EMAIL_SUBFFIX']
 
 
 def _construct_stream_name(staff_netid: str):
@@ -22,10 +23,12 @@ def _construct_stream_name(staff_netid: str):
 @login_required
 def student(request):
     try:
-        student_netid = request.GET.get('student_netid', '21')
+        student_netid = request.user.netid
         student_email = student_netid + email_suffix
-        staff_netid = request.GET.get('staff_netid', '10')
+        student_status = StudentChatStatus.objects.filter(student_netid=student_netid).first()
+        staff_netid = student_status.assigned_counsellor
         staff_email = staff_netid + email_suffix
+
         stream_name = _construct_stream_name(staff_netid)
 
         users = client.get_users()
@@ -42,7 +45,7 @@ def student(request):
             'stream_name': stream_name,
             'staff_netid': staff_netid,
             'staff_email': staff_email,
-            'zulip_realm': os.getenv('DOMAIN_URL'),
+            'zulip_realm': os.getenv('ZULIP_DOMAIN_URL'),
         }
 
         return render(request, 'chat/chat_student.html', page_info)
@@ -90,7 +93,7 @@ def counsellor(request):
             'student_email': student_email,
             'student_netid': student_netid,
             'stream_id': stream_id,
-            'zulip_realm': os.getenv('DOMAIN_URL'),
+            'zulip_realm': os.getenv('ZULIP_DOMAIN_URL'),
         }
 
         return render(request, 'chat/chat_counsellor.html', page_info)
@@ -268,7 +271,7 @@ def stream_room(request):
             'stream_id': stream_id,
             'staff_netid': staff_netid,
             'staff_email': staff_email,
-            'zulip_realm': os.getenv('DOMAIN_URL'),
+            'zulip_realm': os.getenv('ZULIP_DOMAIN_URL'),
         }
 
         return render(request, 'chat/chat_stream_room.html', page_info)
