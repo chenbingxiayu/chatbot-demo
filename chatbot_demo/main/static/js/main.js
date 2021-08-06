@@ -1603,7 +1603,11 @@
                                     student.fields.student_netid ==
                                     student_netid
                                 );
-                                await waitSubsribe(student_netid, waitingNo);
+                                await waitSubsribe(
+                                  student_netid,
+                                  waitingNo,
+                                  "en"
+                                );
                               } else {
                                 // assign or end
                                 currentStatus = stu.student_chat_status;
@@ -3558,7 +3562,11 @@
                                     student.fields.student_netid ==
                                     student_netid
                                 );
-                                await waitSubsribe(student_netid, waitingNo);
+                                await waitSubsribe(
+                                  student_netid,
+                                  waitingNo,
+                                  "zh-hant"
+                                );
                               } else {
                                 // assign or end
                                 currentStatus = stu.student_chat_status;
@@ -3576,6 +3584,7 @@
                           if (
                             currentStatus.toLocaleLowerCase() === "assigned"
                           ) {
+                            let count = 0;
                             while (true) {
                               const stu = await getStatusByStudentNetId(
                                 student_netid
@@ -3588,14 +3597,18 @@
                                 });
                                 break;
                               } else {
-                                await botui.message.add({
-                                  delay: 1000,
-                                  photo: polly,
-                                  content: "你已經分配到一個輔導員，請稍等",
-                                });
-                                // request after 2 mins(120000 = 2 * 60 * 1000)
+                                // count % 23 === 0 means 2 * n mins
+                                if (count === 0 || count % 23 === 0) {
+                                  await botui.message.add({
+                                    delay: 1000,
+                                    photo: polly,
+                                    content: "你已經分配到一個輔導員，請稍等",
+                                  });
+                                }
+                                count++;
+                                // request after 5 sec
                                 await new Promise((resolve) =>
-                                  setTimeout(resolve, 120000)
+                                  setTimeout(resolve, 5000)
                                 );
                               }
                             }
@@ -5392,7 +5405,11 @@
                                     student.fields.student_netid ==
                                     student_netid
                                 );
-                                await waitSubsribe(student_netid, waitingNo);
+                                await waitSubsribe(
+                                  student_netid,
+                                  waitingNo,
+                                  "zh-hans"
+                                );
                               } else {
                                 // assign or end
                                 currentStatus = stu.student_chat_status;
@@ -5410,6 +5427,7 @@
                           if (
                             currentStatus.toLocaleLowerCase() === "assigned"
                           ) {
+                            let count = 0;
                             while (true) {
                               const stu = await getStatusByStudentNetId(
                                 student_netid
@@ -5422,14 +5440,18 @@
                                 });
                                 break;
                               } else {
-                                await botui.message.add({
-                                  delay: 1000,
-                                  photo: polly,
-                                  content: "你已经分配到一个辅导员，请稍等",
-                                });
-                                // request after 2 mins(120000 = 2 * 60 * 1000)
+                                // count % 23 === 0 means 2 * n mins
+                                if (count === 0 || count % 23 === 0) {
+                                  await botui.message.add({
+                                    delay: 1000,
+                                    photo: polly,
+                                    content: "你已经分配到一个辅导员，请稍等",
+                                  });
+                                }
+                                count++;
+                                // request after 5 sec
                                 await new Promise((resolve) =>
-                                  setTimeout(resolve, 120000)
+                                  setTimeout(resolve, 5000)
                                 );
                               }
                             }
@@ -5761,19 +5783,52 @@
       });
     };
 
-    const waitSubsribe = async (student_netid, waitingNo) => {
+    const waitSubsribeLanguageJson = {
+      en: {
+        WAIT: "Wait",
+        QUIT: "Quit",
+        NO_COUNSELLOR_AVAIABLE_MASSAGE:
+          "Sorry, there is no counsellor available right now, do you want to wait until our counsellor available, or you may contact us directly at 27666800.",
+        QUIT_QUEUE_MESSAGE:
+          "Thank you for using our service, you may make an appointment with our counsellor via POSS or call 2766 6800 if needed.",
+        WAITING_MESSAGE:
+          "Your waiting no. is {{CURRENT_WAITTING_NUMBER}}, I will redirect you to our counsellor as soon as possible.",
+      },
+      "zh-hant": {
+        WAIT: "等待",
+        QUIT: "退出",
+        NO_COUNSELLOR_AVAIABLE_MASSAGE:
+          "抱歉，當前沒有空閒的輔導員，你想繼續等待直到有輔導員有空嗎，或者你可以直接聯繫我們通過電話 27666800.",
+        QUIT_QUEUE_MESSAGE:
+          "謝謝使用我們的服務，如果需要的話，你可以預約我們的輔導員通過POSS 或者撥打 2766 6800.",
+        WAITING_MESSAGE:
+          "你當前的等排隊號碼是 {{CURRENT_WAITTING_NUMBER}}, 我會儘快幫你分配給我們的輔導員.",
+      },
+      "zh-hans": {
+        WAIT: "等待",
+        QUIT: "退出",
+        NO_COUNSELLOR_AVAIABLE_MASSAGE:
+          "抱歉，当前没有空闲的辅导员，你想继续等待直到有辅导员有空吗，或者你可以直接联系我们通过电话 27666800.",
+        QUIT_QUEUE_MESSAGE:
+          "谢谢使用我们的服务，如果需要的话，你可以预约我们的辅导员通过POSS 或者拨打 2766 6800.",
+        WAITING_MESSAGE:
+          "你当前的等排队号码是 {{CURRENT_WAITTING_NUMBER}}, 我会尽快帮你分配给我们的辅导员.",
+      },
+    };
+
+    const waitSubsribe = async (student_netid, waitingNo, langCode) => {
       await botui.message.add({
         delay: 1000,
         photo: polly,
         content:
-          "Sorry, there is no counsellor available right now, do you want to wait until our counsellor available, or you may contact us directly at 27666800.",
+          waitSubsribeLanguageJson[langCode]["NO_COUNSELLOR_AVAIABLE_MASSAGE"],
       });
 
       const actionResult = await botui.action.button({
         addMessage: false,
         action: [
-          { text: "Wait", value: true },
-          { text: "Quit", value: false },
+          { text: waitSubsribeLanguageJson[langCode]["WAIT"], value: true },
+          { text: waitSubsribeLanguageJson[langCode]["QUIT"], value: false },
         ],
       });
 
@@ -5781,7 +5836,7 @@
       if (!actionResult.value) {
         await quitQueue(student_netid);
         throw new Error(
-          "Thank you for using our service, you may make an appointment with our counsellor via POSS or call 2766 6800 if needed."
+          waitSubsribeLanguageJson[langCode]["QUIT_QUEUE_MESSAGE"]
         );
       } else {
         // wait
@@ -5789,7 +5844,9 @@
         await botui.message.add({
           delay: 1000,
           photo: polly,
-          content: `Your waiting no. is ${currentWaitingNumber}, I will redirect you to our counsellor as soon as possible.`,
+          content: waitSubsribeLanguageJson[langCode][
+            "WAITING_MESSAGE"
+          ].replace("{{CURRENT_WAITTING_NUMBER}}", currentWaitingNumber),
         });
       }
     };
