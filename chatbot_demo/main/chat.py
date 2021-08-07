@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
-from main.models import StudentChatStatus
+from main.models import StudentChatStatus, ChatStatus
 from django.contrib.auth.decorators import login_required
 
 
@@ -55,8 +55,12 @@ def student(request):
 @login_required
 def counsellor(request):
     try:
-        staff_netid = request.GET.get('staff_netid', '10')
-        student_netid = request.GET.get('student_netid', '21')
+        staff_netid = request.user.netid.upper()
+        student_status = StudentChatStatus.objects.filter(
+            assigned_counsellor=staff_netid,
+            status=ChatStatus.ASSIGNED,
+        ).first()
+        student_netid = student_status.student_netid.upper()
         student_email = student_netid + email_suffix
         staff_email = staff_netid + email_suffix
 

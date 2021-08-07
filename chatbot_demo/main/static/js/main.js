@@ -1634,7 +1634,7 @@
                                 await botui.message.add({
                                   delay: 1000,
                                   photo: polly,
-                                  content: `please click the <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor}">link</a> to enter the chat room.`,
+                                  content: `please click the <a target="_blank" href="/main/chat/student/">link</a> to enter the chat room.`,
                                 });
                                 break;
                               } else {
@@ -3593,7 +3593,7 @@
                                 await botui.message.add({
                                   delay: 1000,
                                   photo: polly,
-                                  content: `請點擊 <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor}">連結</a> 進入聊天室.`,
+                                  content: `請點擊 <a target="_blank" href="/main/chat/student/">連結</a> 進入聊天室.`,
                                 });
                                 break;
                               } else {
@@ -5436,7 +5436,7 @@
                                 await botui.message.add({
                                   delay: 1000,
                                   photo: polly,
-                                  content: `请点击 <a target="_blank" href="/main/chat/student/?student_netid=${student_netid}&staff_netid=${stu.assigned_counsellor}">连结</a> 进入聊天室。`,
+                                  content: `请点击 <a target="_blank" href="/main/chat/student/">连结</a> 进入聊天室。`,
                                 });
                                 break;
                               } else {
