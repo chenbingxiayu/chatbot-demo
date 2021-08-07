@@ -83,11 +83,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'chatbot_demo.wsgi.application'
 ASGI_APPLICATION = "chatbot_demo.asgi.application"
 
+
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
+REDIS_CONN = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.getenv('REDIS_URL', 'redis://redis:6379/0')]
+            "hosts": [REDIS_CONN]
         },
     },
 }
@@ -187,8 +192,8 @@ LOGGING = {
     },
 }
 
-CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
-CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://redis:6379/0")
+CELERY_BROKER_URL = REDIS_CONN
+CELERY_RESULT_BACKEND = REDIS_CONN
 
 CELERY_BEAT_SCHEDULE = {
     "assignment_tasks": {

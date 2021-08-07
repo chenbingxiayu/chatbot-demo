@@ -1,5 +1,9 @@
 version: '3.7'
 
+x-common-variables: &common-variables
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+
 services:
   redis:
     image: redis:5-alpine
@@ -27,6 +31,8 @@ services:
       - 8899:8899
     env_file:
       - .env.docker
+    environment:
+      <<: *common-variables
     depends_on:
       - mysql
       - redis
@@ -38,6 +44,8 @@ services:
       - ./chatbot_demo:/app
     env_file:
       - .env.docker
+    environment:
+      <<: *common-variables
     depends_on:
       - redis
 
@@ -48,6 +56,8 @@ services:
       - ./chatbot_demo:/app
     env_file:
       - .env.docker
+    environment:
+      <<: *common-variables
     depends_on:
       - redis
 
@@ -58,8 +68,10 @@ services:
       - 5555:5555
     env_file:
       - .env.docker
+    environment:
+      <<: *common-variables
     depends_on:
       - redis
 
 volumes:
-  mysql_volume: {}
+  mysql_volume: { }
