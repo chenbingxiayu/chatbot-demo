@@ -322,7 +322,6 @@ def addstud(request):
     student, created = StudentChatStatus.objects \
         .update_or_create(student_netid=student_netid.upper(),
                           defaults={"student_chat_status": None,
-                                    "chat_request_time": timezone.now(),
                                     "last_assign_time": None,
                                     "chat_start_time": None,
                                     "assigned_counsellor": None})
