@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 import logging
+import uuid
+
 import requests
 
 from django.shortcuts import render
@@ -13,10 +15,16 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
-from main.models import User
 
 from main.exceptions import UnauthorizedException
-from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, SELECTABLE_STATUS
+from main.models import (
+    User,
+    StaffStatus,
+    StudentChatStatus,
+    StudentChatHistory,
+    ChatBotSession,
+    SELECTABLE_STATUS
+)
 from main.forms import StaffLoginForm
 from main.utils import today_start
 from main.signals import update_queue
@@ -25,6 +33,10 @@ from main.auth import sso_auth
 
 logger = logging.getLogger('django')
 COOKIE_MAX_AGE = 8 * 60 * 60
+
+
+def _session_key_to_uuid4(session_id: str):
+    return str(uuid.UUID(session_id))
 
 
 @login_required
@@ -73,6 +85,82 @@ def response_api(request):
     return HttpResponse(response.json()['response'])
 
 
+def login_all(request):
+    return render(request, 'main/login_sso.html')
+
+
+@csrf_exempt
+def login_sso(request):
+    # redirect to rapid connect server
+    # response = redirect(sso_auth.destination)
+    response = redirect('login_sso_callback')
+    return response
+
+
+@csrf_exempt
+@require_http_methods(['POST', 'GET'])
+def login_sso_callback(request):
+    try:
+        # encoded_jwt = request.POST.get('data')
+        # if not encoded_jwt:
+        #     return render(request, 'main/login_sso.html', {
+        #         'error_message': "Cannot get JWT"
+        #     })
+        # decoded_jwt = sso_auth.decode(encoded_jwt)
+        decoded_jwt = dict()
+        decoded_jwt['polyuUserType'] = 'Student'
+        decoded_jwt['sub'] = '17000001d'
+
+        if decoded_jwt['polyuUserType'] == 'Student':
+            try:
+                student_netid = decoded_jwt['sub']
+                student_user = User.objects.get(netid=student_netid)
+            except User.DoesNotExist:
+                student_user = User.objects.create_user(netid=student_netid, is_active=True)
+
+            authenticate(requests, netid=student_netid)
+            login(request, student_user, backend='django.contrib.auth.backends.ModelBackend')
+
+            ChatBotSession.usage_chatbot_connect(
+                session_id=_session_key_to_uuid4(request.session.session_key),
+                student_netid=student_netid,
+                is_ployu_student=True
+            )
+            return redirect('index')
+
+        elif decoded_jwt['polyuUserType'] == 'Staff':
+            staff_netid = decoded_jwt['cn']
+            user = authenticate(requests, netid=staff_netid)
+            user_group = user.get_groups()
+            request.session['user_group'] = user_group
+            login(request, user)
+            return redirect('login_staff')
+
+        ChatBotSession.usage_chatbot_connect(
+            session_id=str(uuid.uuid4())  # generate a session id for unauthenticated user
+        )
+
+    except (Exception, UnauthorizedException) as e:
+        logger.warning(e)
+        return redirect('login')
+
+
+@login_required
+@require_http_methods(['GET'])
+def student_logout(request):
+    student_netid = request.user.netid
+    logout(request)
+
+    try:
+        student_user = User.objects.get(netid=student_netid)
+        student_user.delete()
+
+    except User.DoesNotExist:
+        return render(request, 'main/404.html')
+
+    return redirect('login')
+
+
 @login_required
 @require_http_methods(['GET'])
 def login_page(request):
@@ -83,7 +171,7 @@ def login_page(request):
 
 @login_required
 @require_http_methods(['GET'])
-def logout_view(request):
+def logout_staff(request):
     staff_netid = request.user.netid
     logout(request)
 
@@ -349,67 +437,3 @@ def appointstaff(request):
     })
 
     return JsonResponse({'status': 'success'}, status=200)
-
-
-def login_all(request):
-    return render(request, 'main/login_sso.html')
-
-
-@csrf_exempt
-def login_sso(request):
-    # redirect to rapid connect server
-    response = redirect(sso_auth.destination)
-    return response
-
-
-@csrf_exempt
-@require_http_methods(['POST', 'GET'])
-def login_sso_callback(request):
-    try:
-        encoded_jwt = request.POST.get('data')
-        if not encoded_jwt:
-            return render(request, 'main/login_sso.html', {
-                'error_message': "Cannot get JWT"
-            })
-        decoded_jwt = sso_auth.decode(encoded_jwt)
-
-        if decoded_jwt['polyuUserType'] == 'Student':
-            try:
-                student_netid = decoded_jwt['sub']
-                student_user = User.objects.get(netid=student_netid)
-            except User.DoesNotExist:
-                student_user = User.objects.create_user(netid=student_netid, is_active=True)
-
-            authenticate(requests, netid=student_netid)
-            login(request, student_user, backend='django.contrib.auth.backends.ModelBackend')
-
-            return redirect('index')
-
-        elif decoded_jwt['polyuUserType'] == 'Staff':
-            staff_netid = decoded_jwt['cn']
-            user = authenticate(requests, netid=staff_netid)
-            user_group = user.get_groups()
-            request.session['user_group'] = user_group
-            login(request, user)
-            return redirect('login_staff')
-
-    except (Exception, UnauthorizedException) as e:
-        logger.warning(e)
-        return redirect('login')
-
-
-@login_required
-@require_http_methods(['GET'])
-def student_logout(request):
-    student_netid = request.user.netid
-    logout(request)
-
-    try:
-        student_user = User.objects.get(netid=student_netid)
-        student_user.delete()
-
-    except User.DoesNotExist:
-        return render(request, 'main/404.html')
-
-    return redirect('login')
-

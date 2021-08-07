@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, annotations
 import logging
+import uuid
 from datetime import datetime, date
 
 import xlwt
@@ -231,6 +232,9 @@ class StudentChatStatus(models.Model):
             student.add_to_queue()
             logger.info(f'Unassigned {student}')
 
+    def usage_online_chatting_connect(self):
+        pass
+
 
 class StudentChatHistory(models.Model):
     """
@@ -329,9 +333,9 @@ class ChatBotSession(models.Model):
         opt5 = 'online_chat_service', _('Online Chat Service')
         opt6 = 'community_helpline', _('Community Helpline')
 
-    session_id = models.CharField(max_length=32, primary_key=True)
+    session_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     student_netid = models.CharField(max_length=32, null=True)
-    start_time = models.DateTimeField()
+    start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True)
     is_ployu_student = models.BooleanField()
     language = models.CharField(max_length=8, choices=Language.choices, null=True)
@@ -350,6 +354,63 @@ class ChatBotSession(models.Model):
     score = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(13)])
     first_option = models.CharField(max_length=128, choices=RecommendOptions.choices, null=True)
     feedback_rating = models.IntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
+
+    @classmethod
+    def usage_chatbot_connect(cls, session_id: str, student_netid: str = None, is_ployu_student: bool = False):
+        cls.objects.create(
+            session_id=session_id,
+            student_netid=student_netid,
+            start_time=timezone.localtime(),
+            is_ployu_student=is_ployu_student
+        )
+
+    @classmethod
+    def usage_chatbot_score(cls,
+                            session_id: str,
+                            language: str,
+                            q1_academic: bool,
+                            q1_interpersonal_relationship: bool,
+                            q1_career: bool,
+                            q1_family: bool,
+                            q1_mental_health: bool,
+                            q1_others: bool,
+                            q2: bool,
+                            q3: str,
+                            q4: str,
+                            q5: bool,
+                            q6_1: bool,
+                            q6_2: bool,
+                            score: bool):
+
+        # TODO: catch `Doesnotexist` error in upstream function
+        session = cls.objects.get(session_id=session_id)
+        session.language = language
+        session.q1_academic = q1_academic
+        session.q1_interpersonal_relationship = q1_interpersonal_relationship
+        session.q1_career = q1_career
+        session.q1_family = q1_family
+        session.q1_mental_health = q1_mental_health
+        session.q1_others = q1_others
+        session.q2 = q2
+        session.q3 = q3
+        session.q4 = q4
+        session.q5 = q5
+        session.q6_1 = q6_1
+        session.q6_2 = q6_2
+        session.score = score
+        session.save()
+
+    @classmethod
+    def usage_chatbot_end(cls,
+                          session_id: str,
+                          first_option: str,
+                          feedback_rating: int):
+        # TODO: catch `Doesnotexist` error in upstream function
+        session = cls.objects.get(session_id=session_id)
+        session.first_option = first_option
+        session.feedback_rating = feedback_rating
+        session.end_time = timezone.localtime(),
+        session.save()
 
     @classmethod
     def statis_overview(cls, start: datetime, end: datetime):

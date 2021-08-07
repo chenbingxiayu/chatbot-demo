@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from main.models import StaffStatus, StudentChatStatus, User
-from main.views import updatestaff, logout_view
+from main.views import updatestaff, logout_staff
 
 
 class ScheduledTaskTestCase(TestCase):
@@ -88,12 +88,12 @@ class ScheduledTaskTestCase(TestCase):
     def test_logout(self, mock_logout):
 
         for user in self.user_list:
-            request = self.factory.get(reverse('logout_view'),
+            request = self.factory.get(reverse('logout_staff'),
                                        data={
                                            "status": StaffStatus.ChatStatus.AWAY
                                        })
             request.user = user
-            logout_view(request)
+            logout_staff(request)
 
         self.assertEqual(len(StudentChatStatus.objects
                              .filter(student_chat_status=StudentChatStatus.ChatStatus.ASSIGNED)
