@@ -20,6 +20,7 @@ urlpatterns = [
     path('user/login/', views.login_all, name='login'),
     path('user/login-sso/', views.login_sso, name='login_sso'),
     path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback'),
+    path('user/logout/student/', views.student_logout, name='student_logout'),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     path('i18n/', include('django.conf.urls.i18n')),
 ]

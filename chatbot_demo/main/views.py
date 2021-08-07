@@ -383,3 +383,20 @@ def login_sso_callback(request):
     except (Exception, UnauthorizedException) as e:
         logger.warning(e)
         return redirect('login')
+
+
+@login_required
+@require_http_methods(['GET'])
+def student_logout(request):
+    student_netid = request.user.netid
+    logout(request)
+
+    try:
+        student_user = User.objects.get(netid=student_netid)
+        student_user.delete()
+
+    except User.DoesNotExist:
+        return render(request, 'main/404.html')
+
+    return redirect('login')
+
