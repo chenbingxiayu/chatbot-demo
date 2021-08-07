@@ -58,7 +58,7 @@ def counsellor(request):
         staff_netid = request.user.netid
         student_status = StudentChatStatus.objects.filter(
             assigned_counsellor__staff_netid=staff_netid,
-            status=StudentChatStatus.ChatStatus.CHATTING,
+            student_chat_status=StudentChatStatus.ChatStatus.CHATTING,
         ).first()
         student_netid = student_status.student_netid.upper()
         student_email = student_netid + email_suffix
