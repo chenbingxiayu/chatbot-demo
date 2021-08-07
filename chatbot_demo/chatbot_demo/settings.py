@@ -38,10 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'webpack_loader',
     'channels',
     'main',
     'tasks',
-    'django_celery_results'
+    'django_celery_results',
+    'letsencrypt',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +57,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
 ]
 
+AUTH_USER_MODEL = 'main.User'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'main.auth.AuthBackend',
@@ -105,7 +108,7 @@ DATABASES = {
 }
 
 # Session settings
-LOGIN_URL = '/main/login/staff/'  # redirect url if not logged in
+LOGIN_URL = '/main/user/login/'  # redirect url if not logged in
 SESSION_COOKIE_AGE = 12 * 60 * 60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -194,4 +197,23 @@ CELERY_BEAT_SCHEDULE = {
         "task": "tasks.tasks.assignment_tasks",
         "schedule": timedelta(seconds=60),
     }
+}
+
+
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": not DEBUG,
+        "BUNDLE_DIR_NAME": "/",
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats-prod.json"),
+        "POLL_INTERVAL": 0.1,
+        "TIMEOUT": None,
+        "IGNORE": [".*\.hot-update.js", ".+\.map"]
+    }
+}
+
+ZULIP = {
+    'ZULIP_ADMIN_EMAIL': os.getenv('ZULIP_ADMIN_EMAIL'),
+    'ZULIP_DOMAIN_URL': os.getenv('ZULIP_DOMAIN_URL'),
+    'ZULIP_EMAIL_SUBFFIX': os.getenv('ZULIP_EMAIL_SUBFFIX', '@zulip.com'),
+    'ZULIP_SSL_PATH': os.getenv('ZULIP_SSL_PATH')
 }

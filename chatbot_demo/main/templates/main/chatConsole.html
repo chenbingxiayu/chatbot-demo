@@ -24,7 +24,7 @@
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #c9ffff">
-    <a class="navbar-brand" href="#">Chat Console</a>
+    <a class="navbar-brand" href="/main/page/chatconsole/">Chat Console</a>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
@@ -85,14 +85,39 @@
     $(document).ready(() => {
     })
 
+    $(document).on('click', '.start-chat-with-student', (e) => {
+      const student_netid = e.target.getAttribute("data-student-netid");
+      const staff_netid = e.target.getAttribute("data-staff-netid");
+      $.ajax({
+        type: 'POST',
+        url: '/main/debug/startchat/',
+        headers: { 'X-CSRFToken': getCookie('csrftoken')},
+        data: {
+          'student_netid': student_netid,
+          'staff_netid': staff_netid,
+        },
+        success: () => {
+          const a = document.createElement('a');
+          a.target= "_blank";
+          a.href= `/main/chat/counsellor/`;
+          a.click();
+        },
+        error: (data) => {
+          alert("Failed to start chatting.")
+        }
+      })
+    });
+
     /**
      * Create the room creation link
      * @param student_id
      * @returns {string}
      */
     function createRoomEl(student_id) {
-      return  `<a href="/main/createRoom/" target="_blank">${student_id}</a>`
+      const staff_netid = '{{ staff.staff_netid }}';
+      return  `<a href="javascript:void(0)" data-student-netid="${student_id}" data-staff-netid="${staff_netid}" class="start-chat-with-student">${student_id}</a>`
     }
+
 
     $('#staff-status-select').on('change', (e) => {
       const status = e.target.value
@@ -170,7 +195,7 @@
     $('.chat-status').each((idx, el) => {
       if ($(el).text() !== 'Assigned') return
       const assignRow = $(el).parent().attr('id', 'assigned')
-      const student_id = assignRow.find('td:first').text()
+      const student_id = assignRow.find('td:first')[0].getAttribute('data-student-netid')
       assignRow.find('td:first').html(createRoomEl(student_id))
     })
 

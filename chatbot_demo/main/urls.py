@@ -1,13 +1,14 @@
 from django.urls import path, include
 from django.views.i18n import JavaScriptCatalog
 
-from main import views, debug_api
+from main import views, debug_api, chat
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('response', views.auto_response, name='auto_response'),
     path('response_api', views.response_api, name='response_api'),
     path('login/staff/', views.login_page, name='login_staff'),
+    path('page/chatconsole/', views.chat_console, name='chat_console'),
     path('page/counsellor/', views.counsellor, name='counsellor'),
     path('page/supervisor/', views.supervisor, name='supervisor'),
     path('page/administrator/', views.administrator, name='administrator'),
@@ -20,8 +21,9 @@ urlpatterns = [
     path('user/login/', views.login_all, name='login'),
     path('user/login-sso/', views.login_sso, name='login_sso'),
     path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback'),
+    path('user/logout/student/', views.student_logout, name='student_logout'),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-    path('i18n/', include('django.conf.urls.i18n'))
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 debug_urls = [
@@ -46,4 +48,15 @@ debug_urls = [
     path('debug/export_red_route/', debug_api.export_red_route, name='export_red_route'),
 ]
 
+chat_urls = [
+    path('chat/student/', chat.student, name='chat_student'),
+    path('chat/counsellor/', chat.counsellor, name='chat_counsellor'),
+    path('chat/subscribe_stream/', chat.subscribe_stream, name='chat_subscribe_stream'),
+    path('chat/unsubscribe_stream/', chat.unsubscribe_stream, name='chat_unsubscribe_stream'),
+    path('chat/delete_stream/', chat.delete_stream, name='chat_delete_stream'),
+    path('chat/delete_stream_in_topic/', chat.delete_stream_in_topic, name='chat_delete_stream_in_topic'),
+    path('chat/stream_room/', chat.stream_room, name='chat_stream_room'),
+]
+
 urlpatterns += debug_urls
+urlpatterns += chat_urls

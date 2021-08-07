@@ -1,0 +1,276 @@
+{% load render_bundle from webpack_loader %} 
+{% load static %}
+
+ <!--<!DOCTYPE html>-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Counselling Service</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+
+    <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
+
+    <script src="{% static 'botui-master/build/botui.js' %}"></script>
+    <link
+      rel="stylesheet"
+      href="{% static 'botui-master/build/botui.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'botui-master/build/botui-theme-default.css' %}"
+    />
+    <link
+      href="{% static 'fontawesome-free-5.15.3-web/css/all.css' %}"
+      rel="stylesheet"
+    />
+
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://malsup.github.io/jquery.form.js"></script>
+
+    <link
+      href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+{% block extra_scripts %}
+{% endblock %}
+
+
+<style type="text/css">
+    .profil > img {
+        border: none !important;
+        width: 48px;
+        height: 48px;
+        border-radius: unset !important;
+    }
+    
+    .profil > img.agent {
+      content: unset;
+    }
+
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    .copyright {
+      overflow-x: hidden;
+      background-color: #ca3f6a;
+      height: auto;
+      padding: 20px 50px;
+    }
+
+    .copyright ul {
+      display: inline-flex;
+      list-style-type: none;
+      color: white;
+      padding-left: 0px;
+    }
+
+    .copyright-item {
+      border-right: 1px solid white;
+      padding: 0px 10px;
+    }
+
+    .copyright-item a {
+      color: white;
+    }
+
+    .copyright-item a:hover {
+      text-decoration: none;
+    }
+
+    .copyright-text {
+      margin-top: 20px;
+      color: white;
+      text-align: right;
+    }
+
+    .main-content {
+      height: auto;
+      background-color: #fefae4;
+      padding-bottom: 40px;
+    }
+
+    .max-width-2 {
+        max-width: 1230px;
+        margin: 0 auto;
+        position: relative;
+    }
+    
+    .row.justify-content-center {
+        margin: 0;
+        width: 100%;
+    }
+    
+    .chatbox-wrapper {
+        background-color: #eff7d7;
+        position: relative;
+        height: 675px;
+        width: 100%;
+        background: url("/static/Polly-graphics/general/general-bg.png")
+        no-repeat center center #eff7d7;
+        background-size: contain;
+        -o-background-size: contain;
+        -moz-background-size: contain;
+        -webkit-background-size: contain;
+    }
+
+     #chatbox {
+        height: 100%;
+        display: inline-flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .botui-container {
+        background-color: transparent;
+    }
+
+    .botui {
+      height: auto;
+    }
+
+    .botui-header {
+        {% comment %} padding-top: 120px;  {% endcomment %}
+        width: 100%;
+        {% comment %} background: url('/static/Polly-graphics/general/polly-full.png') no-repeat 30px 5px; {% endcomment %}
+        {% comment %} background-size: contain;
+        -o-background-size: contain;
+        -moz-background-size: contain;
+        -webkit-background-size: contain; {% endcomment %}
+        position: sticky;
+        z-index: 1;
+        top: 0;
+        background-color: #fcb040;
+        border-radius: 10px 10px 30px 30px;
+    }
+
+    {% comment %} .botui-header-text {
+        position: absolute;
+        top: 20px;
+        background: #522d54;
+        border-radius: 40px 35px 35px 15px;
+        width: 300px;
+        text-align: center;
+        padding: 10px 0 0px 0px;
+        line-height: 10px;
+        font-size: 10px;
+        color: #f1e202;
+        right: 10%;
+    }
+
+    .botui-header-text p {
+      margin-bottom: 10px;
+    } {% endcomment %}
+
+    .botui-message-content {
+      background-color: #c2c890;
+      border-radius: 10px 10px 10px 5px;
+      overflow-wrap: break-word;
+      font-weight: bold;
+    }
+
+    .botui-message-content.human {
+      background-color: #fccca5;
+      color: #595a5a;
+      border-radius: 10px 10px 10px 5px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 678px) {
+        {% comment %} .top-banner-header-1 {
+            font-size: 24px;
+        } {% endcomment %}
+
+        {% comment %} .botui-header {
+            background: url(/static/Polly-graphics/general/polly-full.png) no-repeat 10px 5px;
+            background-size: contain;
+            background-color: #fcb040; 
+            padding-top: 120px;
+        } {% endcomment %}
+        {% comment %} .botui-header-text {
+            font-size: 10px;
+            width: 300px;
+            padding: 10px 0 0 0;
+            line-height: 10px;
+        } {% endcomment %}
+    }
+
+    @media (max-width: 530px) {
+      {% comment %} .botui-header { 
+        padding-top: 90px;
+      }
+
+        .botui-header-text {
+            font-size: 5px;
+            width: 156px;
+            padding: 10px 0 0 0;
+            line-height: 0px;
+        } {% endcomment %}
+
+        .copyright ul {
+          flex-direction: column;
+        }
+
+        .copyright-item {
+          border-right: none;
+        }
+    }
+
+    {% comment %} @media (max-width: 420px) { {% endcomment %}
+        {% comment %} .top-banner-header-1 {
+            font-size: 16px;
+        }
+
+        .top-sao-logo-1 {           
+            height: 30px;
+        }
+    } {% endcomment %}
+  </style>
+
+{% block custom_style %}
+{% endblock %}
+
+</head>
+
+
+<body>
+    {% block top_banner_content %}
+    {% endblock %}
+
+    {% block main_content %} {% endblock %}
+
+    <section class="footer">
+      <div class="copyright">
+        <ul>
+          <li class="copyright-item"><a href="#">Sitemap</a></li>
+          <li class="copyright-item"><a href="#">Contact Us</a></li>
+          <li class="copyright-item">
+            <a href="#">Privacy Policy Statement</a>
+          </li>
+          <li class="copyright-item">
+            <a href="#">Personal Information Collection Statement</a>
+          </li>
+          <li class="copyright-item"><a href="#">Accessibility</a></li>
+        </ul>
+        <p class="copyright-text">
+          Copyright © The Hong Kong Polytechnic Univeristy Reserved. 2020
+        </p>
+      </div>
+    </section>
+
+
+
+{% block footer_script %}
+{% endblock %}
+{% render_bundle 'main' 'js' %}
+</body>
+</html>

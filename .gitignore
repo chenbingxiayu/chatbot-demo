@@ -1,5 +1,6 @@
 .idea/
 venv
+node_modules/
 .env*
 !.env.sample
 *.pyc

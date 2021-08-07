@@ -20,11 +20,11 @@ services:
 
   django:
     build: ./chatbot_demo
-    command: runserver 0.0.0.0:8000
+    command: runserver 0.0.0.0:8899
     volumes:
       - ./chatbot_demo:/app
     ports:
-      - 80:8000
+      - 8899:8899
     env_file:
       - .env.docker
     depends_on:
@@ -62,4 +62,4 @@ services:
       - redis
 
 volumes:
-  mysql_volume:
+  mysql_volume: {}

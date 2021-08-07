@@ -1,6 +1,10 @@
+import logging
+
 from django.dispatch import receiver, Signal
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
+logger = logging.getLogger('django')
 
 update_queue = Signal()
 channel_layer = get_channel_layer()
@@ -15,11 +19,14 @@ def send_update_signal(sender, **kwargs):
     :param kwargs:
     :return:
     """
-    async_to_sync(channel_layer.group_send)(
-        'staff', {
-            'type': 'refresh_chat_queue',
-            'content': {
-                'type': 'update_queue'
+    try:
+        async_to_sync(channel_layer.group_send)(
+            'staff', {
+                'type': 'refresh_chat_queue',
+                'content': {
+                    'type': 'update_queue'
+                }
             }
-        }
-    )
+        )
+    except Exception as e:
+        logger.warning(e)

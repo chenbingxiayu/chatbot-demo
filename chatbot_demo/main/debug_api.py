@@ -2,7 +2,6 @@ import json
 import logging
 from datetime import timedelta
 
-import requests
 from django.core import serializers
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse, HttpResponse
@@ -15,8 +14,9 @@ from main.models import (
     StaffStatus,
     StudentChatStatus,
     StudentChatHistory,
+    User,
     ChatBotSession,
-    ROLE_RANKING
+    ROLE_RANKING,
 )
 from main.utils import hk_time
 from tasks.tasks import reassign_counsellor, dequeue_student
@@ -325,11 +325,13 @@ def endchat(request):
         try:
             staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid.upper())
             student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid.upper())
+            student_user = User.objects.get(netid=student_netid)
 
             StudentChatHistory.append_end_chat(student, now)
             staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
             staff.status_change_time = now
             student.delete()
+            student_user.delete()
             staff.save()
         except Exception as e:
             logger.warning(e)

@@ -7,17 +7,99 @@ import xlwt
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
+from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 from main.email_service import email_service
+from main.exceptions import UnauthorizedException
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
 DB_NAME = settings.DATABASES['default']['NAME']
+
+
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, netid, password=None, **extra_fields):
+        """
+        Creates and saves a User with the given email and password.
+        """
+        if not netid:
+            raise ValueError('The given netid must be set')
+        user = self.model(netid=netid, **extra_fields)
+        if password:
+            user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, netid, **extra_fields):
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(netid, **extra_fields)
+
+    def create_superuser(self, netid, password, **extra_fields):
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_staff', True)
+
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(netid, password, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    netid = models.CharField(_('polyU Net ID'), max_length=30, unique=True)
+    first_name = models.CharField(_('first name'), max_length=30, blank=True)
+    last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    is_staff = models.BooleanField(
+        _('app admin'),
+        default=False,
+        help_text=_('Designates whether the user can log into this admin site.'),
+    )
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+        help_text=_(
+            'Designates whether this user should be treated as active. '
+            'Unselect this instead of deleting accounts.'
+        ),
+    )
+    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'netid'
+    REQUIRED_FIELDS = []
+
+    class Meta:
+        db_table = 'auth_user'
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+
+    def get_full_name(self):
+        """
+        Returns the first_name plus the last_name, with a space in between.
+        """
+        full_name = f"{self.first_name} {self.last_name}"
+        return full_name.strip()
+
+    def get_short_name(self):
+        """
+        Returns the short name for the user.
+        """
+        return self.first_name
+
+    def get_groups(self) -> str:
+        groups = self.groups.all()
+        if groups:
+            return groups[0].name
+        else:
+            raise UnauthorizedException(f'Staff({self.netid}) does not belong to any user group in this application.')
 
 
 class StaffStatus(models.Model):
@@ -52,7 +134,7 @@ class StaffStatus(models.Model):
     staff_name = models.CharField(max_length=64)
     staff_role = models.CharField(max_length=32, choices=Role.choices)
     staff_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices)
-    status_change_time = models.DateTimeField()
+    status_change_time = models.DateTimeField(auto_now_add=True)
     staff_stream_id = models.CharField(max_length=32, null=True)
 
     def __str__(self):
@@ -125,7 +207,7 @@ class StudentChatStatus(models.Model):
     id = models.AutoField(primary_key=True)
     student_netid = models.CharField(max_length=64, unique=True)
     student_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices, null=True)
-    chat_request_time = models.DateTimeField(default=timezone.now, null=True)
+    chat_request_time = models.DateTimeField(auto_now_add=True, null=True)
     last_assign_time = models.DateTimeField(default=None, null=True)
     chat_start_time = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.OneToOneField(StaffStatus, null=True, on_delete=models.DO_NOTHING)
@@ -137,6 +219,17 @@ class StudentChatStatus(models.Model):
     def add_to_queue(self):
         self.student_chat_status = StudentChatStatus.ChatStatus.WAITING
         self.save()
+
+    @classmethod
+    def unassign_from(cls, staff: StaffStatus):
+        student = cls.objects \
+            .filter(student_chat_status=cls.ChatStatus.ASSIGNED,
+                    assigned_counsellor=staff) \
+            .first()
+        if student:
+            student.assigned_counsellor = None
+            student.add_to_queue()
+            logger.info(f'Unassigned {student}')
 
 
 class StudentChatHistory(models.Model):
@@ -163,7 +256,7 @@ class StudentChatHistory(models.Model):
     session_id = models.AutoField(primary_key=True)  # This can be session id
     student_netid = models.CharField(max_length=64)
     student_chat_status = models.CharField(max_length=32, choices=StudentChatStatus.ChatStatus.choices, null=True)
-    chat_request_time = models.DateTimeField(default=timezone.now, null=True)
+    chat_request_time = models.DateTimeField(null=True)
     chat_start_time = models.DateTimeField(default=None, null=True)
     chat_end_time = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)
