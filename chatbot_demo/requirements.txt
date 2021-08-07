@@ -22,4 +22,3 @@ pyjwt==2.1.0
 celery==5.1.2
 zulip==0.7.1
 django-webpack-loader
-django-letsencrypt==4.0.0

@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'main',
     'tasks',
     'django_celery_results',
-    'letsencrypt',
 ]
 
 MIDDLEWARE = [

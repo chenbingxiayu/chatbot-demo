@@ -63,7 +63,8 @@ class ZulipClient:
         # TODO
         # replace the url
         response = requests.post(self.domain_url + "/api/v1/fetch_api_key",
-                                 data=payload, verify=self.ssl_path)
+                                 data=payload)
+                                #  data=payload, verify=self.ssl_path)
         result = response.json()
         if response.status_code != 200:
             raise Exception("Cannot get {username}'s api key: {error}".format(
