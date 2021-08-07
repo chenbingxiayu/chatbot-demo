@@ -17,7 +17,6 @@ from main.exceptions import UnauthorizedException
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
-from django.contrib.auth.models import AbstractUser
 
 
 class UserManager(BaseUserManager):
@@ -131,7 +130,7 @@ class StaffStatus(models.Model):
     staff_name = models.CharField(max_length=64)
     staff_role = models.CharField(max_length=32, choices=Role.choices)
     staff_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices)
-    status_change_time = models.DateTimeField(default=timezone.localtime)
+    status_change_time = models.DateTimeField(auto_now_add=True)
     staff_stream_id = models.CharField(max_length=32, null=True)
 
     def __str__(self):
@@ -203,7 +202,7 @@ class StudentChatStatus(models.Model):
     id = models.AutoField(primary_key=True)
     student_netid = models.CharField(max_length=64, unique=True)
     student_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices, null=True)
-    chat_request_time = models.DateTimeField(default=timezone.now, null=True)
+    chat_request_time = models.DateTimeField(auto_now_add=True, null=True)
     last_assign_time = models.DateTimeField(default=None, null=True)
     chat_start_time = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.OneToOneField(StaffStatus, null=True, on_delete=models.DO_NOTHING)
@@ -245,7 +244,7 @@ class StudentChatHistory(models.Model):
     id = models.AutoField(primary_key=True)
     student_netid = models.CharField(max_length=64)
     student_chat_status = models.CharField(max_length=32, choices=StudentChatStatus.ChatStatus.choices, null=True)
-    chat_request_time = models.DateTimeField(default=timezone.now, null=True)
+    chat_request_time = models.DateTimeField(null=True)
     chat_start_time = models.DateTimeField(default=None, null=True)
     chat_end_time = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)
