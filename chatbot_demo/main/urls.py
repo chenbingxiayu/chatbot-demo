@@ -18,6 +18,12 @@ urlpatterns = [
     path('api/updatestaff/', views.updatestaff, name='updatestaff'),
     path('api/addstud/', views.addstud, name='addstud'),
     path('api/appointstaff/', views.appointstaff, name='appointstaff'),
+    path('api/superviorjoin/', views.supervior_join, name='superviorjoin'),
+    path('api/submitsurvey/', views.submit_survey, name='submitsurvey'),
+    path('api/endchatbot/', views.end_chatbot, name='endchatbot'),
+    path('api/export_statistics/', views.export_statistics, name='export_statistics'),
+    path('api/get_red_route/', views.get_red_route, name='get_red_route'),
+    path('api/export_red_route/', views.export_red_route, name='export_red_route'),
     path('user/login/', views.login_all, name='login'),
     path('user/login-sso/', views.login_sso, name='login_sso'),
     path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback'),
@@ -42,10 +48,6 @@ debug_urls = [
     path('debug/endchat/', debug_api.endchat, name='debug_endchat'),
     path('debug/reassign_counsellor/', debug_api.reassign_task, name='reassign_counsellor'),
     path('debug/dequeue_student/', debug_api.dequeue_task, name='dequeue_student'),
-    path('debug/add_survey_data/', debug_api.add_survey_data, name='add_survey_data'),
-    path('debug/export_statistics/', debug_api.export_statistics, name='export_statistics'),
-    path('debug/get_red_route/', debug_api.get_red_route, name='get_red_route'),
-    path('debug/export_red_route/', debug_api.export_red_route, name='export_red_route'),
 ]
 
 chat_urls = [

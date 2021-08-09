@@ -185,15 +185,24 @@ class StaffStatus(models.Model):
 
 class StudentChatStatus(models.Model):
     """
+    Student's info will temporary store in this table when they use the online service.
+    This info will move to the StudentChatHistory table when the student left this service.
+
     Attributes
-        id:                     Primary key of this table
-        student_netid:          Student's net ID
-        student_chat_status:    Student's chat status
-        chat_request_time:      The time that this student make the chat request
-        last_assign_time:       The time that assign a staff to this student
-        chat_start_time:        The time that the chat start
-        assigned_counsellor:    The counsellor assigned to this student
-        is_supervisor_join:     Whether a supervisory joined or not
+        id:                         Primary key of this table
+        student_netid:              Student's net ID, unique in this table
+        student_chat_status:        Student's chat status
+        chat_request_time:          The time that this student make the chat request
+        q1:
+        q2:
+        personal_contact_number:    Contact number of the student
+        emergency_contact_name:     Emergency contact of the student
+        relationship:               The relationship between contact person and the student
+        emergency_contact_number:   Contact number of the emergency contact person
+        last_assign_time:           The time that assign a staff to this student
+        chat_start_time:            The time that the chat start
+        assigned_counsellor:        The counsellor assigned to this student
+        is_supervisor_join:         Whether a supervisory joined or not
     """
 
     class Meta:
@@ -209,6 +218,12 @@ class StudentChatStatus(models.Model):
     student_netid = models.CharField(max_length=64, unique=True)
     student_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices, null=True)
     chat_request_time = models.DateTimeField(auto_now_add=True, null=True)
+    q1 = models.BooleanField(null=True)
+    q2 = models.BooleanField(null=True)
+    personal_contact_number = models.CharField(max_length=32, null=True)
+    emergency_contact_name = models.CharField(max_length=32, null=True)
+    relationship = models.CharField(max_length=32, null=True)
+    emergency_contact_number = models.CharField(max_length=32, null=True)
     last_assign_time = models.DateTimeField(default=None, null=True)
     chat_start_time = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.OneToOneField(StaffStatus, null=True, on_delete=models.DO_NOTHING)
@@ -239,7 +254,7 @@ class StudentChatStatus(models.Model):
 class StudentChatHistory(models.Model):
     """
     Attributes
-        session_id:                 Primary key of this table
+        id:                         Primary key of this a chat record
         student_netid:              Student's net ID
         student_chat_status:        Student's chat status
         chat_request_time:          The time that this student make the chat request
@@ -257,7 +272,7 @@ class StudentChatHistory(models.Model):
     class Meta:
         db_table = 'student-chat-history'
 
-    session_id = models.AutoField(primary_key=True)  # This can be session id
+    id = models.AutoField(primary_key=True)
     student_netid = models.CharField(max_length=64)
     student_chat_status = models.CharField(max_length=32, choices=StudentChatStatus.ChatStatus.choices, null=True)
     chat_request_time = models.DateTimeField(null=True)
@@ -266,6 +281,8 @@ class StudentChatHistory(models.Model):
     assigned_counsellor = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)
     is_supervisor_join = models.BooleanField(default=False)
     is_no_show = models.BooleanField(default=False)
+    q1 = models.BooleanField(null=True)
+    q2 = models.BooleanField(null=True)
     personal_contact_number = models.CharField(max_length=32, null=True)
     emergency_contact_name = models.CharField(max_length=32, null=True)
     relationship = models.CharField(max_length=32, null=True)
@@ -275,13 +292,22 @@ class StudentChatHistory(models.Model):
         return f"ChatHistory({self.student_netid})"
 
     @classmethod
-    def append_end_chat(cls, student: StudentChatStatus, time: datetime):
+    def append_end_chat(cls, student: StudentChatStatus, time: datetime, is_no_show: bool):
         cls(student_netid=student.student_netid,
             student_chat_status=StudentChatStatus.ChatStatus.END,
             chat_request_time=student.chat_request_time,
             chat_start_time=student.chat_start_time,
             chat_end_time=time,
-            assigned_counsellor=student.assigned_counsellor).save()
+            assigned_counsellor=student.assigned_counsellor,
+            is_supervisor_join=student.is_supervisor_join,
+            is_no_show=is_no_show,
+            q1=student.q1,
+            q2=student.q2,
+            personal_contact_number=student.personal_contact_number,
+            emergency_contact_name=student.emergency_contact_name,
+            relationship=student.relationship,
+            emergency_contact_number=student.emergency_contact_number,
+            ).save()
 
 
 class ChatBotSession(models.Model):
@@ -363,54 +389,6 @@ class ChatBotSession(models.Model):
             start_time=timezone.localtime(),
             is_ployu_student=is_ployu_student
         )
-
-    @classmethod
-    def usage_chatbot_score(cls,
-                            session_id: str,
-                            language: str,
-                            q1_academic: bool,
-                            q1_interpersonal_relationship: bool,
-                            q1_career: bool,
-                            q1_family: bool,
-                            q1_mental_health: bool,
-                            q1_others: bool,
-                            q2: bool,
-                            q3: str,
-                            q4: str,
-                            q5: bool,
-                            q6_1: bool,
-                            q6_2: bool,
-                            score: bool):
-
-        # TODO: catch `Doesnotexist` error in upstream function
-        session = cls.objects.get(session_id=session_id)
-        session.language = language
-        session.q1_academic = q1_academic
-        session.q1_interpersonal_relationship = q1_interpersonal_relationship
-        session.q1_career = q1_career
-        session.q1_family = q1_family
-        session.q1_mental_health = q1_mental_health
-        session.q1_others = q1_others
-        session.q2 = q2
-        session.q3 = q3
-        session.q4 = q4
-        session.q5 = q5
-        session.q6_1 = q6_1
-        session.q6_2 = q6_2
-        session.score = score
-        session.save()
-
-    @classmethod
-    def usage_chatbot_end(cls,
-                          session_id: str,
-                          first_option: str,
-                          feedback_rating: int):
-        # TODO: catch `Doesnotexist` error in upstream function
-        session = cls.objects.get(session_id=session_id)
-        session.first_option = first_option
-        session.feedback_rating = feedback_rating
-        session.end_time = timezone.localtime(),
-        session.save()
 
     @classmethod
     def statis_overview(cls, start: datetime, end: datetime):

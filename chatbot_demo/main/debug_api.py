@@ -18,7 +18,6 @@ from main.models import (
     ChatBotSession,
     ROLE_RANKING,
 )
-from main.utils import hk_time
 from tasks.tasks import reassign_counsellor, dequeue_student
 
 logger = logging.getLogger('django')
@@ -106,12 +105,13 @@ def deletestud(request):
     :return:
     """
     student_netid = request.POST.get('student_netid')
+    is_no_show = request.POST.get('is_no_show')
     now = timezone.now()
     with transaction.atomic():
         try:
             student = StudentChatStatus.objects \
                 .get(student_netid=student_netid)
-            StudentChatHistory.append_end_chat(student, now)
+            StudentChatHistory.append_end_chat(student, now, is_no_show)
             student.delete()
         except Exception as e:
             logger.warning(e)
@@ -319,6 +319,7 @@ def endchat(request):
     """
     student_netid = request.POST.get('student_netid')
     staff_netid = request.POST.get('staff_netid')
+    is_no_show = request.POST.get('is_no_show')
     now = timezone.now()
 
     with transaction.atomic():
@@ -327,7 +328,7 @@ def endchat(request):
             student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid.upper())
             student_user = User.objects.get(netid=student_netid)
 
-            StudentChatHistory.append_end_chat(student, now)
+            StudentChatHistory.append_end_chat(student, now, is_no_show)
             staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
             staff.status_change_time = now
             student.delete()
@@ -352,68 +353,3 @@ def reassign_task(request):
 def dequeue_task(request):
     dequeue_student()
     return JsonResponse({'status': 'success'}, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['POST'])
-def add_survey_data(request):
-    survey_data = json.loads(request.body.decode('utf-8'))
-    now = timezone.now().astimezone(hk_time) - timedelta(days=1)
-    today = now.date()
-    ChatBotSession(
-        date=today,
-        start_time=now.time(),
-        end_time=(now + timedelta(seconds=15 * 60)).time(),
-        is_ployu_student=survey_data['is_ployu_student'],
-        student_netid=survey_data['student_netid'],
-        language=survey_data['language'],
-        q1_academic=survey_data['q1_academic'],
-        q1_interpersonal_relationship=survey_data['q1_interpersonal_relationship'],
-        q1_career=survey_data['q1_career'],
-        q1_family=survey_data['q1_family'],
-        q1_mental_health=survey_data['q1_mental_health'],
-        q1_others=survey_data['q1_others'],
-        q2=survey_data['q2'],
-        q3=survey_data['q3'],
-        q4=survey_data['q4'],
-        q5=survey_data['q5'],
-        q6_1=survey_data['q6_1'],
-        q6_2=survey_data['q6_2'],
-        score=survey_data['score'],
-        first_option=survey_data['first_option'],
-        feedback_rating=survey_data['feedback_rating']
-    ).save()
-
-    return JsonResponse({'status': 'success'}, status=201)
-
-
-@csrf_exempt
-@require_http_methods(['GET'])
-def export_statistics(request):
-    from_date = timezone.now().date() - timedelta(days=1)
-    to_date = timezone.now().date()
-
-    ChatBotSession.statis_overview(from_date, to_date)
-    return JsonResponse({'status': 'success'}, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['GET'])
-def get_red_route(request):
-    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
-
-    ChatBotSession.get_red_route(from_date)
-    return JsonResponse({'status': 'success'}, status=200)
-
-
-@csrf_exempt
-@require_http_methods(['GET'])
-def export_red_route(request):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="red_route.xls"'
-
-    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
-    wb = ChatBotSession.get_red_route_to_excel(from_date)
-
-    wb.save(response)
-    return response

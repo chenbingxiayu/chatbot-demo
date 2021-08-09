@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import logging
 import uuid
+from datetime import timedelta
 
 import requests
 
@@ -26,13 +27,15 @@ from main.models import (
     SELECTABLE_STATUS
 )
 from main.forms import StaffLoginForm
-from main.utils import today_start
+from main.utils import today_start, hk_time
 from main.signals import update_queue
 from tasks.tasks import assign_staff
 from main.auth import sso_auth
 
-logger = logging.getLogger('django')
 COOKIE_MAX_AGE = 8 * 60 * 60
+
+logger = logging.getLogger('django')
+response_json = {'status': 'success'}
 
 
 def _session_key_to_uuid4(session_id: str):
@@ -92,8 +95,7 @@ def login_all(request):
 @csrf_exempt
 def login_sso(request):
     # redirect to rapid connect server
-    # response = redirect(sso_auth.destination)
-    response = redirect('login_sso_callback')
+    response = redirect(sso_auth.destination)
     return response
 
 
@@ -101,15 +103,12 @@ def login_sso(request):
 @require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
-        # encoded_jwt = request.POST.get('data')
-        # if not encoded_jwt:
-        #     return render(request, 'main/login_sso.html', {
-        #         'error_message': "Cannot get JWT"
-        #     })
-        # decoded_jwt = sso_auth.decode(encoded_jwt)
-        decoded_jwt = dict()
-        decoded_jwt['polyuUserType'] = 'Student'
-        decoded_jwt['sub'] = '17000001d'
+        encoded_jwt = request.POST.get('data')
+        if not encoded_jwt:
+            return render(request, 'main/login_sso.html', {
+                'error_message': "Cannot get JWT"
+            })
+        decoded_jwt = sso_auth.decode(encoded_jwt)
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
@@ -409,7 +408,13 @@ def addstud(request):
 
     student, created = StudentChatStatus.objects \
         .update_or_create(student_netid=student_netid.upper(),
-                          defaults={"student_chat_status": None,
+                          defaults={"q1": request.POST.get('q1'),
+                                    "q2": request.POST.get('q2'),
+                                    "personal_contact_number": request.POST.get('personal_contact_number'),
+                                    "emergency_contact_name": request.POST.get('emergency_contact_name'),
+                                    "relationship": request.POST.get('relationship'),
+                                    "emergency_contact_number": request.POST.get('emergency_contact_number'),
+                                    "student_chat_status": None,
                                     "last_assign_time": None,
                                     "chat_start_time": None,
                                     "assigned_counsellor": None})
@@ -417,12 +422,34 @@ def addstud(request):
 
     if assign_staff(student):
         msg += f" Student is assigned to a staff."
-        return JsonResponse({'status': 'success', 'message': msg}, status=201)
+        response_json['message'] = msg
+        return JsonResponse(response_json, status=201)
     else:
         student.add_to_queue()
         update_queue.send(sender=None)
         msg += f" No staff available, added student to queue."
-        return JsonResponse({'status': 'success', 'message': msg}, status=201)
+        response_json['message'] = msg
+        return JsonResponse(response_json, status=201)
+
+
+# @login_required
+@csrf_exempt
+@require_http_methods(['POST'])
+def supervior_join(request):
+    student_netid = request.POST.get('student_netid')
+    status_code = 200
+    try:
+        student = StudentChatStatus.objects.get(student_netid=student_netid)
+        student.is_supervisor_join = True
+        student.save()
+    except StudentChatStatus.DoesNotExist:
+        msg = "Student does not exit. Supervisor cannot join the chat."
+        logger.warning(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        status_code = 404
+
+    return JsonResponse(response_json, status=status_code)
 
 
 @csrf_exempt
@@ -437,3 +464,86 @@ def appointstaff(request):
     })
 
     return JsonResponse({'status': 'success'}, status=200)
+
+
+@login_required
+@require_http_methods(['POST'])
+def submit_survey(request):
+    try:
+        session = ChatBotSession.objects.get(session_id=_session_key_to_uuid4(request.session.session_key))
+        session.language = request.POST.get('language'),
+        session.q1_academic = request.POST.get('q1_academic'),
+        session.q1_interpersonal_relationship = request.POST.get('q1_interpersonal_relationship'),
+        session.q1_career = request.POST.get('q1_career'),
+        session.q1_family = request.POST.get('q1_family'),
+        session.q1_mental_health = request.POST.get('q1_mental_health'),
+        session.q1_others = request.POST.get('q1_others'),
+        session.q2 = request.POST.get('q2'),
+        session.q3 = request.POST.get('q3'),
+        session.q4 = request.POST.get('q4'),
+        session.q5 = request.POST.get('q5'),
+        session.q6_1 = request.POST.get('q6_1'),
+        session.q6_2 = request.POST.get('q6_2'),
+        session.score = request.POST.get('score')
+        session.save()
+        status_code = 200
+    except ChatBotSession.DoesNotExist:
+        msg = "Session does not exist. Chatbot survey is not saved."
+        logger.warning(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        status_code = 404
+
+    return JsonResponse(response_json, status=status_code)
+
+
+@login_required
+@require_http_methods(['POST'])
+def end_chatbot(request):
+    try:
+        session = ChatBotSession.objects.get(session_id=_session_key_to_uuid4(request.session.session_key))
+        session.first_option = request.POST.get('first_option'),
+        session.feedback_rating = request.POST.get('feedback_rating'),
+        session.end_time = timezone.localtime()
+        session.save()
+        status_code = 200
+    except ChatBotSession.DoesNotExist:
+        msg = "Session does not exist. Error occurs when ending survey."
+        logger.warning(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        status_code = 404
+
+    return JsonResponse(response_json, status=status_code)
+
+
+@login_required
+@require_http_methods(['GET'])
+def export_statistics(request):
+    from_date = timezone.now().date() - timedelta(days=1)
+    to_date = timezone.now().date()
+
+    ChatBotSession.statis_overview(from_date, to_date)
+    return JsonResponse(response_json, status=200)
+
+
+@login_required
+@require_http_methods(['GET'])
+def get_red_route(request):
+    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
+
+    ChatBotSession.get_red_route(from_date)
+    return JsonResponse(response_json, status=200)
+
+
+@login_required
+@require_http_methods(['GET'])
+def export_red_route(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="red_route.xls"'
+
+    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
+    wb = ChatBotSession.get_red_route_to_excel(from_date)
+
+    wb.save(response)
+    return response
