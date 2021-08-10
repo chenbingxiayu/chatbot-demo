@@ -113,6 +113,7 @@ def login_sso_callback(request):
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
                 student_netid = decoded_jwt['sub']
+                student_netid = student_netid.upper() if student_netid else None
                 student_user = User.objects.get(netid=student_netid)
             except User.DoesNotExist:
                 student_user = User.objects.create_user(netid=student_netid, is_active=True)
@@ -407,7 +408,7 @@ def addstud(request):
         return JsonResponse({"error": "Invalid student ID"}, status=400)
 
     student, created = StudentChatStatus.objects \
-        .update_or_create(student_netid=student_netid.upper(),
+        .update_or_create(student_netid=student_netid,
                           defaults={"q1": request.POST.get('q1'),
                                     "q2": request.POST.get('q2'),
                                     "personal_contact_number": request.POST.get('personal_contact_number'),

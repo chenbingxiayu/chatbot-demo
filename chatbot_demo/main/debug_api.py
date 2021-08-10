@@ -57,7 +57,7 @@ def addstud(request):
         return JsonResponse({"error": "Invalid student ID"}, status=400)
 
     student, created = StudentChatStatus.objects \
-        .get_or_create(student_netid=student_netid.upper(),
+        .get_or_create(student_netid=student_netid,
                        defaults={'chat_request_time': timezone.now()})
     msg = f"{student} is {'created' if created else 'updated'}"
     if status:
@@ -211,7 +211,7 @@ def addstaff(request):
     now = timezone.now()
     staff_status = StaffStatus(
         staff_name=request.POST.get('staff_name'),
-        staff_netid=staff_netid.upper(),
+        staff_netid=staff_netid,
         staff_role=request.POST.get('staff_role'),
         staff_chat_status=request.POST.get('staff_chat_status'),
         status_change_time=now
@@ -268,7 +268,7 @@ def assignstaff(request):
                 .order_by('?') \
                 .first()
             student = StudentChatStatus.objects \
-                .get(student_netid=student_netid.upper())
+                .get(student_netid=student_netid)
             staff.assign_to(student)
         except Exception as e:
             logger.warning(e)
@@ -292,8 +292,8 @@ def startchat(request):
 
     with transaction.atomic():
         try:
-            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid.upper())
-            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid.upper())
+            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
+            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
 
             student.chat_start_time = now
             student.student_chat_status = StudentChatStatus.ChatStatus.CHATTING
@@ -324,8 +324,8 @@ def endchat(request):
 
     with transaction.atomic():
         try:
-            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid.upper())
-            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid.upper())
+            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
+            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
             student_user = User.objects.get(netid=student_netid)
 
             StudentChatHistory.append_end_chat(student, now, is_no_show)
