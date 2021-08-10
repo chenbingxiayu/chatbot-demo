@@ -213,5 +213,5 @@ ZULIP = {
     'ZULIP_ADMIN_EMAIL': os.getenv('ZULIP_ADMIN_EMAIL'),
     'ZULIP_DOMAIN_URL': os.getenv('ZULIP_DOMAIN_URL'),
     'ZULIP_EMAIL_SUBFFIX': os.getenv('ZULIP_EMAIL_SUBFFIX', '@zulip.com'),
-    'ZULIP_SSL_PATH': os.getenv('ZULIP_SSL_PATH')
+    # 'ZULIP_SSL_PATH': os.getenv('ZULIP_SSL_PATH', './ssl/zulip.combined-chain.crt')
 }

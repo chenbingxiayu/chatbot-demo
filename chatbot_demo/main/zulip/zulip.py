@@ -12,7 +12,7 @@ class ZulipClient:
         self.client = zulip.Client(config_file=config_file)
         self.admin_email = settings.ZULIP['ZULIP_ADMIN_EMAIL']
         self.domain_url = settings.ZULIP['ZULIP_DOMAIN_URL']
-        self.ssl_path = settings.ZULIP['ZULIP_SSL_PATH']
+        # self.ssl_path = settings.ZULIP['ZULIP_SSL_PATH']
 
     def get_users(self):
         users = self.client.get_users()
