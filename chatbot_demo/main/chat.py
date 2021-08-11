@@ -244,7 +244,7 @@ def delete_stream(request):
 def stream_room(request):
     try:
         staff_netid = request.GET.get('staff_netid', None)
-        supervisor_netid = request.GET.get('supervisor_netid', None)
+        supervisor_netid = request.user.netid
 
         if staff_netid is None or supervisor_netid is None:
             raise('Please provide both stream name and supervisor email.')

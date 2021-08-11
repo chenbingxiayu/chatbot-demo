@@ -20,7 +20,7 @@
         <th scope="row" class="seq-no">{{ forloop.counter }}</th>
         <td>{{ student.student_netid|mask }}</td>
         <td>{{ student.chat_request_time|time:'H:i:s' }}</td>
-        <td>{{ student.get_student_chat_status_display }}</td>
+        <td class="status">{{ student.get_student_chat_status_display }}</td>
         <td>{{ student.chat_request_time|duration:now }}</td>
         <td class="counsellor">{{ student.assigned_counsellor.staff_netid }}</td>
         <td class="join-session"></td>
@@ -31,7 +31,7 @@
         <th scope="row" class="seq-no"></th>
         <td>{{ history.student_netid|mask }}</td>
         <td>{{ history.chat_request_time|time:'H:i:s' }}</td>
-        <td>{{ history.get_student_chat_status_display|default_if_none:"" }}</td>
+        <td class="status">{{ history.get_student_chat_status_display|default_if_none:"" }}</td>
         <td>{{ history.chat_request_time|duration:now }}</td>
         <td class="counsellor">{{ history.assigned_counsellor.staff_netid }}</td>
         <td class="join-session"></td>
@@ -45,8 +45,9 @@
 <script>
   $('#chat-status-table tbody > .chat-queue').each((i,row) => {
     const $row = $(row)
-    const is_counsellor = !!($row.find('td.counsellor').text())
-    is_counsellor ? $row.find('td.join-session').append('<span>Join</span>') : null
+    const isChatting = $row.find('td.status').text().toLocaleLowerCase() === 'chatting';
+    const counsellor_netid = $row.find('td.counsellor').text();
+    isChatting ? $row.find('td.join-session').append(`<span><a href="/main/chat/stream_room/?staff_netid=${counsellor_netid}" target="_blank">Join</a></span>`) : null
   })
 </script>
 {% endblock %}
