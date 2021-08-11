@@ -205,7 +205,7 @@
 
     $('.chat-status').each((idx, el) => {
       const status = $(el).text().toLocaleLowerCase();
-      if (status !== 'assigned' || status !== 'chatting') return
+      if (status !== 'assigned' && status !== 'chatting') return
       const assignRow = $(el).parent().attr('id', status)
       const student_id = assignRow.find('td:first')[0].getAttribute('data-student-netid')
       assignRow.find('td:first').html(createRoomEl(student_id, status))
