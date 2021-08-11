@@ -10,6 +10,13 @@
     const clientImg = document.getElementById("client-img").value;
     const supervisorImg = document.getElementById("supervisor-img").value;
 
+    botui.message.add({
+      human: false,
+      photo: pollyImg,
+      content:
+        "Welcome to integrated counselling service! It nice to meet you.",
+    });
+
     // Listen 'Enter' key press
     $(document).on("keyup", "#message-text", (event) => {
       if (event.keyCode === 13) {
