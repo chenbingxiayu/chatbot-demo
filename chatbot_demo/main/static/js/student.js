@@ -143,13 +143,13 @@
           op: "stop",
         });
       })
-      .on("click", ".icon-leave", function() {
+      .on("click", ".icon-leave", async function() {
         if (confirm("Are you sure you want to quit?")) {
           await $.ajax({
             url: "/main/user/logout/student/",
             method: "GET",
           });
-          
+
           if (
             navigator.userAgent.indexOf("Firefox") != -1 ||
             navigator.userAgent.indexOf("Chrome") != -1
