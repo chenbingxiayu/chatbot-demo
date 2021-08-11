@@ -88,24 +88,35 @@
     $(document).on('click', '.start-chat-with-student', (e) => {
       const student_netid = e.target.getAttribute("data-student-netid");
       const staff_netid = e.target.getAttribute("data-staff-netid");
-      $.ajax({
-        type: 'POST',
-        url: '/main/debug/startchat/',
-        headers: { 'X-CSRFToken': getCookie('csrftoken')},
-        data: {
-          'student_netid': student_netid,
-          'staff_netid': staff_netid,
-        },
-        success: () => {
-          const a = document.createElement('a');
-          a.target= "_blank";
-          a.href= `/main/chat/counsellor/`;
-          a.click();
-        },
-        error: (data) => {
-          alert("Failed to start chatting.")
-        }
-      })
+      const status = e.target.getAttribute("data-status");
+
+      if (status === 'assigned') {
+        $.ajax({
+          type: 'POST',
+          url: '/main/debug/startchat/',
+          headers: { 'X-CSRFToken': getCookie('csrftoken')},
+          data: {
+            'student_netid': student_netid,
+            'staff_netid': staff_netid,
+          },
+          success: () => {
+            const a = document.createElement('a');
+            a.target= "_blank";
+            a.href= `/main/chat/counsellor/`;
+            a.click();
+          },
+          error: (data) => {
+            alert("Failed to start chatting.")
+          }
+        });
+      }
+
+      if (status === 'chatting') {
+        const a = document.createElement('a');
+        a.target= "_blank";
+        a.href= `/main/chat/counsellor/`;
+        a.click();
+      }
     });
 
     /**
@@ -113,9 +124,9 @@
      * @param student_id
      * @returns {string}
      */
-    function createRoomEl(student_id) {
+    function createRoomEl(student_id, status) {
       const staff_netid = '{{ staff.staff_netid }}';
-      return  `<a href="javascript:void(0)" data-student-netid="${student_id}" data-staff-netid="${staff_netid}" class="start-chat-with-student">${student_id}</a>`
+      return  `<a href="javascript:void(0)" data-student-netid="${student_id}" data-staff-netid="${staff_netid}" data-status="${status}" class="start-chat-with-student">${student_id}</a>`
     }
 
 
@@ -193,10 +204,11 @@
     }, 1000)
 
     $('.chat-status').each((idx, el) => {
-      if ($(el).text() !== 'Assigned') return
-      const assignRow = $(el).parent().attr('id', 'assigned')
+      const status = $(el).text().toLocaleLowerCase();
+      if (status !== 'assigned' || status !== 'chatting') return
+      const assignRow = $(el).parent().attr('id', status)
       const student_id = assignRow.find('td:first')[0].getAttribute('data-student-netid')
-      assignRow.find('td:first').html(createRoomEl(student_id))
+      assignRow.find('td:first').html(createRoomEl(student_id, status))
     })
 
     // FIXME remove later
