@@ -71,6 +71,11 @@ def counsellor(request):
         if staff is None:
             client.create_user(staff_email, staff_netid)
 
+        student = next(
+            (user for user in users['members'] if user['email'] == student_email), None)
+        if student is None:
+            client.create_user(student_email, student_netid)
+
         # We will use `${staff_email}` to construct the stream name.
         stream_name = _construct_stream_name(
             staff_netid=staff_netid)
