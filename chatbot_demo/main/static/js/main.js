@@ -1582,11 +1582,13 @@
                         })
                         .then(async function(status) {
                           let currentStatus = status;
+                          let count = 0;
                           if (currentStatus == "waiting") {
                             while (true) {
-                              // request after 2 mins(120000 = 2 * 60 * 1000)
+                              // request after 5 sec
+
                               await new Promise((resolve) =>
-                                setTimeout(resolve, 120000)
+                                setTimeout(resolve, 5000)
                               );
 
                               const stu = await getStatusByStudentNetId(
@@ -1594,20 +1596,23 @@
                               );
 
                               if (stu.student_chat_status === "waiting") {
-                                const queueList = await getQueueStatus(
-                                  student_netid
-                                );
-
-                                const waitingNo = queueList.findIndex(
-                                  (student) =>
-                                    student.fields.student_netid ==
+                                if (count % 23 === 0) {
+                                  const queueList = await getQueueStatus(
                                     student_netid
-                                );
-                                await waitSubsribe(
-                                  student_netid,
-                                  waitingNo,
-                                  "en"
-                                );
+                                  );
+
+                                  const waitingNo = queueList.findIndex(
+                                    (student) =>
+                                      student.fields.student_netid ==
+                                      student_netid
+                                  );
+                                  await waitSubsribe(
+                                    student_netid,
+                                    waitingNo,
+                                    "en"
+                                  );
+                                }
+                                count++;
                               } else {
                                 // assign or end
                                 currentStatus = stu.student_chat_status;

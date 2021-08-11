@@ -361,7 +361,7 @@ def login_sso_callback(request):
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
-                student_netid = decoded_jwt['sub']
+                student_netid = decoded_jwt['sub'].upper()
                 student_user = User.objects.get(netid=student_netid)
             except User.DoesNotExist:
                 student_user = User.objects.create_user(netid=student_netid, is_active=True)

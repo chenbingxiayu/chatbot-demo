@@ -125,7 +125,7 @@ def subscribe_stream(request):
         is_exist = next(
             (user for user in users['members'] if user['email'] == subscriber_email), None)
         if is_exist is None:
-            print("subsriber isn't exist, create a new one")
+            print("subscriber isn't exist, create a new one")
             client.create_user(username=subscriber_email,
                                name=subscriber_netid)
 
