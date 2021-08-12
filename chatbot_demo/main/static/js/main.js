@@ -17,7 +17,7 @@
           loading: true,
           searchselect: true,
           delay: 1000,
-          content: "Please select your language 請選擇語言",
+          content: "Please select your language 請選擇語言 请选择语言",
         })
         .then(function() {
           return botui.action
@@ -1757,7 +1757,7 @@
           photo: polly,
           delay: 1500,
           content:
-            '1. Email: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+            '1. Email: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0AStudent ID:________________%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
         })
         .then(further_help);
     }
@@ -3732,7 +3732,7 @@
           photo: polly,
           delay: 1500,
           content:
-            '1. 電郵預約: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. 網上系統POSS預約輔導服務: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+            '1. 電郵預約: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0AStudent ID:________________%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. 網上系統POSS預約輔導服務: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
         })
         .then(further_help_tc);
     }
@@ -5580,7 +5580,7 @@
           photo: polly,
           delay: 1500,
           content:
-            '1. 电邮预约: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. 网上系统POSS预约辅导服务: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+            '1. 电邮预约: <a href="mailto:stud.counselling@polyu.edu.hk?subject=Making appointment with SAO counsellor&body=Dear Counsellor,%0D%0A%0D%0AI would like to make appointment with SAO counsellor on the following date and time:%0D%0AStudent ID:________________%0D%0ADate:________________%0D%0ATime: ________________%0D%0A%0D%0ALooking forward to your reply.%0D%0A%0D%0ARegards%0D%0A________________">stud.counselling@polyu.edu.hk</a><br/>2. 网上系统POSS预约辅导服务: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
         })
         .then(further_help_sc);
     }
