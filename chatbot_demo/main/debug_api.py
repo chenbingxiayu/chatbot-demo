@@ -1,14 +1,23 @@
+import json
 import logging
+from datetime import timedelta
 
 from django.core import serializers
 from django.db import IntegrityError, transaction
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.forms.models import model_to_dict
 
-from main.models import StaffStatus, StudentChatStatus, StudentChatHistory, ROLE_RANKING, User
+from main.models import (
+    StaffStatus,
+    StudentChatStatus,
+    StudentChatHistory,
+    User,
+    ChatBotSession,
+    ROLE_RANKING,
+)
 from tasks.tasks import reassign_counsellor, dequeue_student
 
 logger = logging.getLogger('django')
@@ -48,7 +57,7 @@ def addstud(request):
         return JsonResponse({"error": "Invalid student ID"}, status=400)
 
     student, created = StudentChatStatus.objects \
-        .get_or_create(student_netid=student_netid.upper(),
+        .get_or_create(student_netid=student_netid,
                        defaults={'chat_request_time': timezone.now()})
     msg = f"{student} is {'created' if created else 'updated'}"
     if status:
@@ -96,12 +105,13 @@ def deletestud(request):
     :return:
     """
     student_netid = request.POST.get('student_netid')
+    is_no_show = request.POST.get('is_no_show')
     now = timezone.now()
     with transaction.atomic():
         try:
             student = StudentChatStatus.objects \
                 .get(student_netid=student_netid)
-            StudentChatHistory.append_end_chat(student, now)
+            StudentChatHistory.append_end_chat(student, now, is_no_show)
             student.delete()
         except Exception as e:
             logger.warning(e)
@@ -160,6 +170,7 @@ def getstaff(request):
     if role:
         qset = qset.filter(staff_role=role)
     res = qset.values('staff_netid').order_by('?').first()  # select randomly
+
     return JsonResponse(res, safe=False, status=200)
 
 
@@ -200,7 +211,7 @@ def addstaff(request):
     now = timezone.now()
     staff_status = StaffStatus(
         staff_name=request.POST.get('staff_name'),
-        staff_netid=staff_netid.upper(),
+        staff_netid=staff_netid,
         staff_role=request.POST.get('staff_role'),
         staff_chat_status=request.POST.get('staff_chat_status'),
         status_change_time=now
@@ -257,7 +268,7 @@ def assignstaff(request):
                 .order_by('?') \
                 .first()
             student = StudentChatStatus.objects \
-                .get(student_netid=student_netid.upper())
+                .get(student_netid=student_netid)
             staff.assign_to(student)
         except Exception as e:
             logger.warning(e)
@@ -281,8 +292,8 @@ def startchat(request):
 
     with transaction.atomic():
         try:
-            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid.upper())
-            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid.upper())
+            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
+            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
 
             student.chat_start_time = now
             student.student_chat_status = StudentChatStatus.ChatStatus.CHATTING
@@ -308,15 +319,16 @@ def endchat(request):
     """
     student_netid = request.POST.get('student_netid')
     staff_netid = request.POST.get('staff_netid')
+    is_no_show = request.POST.get('is_no_show')
     now = timezone.now()
 
     with transaction.atomic():
         try:
-            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid.upper())
-            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid.upper())
+            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
+            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
             student_user = User.objects.get(netid=student_netid)
 
-            StudentChatHistory.append_end_chat(student, now)
+            StudentChatHistory.append_end_chat(student, now, is_no_show, endchat=True)
             staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
             staff.status_change_time = now
             student.delete()

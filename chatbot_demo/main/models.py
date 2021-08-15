@@ -1,22 +1,47 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, annotations
 import logging
-from datetime import datetime
+import uuid
+from datetime import datetime, date
 
-from django.db import models
+import pendulum
+import xlwt
+from django.db import models, connection
+from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 from main.email_service import email_service
 from main.exceptions import UnauthorizedException
+from main.utils import hk_time, utc_time, tz_offset
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
+DB_NAME = settings.DATABASES['default']['NAME']
+service_begin_hour = 9 - tz_offset
+service_close_weekday_hour = 19 - tz_offset
+service_clsoe_sat_hour = 12 - tz_offset
+
+
+def dictfetchone(cursor):
+    """Return all rows from a cursor as a dict"""
+    columns = [col[0] for col in cursor.description]
+    return dict(zip(columns, cursor.fetchone()))
+
+
+def dictfetchall(cursor):
+    """Return all rows from a cursor as a dict"""
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
 
 
 class UserManager(BaseUserManager):
@@ -174,20 +199,30 @@ class StaffStatus(models.Model):
                     'type': 'assignment'
                 }
             })
-        # TODO: send email
-        # email_service
+
+        email_service.send('new_assignment', self.staff_netid)
 
 
 class StudentChatStatus(models.Model):
     """
+    Student's info will temporary store in this table when they use the online service.
+    This info will move to the StudentChatHistory table when the student left this service.
+
     Attributes
-        id:                     Primary key of this table
-        student_netid:          Student's net ID
-        student_chat_status:    Student's chat status
-        chat_request_time:      The time that this student make the chat request
-        last_assign_time:       The time that assign a staff to this student
-        chat_start_time:        The time that the chat start
-        assigned_counsellor:    The counsellor assigned to this student
+        id:                         Primary key of this table
+        student_netid:              Student's net ID, unique in this table
+        student_chat_status:        Student's chat status
+        chat_request_time:          The time that this student make the chat request
+        q1:
+        q2:
+        personal_contact_number:    Contact number of the student
+        emergency_contact_name:     Emergency contact of the student
+        relationship:               The relationship between contact person and the student
+        emergency_contact_number:   Contact number of the emergency contact person
+        last_assign_time:           The time that assign a staff to this student
+        chat_start_time:            The time that the chat start
+        assigned_counsellor:        The counsellor assigned to this student
+        is_supervisor_join:         Whether a supervisory joined or not
     """
 
     class Meta:
@@ -202,10 +237,17 @@ class StudentChatStatus(models.Model):
     id = models.AutoField(primary_key=True)
     student_netid = models.CharField(max_length=64, unique=True)
     student_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices, null=True)
-    chat_request_time = models.DateTimeField(auto_now_add=True, null=True)
+    chat_request_time = models.DateTimeField(default=timezone.localtime, null=True)
+    q1 = models.BooleanField(null=True)
+    q2 = models.BooleanField(null=True)
+    personal_contact_number = models.CharField(max_length=32, null=True)
+    emergency_contact_name = models.CharField(max_length=32, null=True)
+    relationship = models.CharField(max_length=32, null=True)
+    emergency_contact_number = models.CharField(max_length=32, null=True)
     last_assign_time = models.DateTimeField(default=None, null=True)
     chat_start_time = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.OneToOneField(StaffStatus, null=True, on_delete=models.DO_NOTHING)
+    is_supervisor_join = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Student({self.student_netid})"
@@ -225,17 +267,26 @@ class StudentChatStatus(models.Model):
             student.add_to_queue()
             logger.info(f'Unassigned {student}')
 
+    def usage_online_chatting_connect(self):
+        pass
+
 
 class StudentChatHistory(models.Model):
     """
     Attributes
-        id:                     Primary key of this table
-        student_netid:          Student's net ID
-        student_chat_status:    Student's chat status
-        chat_request_time:      The time that this student make the chat request
-        chat_start_time:        The time that the chat starts
-        chat_end_time:          The time that the chat ends
-        assigned_counsellor:    The counsellor assigned to this student
+        id:                         Primary key of this a chat record
+        student_netid:              Student's net ID
+        student_chat_status:        Student's chat status
+        chat_request_time:          The time that this student make the chat request
+        chat_start_time:            The time that the chat starts
+        chat_end_time:              The time that the chat ends
+        assigned_counsellor:        The counsellor assigned to this student
+        is_supervisor_join:         Whether a supervisory joined or not
+        is_no_show:                 Whether the student is no show
+        personal_contact_number:    Contact number of the student
+        emergency_contact_name:     Emergency contact of the student
+        relationship:               The relationship between contact person and the student
+        emergency_contact_number:   Contact number of the emergency contact person
     """
 
     class Meta:
@@ -248,18 +299,223 @@ class StudentChatHistory(models.Model):
     chat_start_time = models.DateTimeField(default=None, null=True)
     chat_end_time = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)
+    is_supervisor_join = models.BooleanField(default=False)
+    is_no_show = models.BooleanField(null=True)
+    q1 = models.BooleanField(null=True)
+    q2 = models.BooleanField(null=True)
+    personal_contact_number = models.CharField(max_length=32, null=True)
+    emergency_contact_name = models.CharField(max_length=32, null=True)
+    relationship = models.CharField(max_length=32, null=True)
+    emergency_contact_number = models.CharField(max_length=32, null=True)
 
     def __str__(self):
         return f"ChatHistory({self.student_netid})"
 
     @classmethod
-    def append_end_chat(cls, student: StudentChatStatus, time: datetime):
+    def append_end_chat(cls, student: StudentChatStatus, time: datetime, is_no_show: bool = None, endchat=False):
         cls(student_netid=student.student_netid,
-            student_chat_status=StudentChatStatus.ChatStatus.END,
+            student_chat_status=StudentChatStatus.ChatStatus.END if endchat else student.student_chat_status,
             chat_request_time=student.chat_request_time,
             chat_start_time=student.chat_start_time,
             chat_end_time=time,
-            assigned_counsellor=student.assigned_counsellor).save()
+            assigned_counsellor=student.assigned_counsellor,
+            is_supervisor_join=student.is_supervisor_join,
+            is_no_show=is_no_show,
+            q1=student.q1,
+            q2=student.q2,
+            personal_contact_number=student.personal_contact_number,
+            emergency_contact_name=student.emergency_contact_name,
+            relationship=student.relationship,
+            emergency_contact_number=student.emergency_contact_number).save()
+
+    @classmethod
+    def statis_overview(cls, start: datetime, end: datetime):
+        # Convert all time value to in utc
+        start_time = start.astimezone(utc_time)
+        end_time = end.astimezone(utc_time)
+
+        query = f"""
+            WITH 
+                selected_table AS  (
+                SELECT 
+                    *
+                FROM
+                    `{DB_NAME}`.`{cls._meta.db_table}`
+                WHERE
+                    `{DB_NAME}`.`{cls._meta.db_table}`.`chat_request_time` BETWEEN '{start_time}' AND '{end_time}'
+            )
+            SELECT 
+             (SELECT count(*) FROM selected_table) AS online_chat_access_count,
+             (SELECT count(*) FROM selected_table WHERE student_chat_status='{StudentChatStatus.ChatStatus.END}'
+                AND is_no_show=FALSE) AS successful_chat_count
+        """
+
+        logger.info(query)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            res = dictfetchone(cursor)
+
+        return res
+
+
+class ChatBotSession(models.Model):
+    """
+    Attributes
+        session_id:                     Id of this counselling service session. UUID.hex format
+        student_netid:                  student_netid
+        start_time:                     The time of login to this system
+        end_time:                       The time of session close
+        is_ployu_student:               Whether the user is a PolyU's student
+        language:                       Language preference
+        q1_academic:                    Choice/Answer of the chatbot survey
+        q1_interpersonal_relationship:  Choice/Answer of the chatbot survey
+        q1_career:                      Choice/Answer of the chatbot survey
+        q1_family:                      Choice/Answer of the chatbot survey
+        q1_mental_health:               Choice/Answer of the chatbot survey
+        q1_others:                      Choice/Answer of the chatbot survey
+        q2:                             Choice/Answer of the chatbot survey
+        q3:                             Choice/Answer of the chatbot survey
+        q4:                             Choice/Answer of the chatbot survey
+        q5:                             Choice/Answer of the chatbot survey
+        q6_1:                           Choice/Answer of the chatbot survey
+        q6_2:                           Choice/Answer of the chatbot survey
+        score:                          Score of the survey
+        first_option:                   First selection after the survey
+        feedback_rating:                Feedback rating of the counselling service
+        chat_record:                    Refer to the chat history in the same session
+    """
+
+    class Meta:
+        db_table = 'chatbot-session'
+
+    class Language(models.TextChoices):
+        en_us = 'en-us', _('English')
+        zh_hk = 'zh-hk', _('繁體中文')
+
+    class FrequencyScale(models.TextChoices):
+        rarely = 'rarely', _('Rarely')
+        seldom = 'seldom', _('Seldom')
+        sometimes = 'sometimes', _('Sometimes')
+        often = 'often', _('Often')
+        always = 'always', _('Always')
+
+    class RecommendOptions(models.TextChoices):
+        opt1 = 'mental_health_101', _('Mental Health 101')
+        opt2 = 'make_appointment_with_sao_counsellors', _('Make appointment with SAO counsellors')
+        opt3 = 'immediate_contact_with_sao_counsellors', _('Immediate contact with SAO counsellors')
+        opt4 = 'immediate_contact_with_polyu_line', _('Immediate contact with PolyU line')
+        opt5 = 'online_chat_service', _('Online Chat Service')
+        opt6 = 'community_helpline', _('Community Helpline')
+
+    session_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    student_netid = models.CharField(max_length=32, null=True)
+    start_time = models.DateTimeField(default=timezone.localtime)
+    end_time = models.DateTimeField(null=True)
+    is_ployu_student = models.BooleanField(default=False)
+    language = models.CharField(max_length=16, choices=Language.choices, null=True)
+    q1_academic = models.BooleanField(null=True)
+    q1_interpersonal_relationship = models.BooleanField(null=True)
+    q1_career = models.BooleanField(null=True)
+    q1_family = models.BooleanField(null=True)
+    q1_mental_health = models.BooleanField(null=True)
+    q1_others = models.BooleanField(null=True)
+    q2 = models.BooleanField(null=True)
+    q3 = models.CharField(max_length=32, choices=FrequencyScale.choices, null=True)
+    q4 = models.CharField(max_length=32, choices=FrequencyScale.choices, null=True)
+    q5 = models.BooleanField(null=True)
+    q6_1 = models.BooleanField(null=True)
+    q6_2 = models.BooleanField(null=True)
+    score = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(13)])
+    first_option = models.CharField(max_length=128, choices=RecommendOptions.choices, null=True)
+    feedback_rating = models.IntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
+
+    @classmethod
+    def usage_chatbot_connect(cls, student_netid: str = None,
+                              is_ployu_student: bool = False) -> ChatBotSession:
+        session = cls.objects.create(student_netid=student_netid,
+                                     start_time=timezone.localtime(),
+                                     is_ployu_student=is_ployu_student)
+
+        return session
+
+    @classmethod
+    def statis_overview(cls, start: datetime, end: datetime):
+        # Convert all time value to in utc
+        start_time = start.astimezone(utc_time).replace(tzinfo=None)
+        end_time = end.astimezone(utc_time).replace(tzinfo=None)
+
+        query = f"""
+            WITH 
+                session_table AS  (
+                SELECT 
+                    *
+                FROM
+                    `{DB_NAME}`.`{cls._meta.db_table}`
+                WHERE
+                    `{DB_NAME}`.`{cls._meta.db_table}`.`start_time` BETWEEN '{start_time}' AND '{end_time}'
+            )
+            SELECT 
+             (SELECT count(*) FROM session_table) AS total_access_count,
+             (SELECT count(*) FROM session_table 
+                WHERE (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_close_weekday_hour} AND weekday(start_time) IN (0, 1, 2, 3, 4))
+                OR (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_clsoe_sat_hour} AND weekday(start_time)=5)) AS access_office_hr_count,
+             (SELECT count(*) FROM session_table WHERE is_ployu_student=TRUE ) AS polyu_student_count,
+             (SELECT count(*) FROM session_table WHERE score<=6 ) AS score_green_count,
+             (SELECT count(*) FROM session_table WHERE score>=7 AND score<=10 ) AS score_yellow_count,
+             (SELECT count(*) FROM session_table WHERE score>=11 AND score<=13 ) AS score_red_count,
+             (SELECT count(*) FROM session_table WHERE first_option='mental_health_101' ) AS 101_access_count
+            """
+
+        logger.info(query)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            res = dictfetchone(cursor)
+
+        return res
+
+    @classmethod
+    def get_red_route(cls, start_dt: datetime):
+        query = f"""
+            SELECT
+                `{cls._meta.db_table}`.`student_netid`,
+                `{cls._meta.db_table}`.`start_time` AS `datetime`, #  full datetime, used to sort the results
+                CAST(`{cls._meta.db_table}`.`start_time` AS DATE) AS `date`,
+                CAST(`{cls._meta.db_table}`.`start_time` AS TIME) AS `start_time`,
+                CAST(`{cls._meta.db_table}`.`end_time` AS TIME) AS `end_time`
+            FROM
+                `{DB_NAME}`.`{cls._meta.db_table}`
+            WHERE
+                `{cls._meta.db_table}`.`start_time` > '{start_dt.astimezone(utc_time).replace(tzinfo=None)}'
+            ORDER BY `{cls._meta.db_table}`.`start_time` ASC
+        """
+
+        logger.info(query)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            res = dictfetchall(cursor)
+        return res
+
+    @classmethod
+    def get_red_route_to_excel(cls, start_dt: datetime) -> xlwt.Workbook:
+        data = cls.get_red_route(start_dt)
+
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('red_route')
+
+        # Sheet header, first row
+        row_num = 0
+        font_style = xlwt.XFStyle()
+        columns = ['Student ID', 'Date', 'Start Time', 'End Time']
+        for col_num in range(len(columns)):
+            ws.write(0, col_num, columns[col_num], font_style)
+
+        for row_num, row in enumerate(data):
+            ws.write(row_num + 1, 0, getattr(row, 'student_netid'), font_style)
+            ws.write(row_num + 1, 1, getattr(row, 'date').strftime("%Y/%m/%d"), font_style)
+            ws.write(row_num + 1, 2, getattr(row, 'start_time').strftime('%H:%M'), font_style)
+            ws.write(row_num + 1, 3, getattr(row, 'end_time').strftime('%H:%M'), font_style)
+
+        return wb
 
 
 ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,

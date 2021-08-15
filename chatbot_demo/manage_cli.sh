@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -a
-source ../.env.docker
+source ../.env
 set +a
 
 export MYSQL_HOST=127.0.0.1

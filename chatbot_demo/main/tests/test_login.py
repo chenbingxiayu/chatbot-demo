@@ -26,20 +26,11 @@ class LoginTestCase(TestCase):
     def test_sso_callback(self, mock_sso_auth):
         # test student login
         mock_sso_auth.decode.return_value = {
-            "iss": "PolyU-SSO",
-            "aud": "http://10.13.46.22/main/user/login-sso/callback/",
-            "exp": 1626498576,
-            "nbf": 1626498276,
-            "iat": 1626498276,
-            "jti": "tJUWXECFTr",
-            "typ": "json",
             "sub": "12345678A",
             "cn": "12345678A",
             "mail": "12345678A@connect.polyu.hk",
             "polyuUserType": "Student",
-            "polyuCurrentStudent": "",
-            "memberof": "Domain Users;polyu_staff_04AG;polyu_ITS_staff;polyu_ITS_all;polyu_staff_ft;polyu_staff;polyu_all_user;res-eMeeting_UAT;res-ACS-users;res-mfa-nest-testing;polyu_staff_ftp_04AG;LIB-EZPROXY-USERS;RES-VDI-UDS-Users",
-            "department": "ITS"
+            "polyuCurrentStudent": ""
         }
 
         response = self.client.post(reverse('login_sso_callback'),
@@ -48,25 +39,16 @@ class LoginTestCase(TestCase):
                                             True
                                         }
                                     })
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'main/login_sso.html')
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('index'))
 
         # test app_admin login
         mock_sso_auth.decode.return_value = {
-            "iss": "PolyU-SSO",
-            "aud": "http://10.13.46.22/main/user/login-sso/callback/",
-            "exp": 1626498576,
-            "nbf": 1626498276,
-            "iat": 1626498276,
-            "jti": "tJUWXECFTr",
-            "typ": "json",
             "sub": "admin_user",
             "cn": "admin_user",
             "mail": "staff@uat.polyu.edu.hk",
             "polyuUserType": "Staff",
-            "polyuCurrentStudent": "",
-            "memberof": "Domain Users;polyu_staff_04AG;polyu_ITS_staff;polyu_ITS_all;polyu_staff_ft;polyu_staff;polyu_all_user;res-eMeeting_UAT;res-ACS-users;res-mfa-nest-testing;polyu_staff_ftp_04AG;LIB-EZPROXY-USERS;RES-VDI-UDS-Users",
-            "department": "ITS"
+            "polyuCurrentStudent": ""
         }
 
         response = self.client.post(reverse('login_sso_callback'),
@@ -79,20 +61,11 @@ class LoginTestCase(TestCase):
 
         # test counsellor login
         mock_sso_auth.decode.return_value = {
-            "iss": "PolyU-SSO",
-            "aud": "http://10.13.46.22/main/user/login-sso/callback/",
-            "exp": 1626498576,
-            "nbf": 1626498276,
-            "iat": 1626498276,
-            "jti": "tJUWXECFTr",
-            "typ": "json",
             "sub": "counsellor_user",
             "cn": "counsellor_user",
             "mail": "staff@uat.polyu.edu.hk",
             "polyuUserType": "Staff",
-            "polyuCurrentStudent": "",
-            "memberof": "Domain Users;polyu_staff_04AG;polyu_ITS_staff;polyu_ITS_all;polyu_staff_ft;polyu_staff;polyu_all_user;res-eMeeting_UAT;res-ACS-users;res-mfa-nest-testing;polyu_staff_ftp_04AG;LIB-EZPROXY-USERS;RES-VDI-UDS-Users",
-            "department": "ITS"
+            "polyuCurrentStudent": ""
         }
 
         response = self.client.post(reverse('login_sso_callback'),
@@ -105,20 +78,11 @@ class LoginTestCase(TestCase):
 
         # test unauthorized user login
         mock_sso_auth.decode.return_value = {
-            "iss": "PolyU-SSO",
-            "aud": "http://10.13.46.22/main/user/login-sso/callback/",
-            "exp": 1626498576,
-            "nbf": 1626498276,
-            "iat": 1626498276,
-            "jti": "tJUWXECFTr",
-            "typ": "json",
             "sub": "unauthorized_user",
             "cn": "unauthorized_user",
             "mail": "staff@uat.polyu.edu.hk",
             "polyuUserType": "Staff",
-            "polyuCurrentStudent": "",
-            "memberof": "Domain Users;polyu_staff_04AG;polyu_ITS_staff;polyu_ITS_all;polyu_staff_ft;polyu_staff;polyu_all_user;res-eMeeting_UAT;res-ACS-users;res-mfa-nest-testing;polyu_staff_ftp_04AG;LIB-EZPROXY-USERS;RES-VDI-UDS-Users",
-            "department": "ITS"
+            "polyuCurrentStudent": ""
         }
 
         response = self.client.post(reverse('login_sso_callback'),
