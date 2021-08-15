@@ -1,8 +1,15 @@
+import uuid
 from datetime import datetime
-from pendulum import timezone
+
+import pendulum
+from typing import Optional
+
+from django.utils import timezone
 from django.conf import settings
 
-hk_time = timezone(settings.TIME_ZONE)
+hk_time = pendulum.timezone(settings.TIME_ZONE)
+utc_time = pendulum.timezone('utc')
+tz_offset = 8
 
 
 def today_start() -> datetime:
@@ -11,4 +18,12 @@ def today_start() -> datetime:
 
     :return:
     """
-    return datetime.combine(datetime.today().date(), datetime.min.time()).astimezone(hk_time)
+    return timezone.localtime().replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+def uuid2str(obj: uuid.UUID) -> str:
+    return str(obj)
+
+
+def str2uuid(string: str) -> uuid.UUID:
+    return uuid.UUID(string)

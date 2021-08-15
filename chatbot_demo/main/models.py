@@ -4,8 +4,9 @@ import logging
 import uuid
 from datetime import datetime, date
 
+import pendulum
 import xlwt
-from django.db import models
+from django.db import models, connection
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -18,10 +19,29 @@ from channels.layers import get_channel_layer
 
 from main.email_service import email_service
 from main.exceptions import UnauthorizedException
+from main.utils import hk_time, utc_time, tz_offset
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
 DB_NAME = settings.DATABASES['default']['NAME']
+service_begin_hour = 9 - tz_offset
+service_close_weekday_hour = 19 - tz_offset
+service_clsoe_sat_hour = 12 - tz_offset
+
+
+def dictfetchone(cursor):
+    """Return all rows from a cursor as a dict"""
+    columns = [col[0] for col in cursor.description]
+    return dict(zip(columns, cursor.fetchone()))
+
+
+def dictfetchall(cursor):
+    """Return all rows from a cursor as a dict"""
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
 
 
 class UserManager(BaseUserManager):
@@ -217,7 +237,7 @@ class StudentChatStatus(models.Model):
     id = models.AutoField(primary_key=True)
     student_netid = models.CharField(max_length=64, unique=True)
     student_chat_status = models.CharField(max_length=32, choices=ChatStatus.choices, null=True)
-    chat_request_time = models.DateTimeField(auto_now_add=True, null=True)
+    chat_request_time = models.DateTimeField(default=timezone.localtime, null=True)
     q1 = models.BooleanField(null=True)
     q2 = models.BooleanField(null=True)
     personal_contact_number = models.CharField(max_length=32, null=True)
@@ -280,7 +300,7 @@ class StudentChatHistory(models.Model):
     chat_end_time = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.ForeignKey(StaffStatus, null=True, on_delete=models.DO_NOTHING)
     is_supervisor_join = models.BooleanField(default=False)
-    is_no_show = models.BooleanField(default=False)
+    is_no_show = models.BooleanField(null=True)
     q1 = models.BooleanField(null=True)
     q2 = models.BooleanField(null=True)
     personal_contact_number = models.CharField(max_length=32, null=True)
@@ -292,9 +312,9 @@ class StudentChatHistory(models.Model):
         return f"ChatHistory({self.student_netid})"
 
     @classmethod
-    def append_end_chat(cls, student: StudentChatStatus, time: datetime, is_no_show: bool):
+    def append_end_chat(cls, student: StudentChatStatus, time: datetime, is_no_show: bool = None, endchat=False):
         cls(student_netid=student.student_netid,
-            student_chat_status=StudentChatStatus.ChatStatus.END,
+            student_chat_status=StudentChatStatus.ChatStatus.END if endchat else student.student_chat_status,
             chat_request_time=student.chat_request_time,
             chat_start_time=student.chat_start_time,
             chat_end_time=time,
@@ -306,8 +326,36 @@ class StudentChatHistory(models.Model):
             personal_contact_number=student.personal_contact_number,
             emergency_contact_name=student.emergency_contact_name,
             relationship=student.relationship,
-            emergency_contact_number=student.emergency_contact_number,
-            ).save()
+            emergency_contact_number=student.emergency_contact_number).save()
+
+    @classmethod
+    def statis_overview(cls, start: datetime, end: datetime):
+        # Convert all time value to in utc
+        start_time = start.astimezone(utc_time)
+        end_time = end.astimezone(utc_time)
+
+        query = f"""
+            WITH 
+                selected_table AS  (
+                SELECT 
+                    *
+                FROM
+                    `{DB_NAME}`.`{cls._meta.db_table}`
+                WHERE
+                    `{DB_NAME}`.`{cls._meta.db_table}`.`chat_request_time` BETWEEN '{start_time}' AND '{end_time}'
+            )
+            SELECT 
+             (SELECT count(*) FROM selected_table) AS online_chat_access_count,
+             (SELECT count(*) FROM selected_table WHERE student_chat_status='{StudentChatStatus.ChatStatus.END}'
+                AND is_no_show=FALSE) AS successful_chat_count
+        """
+
+        logger.info(query)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            res = dictfetchone(cursor)
+
+        return res
 
 
 class ChatBotSession(models.Model):
@@ -361,10 +409,10 @@ class ChatBotSession(models.Model):
 
     session_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     student_netid = models.CharField(max_length=32, null=True)
-    start_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField(default=timezone.localtime)
     end_time = models.DateTimeField(null=True)
-    is_ployu_student = models.BooleanField()
-    language = models.CharField(max_length=8, choices=Language.choices, null=True)
+    is_ployu_student = models.BooleanField(default=False)
+    language = models.CharField(max_length=16, choices=Language.choices, null=True)
     q1_academic = models.BooleanField(null=True)
     q1_interpersonal_relationship = models.BooleanField(null=True)
     q1_career = models.BooleanField(null=True)
@@ -382,61 +430,74 @@ class ChatBotSession(models.Model):
     feedback_rating = models.IntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     @classmethod
-    def usage_chatbot_connect(cls, session_id: str, student_netid: str = None, is_ployu_student: bool = False):
-        cls.objects.create(
-            session_id=session_id,
-            student_netid=student_netid,
-            start_time=timezone.localtime(),
-            is_ployu_student=is_ployu_student
-        )
+    def usage_chatbot_connect(cls, student_netid: str = None,
+                              is_ployu_student: bool = False) -> ChatBotSession:
+        session = cls.objects.create(student_netid=student_netid,
+                                     start_time=timezone.localtime(),
+                                     is_ployu_student=is_ployu_student)
+
+        return session
 
     @classmethod
     def statis_overview(cls, start: datetime, end: datetime):
-        # No. of non-office hour access = no_of_access - access_office_hr_count
-        # No. of non-student = no_of_access - polyu_student_count
-        res = cls.objects.raw(f"""
+        # Convert all time value to in utc
+        start_time = start.astimezone(utc_time).replace(tzinfo=None)
+        end_time = end.astimezone(utc_time).replace(tzinfo=None)
+
+        query = f"""
             WITH 
-                selected_table AS  (
+                session_table AS  (
                 SELECT 
                     *
                 FROM
                     `{DB_NAME}`.`{cls._meta.db_table}`
                 WHERE
-                    `{DB_NAME}`.`{cls._meta.db_table}`.`date` BETWEEN '{start}' AND '{end}')
+                    `{DB_NAME}`.`{cls._meta.db_table}`.`start_time` BETWEEN '{start_time}' AND '{end_time}'
+            )
             SELECT 
-             (SELECT count(*) FROM selected_table) AS no_of_access,
-             (SELECT count(*) FROM selected_table WHERE start_time > '09:00:00' AND start_time < '19:00:00' AND weekday(start_time) IN (0, 1, 2, 3, 4) 
-                                                        OR start_time > '09:00:00' AND start_time < '12:00:00' AND weekday(start_time)=5) AS access_office_hr_count,
-             (SELECT count(*) FROM selected_table WHERE is_ployu_student=1 ) AS polyu_student_count,
-             (SELECT count(*) FROM selected_table WHERE score<=6 ) AS score_green_count,
-             (SELECT count(*) FROM selected_table WHERE score>=7 AND score<=10 ) AS score_yellow_count,
-             (SELECT count(*) FROM selected_table WHERE score>=11 AND score<=13 ) AS score_red_count,
-             (SELECT count(*) FROM selected_table WHERE first_option='mental_health_101' ) AS first_option,
-             (SELECT count(*) FROM selected_table WHERE first_option='online_chat_service' ) AS first_option,
-             (SELECT count(*) FROM selected_table LEFT JOIN `{DB_NAME}`.`{StudentChatHistory._meta.db_table}` USING (session_id) WHERE student_chat_status='end' ) AS first_option
-            """)
+             (SELECT count(*) FROM session_table) AS total_access_count,
+             (SELECT count(*) FROM session_table 
+                WHERE (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_close_weekday_hour} AND weekday(start_time) IN (0, 1, 2, 3, 4))
+                OR (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_clsoe_sat_hour} AND weekday(start_time)=5)) AS access_office_hr_count,
+             (SELECT count(*) FROM session_table WHERE is_ployu_student=TRUE ) AS polyu_student_count,
+             (SELECT count(*) FROM session_table WHERE score<=6 ) AS score_green_count,
+             (SELECT count(*) FROM session_table WHERE score>=7 AND score<=10 ) AS score_yellow_count,
+             (SELECT count(*) FROM session_table WHERE score>=11 AND score<=13 ) AS score_red_count,
+             (SELECT count(*) FROM session_table WHERE first_option='mental_health_101' ) AS 101_access_count
+            """
+
+        logger.info(query)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            res = dictfetchone(cursor)
 
         return res
 
     @classmethod
-    def get_red_route(cls, start_date: date):
-        res = cls.objects.raw(f"""
-        SELECT 
-            `{cls._meta.db_table}`.`session_id`,
-            `{cls._meta.db_table}`.`student_netid`,
-            CAST(`{cls._meta.db_table}`.`start_time` AS DATE) AS `date`,
-            CAST(`{cls._meta.db_table}`.`start_time` AS TIME) AS `start_time`,
-            CAST(`{cls._meta.db_table}`.`end_time` AS TIME) AS `end_time`
-        FROM
-            `{DB_NAME}`.`chatbot-session`
-        WHERE
-            `{cls._meta.db_table}`.`start_time` > '{start_date.isoformat()}'
-        """)
+    def get_red_route(cls, start_dt: datetime):
+        query = f"""
+            SELECT
+                `{cls._meta.db_table}`.`student_netid`,
+                `{cls._meta.db_table}`.`start_time` AS `datetime`, #  full datetime, used to sort the results
+                CAST(`{cls._meta.db_table}`.`start_time` AS DATE) AS `date`,
+                CAST(`{cls._meta.db_table}`.`start_time` AS TIME) AS `start_time`,
+                CAST(`{cls._meta.db_table}`.`end_time` AS TIME) AS `end_time`
+            FROM
+                `{DB_NAME}`.`{cls._meta.db_table}`
+            WHERE
+                `{cls._meta.db_table}`.`start_time` > '{start_dt.astimezone(utc_time).replace(tzinfo=None)}'
+            ORDER BY `{cls._meta.db_table}`.`start_time` ASC
+        """
+
+        logger.info(query)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            res = dictfetchall(cursor)
         return res
 
     @classmethod
-    def get_red_route_to_excel(cls, start_date: datetime) -> xlwt.Workbook:
-        data = cls.get_red_route(start_date)
+    def get_red_route_to_excel(cls, start_dt: datetime) -> xlwt.Workbook:
+        data = cls.get_red_route(start_dt)
 
         wb = xlwt.Workbook(encoding='utf-8')
         ws = wb.add_sheet('red_route')

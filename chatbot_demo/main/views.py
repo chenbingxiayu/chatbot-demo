@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 
 import logging
 import uuid
-from datetime import timedelta
+import json
+from datetime import datetime, timedelta
 
 import requests
 
@@ -27,7 +28,7 @@ from main.models import (
     SELECTABLE_STATUS
 )
 from main.forms import StaffLoginForm
-from main.utils import today_start, hk_time
+from main.utils import today_start, uuid2str, str2uuid
 from main.signals import update_queue
 from tasks.tasks import assign_staff
 from main.auth import sso_auth
@@ -36,10 +37,6 @@ COOKIE_MAX_AGE = 8 * 60 * 60
 
 logger = logging.getLogger('django')
 response_json = {'status': 'success'}
-
-
-def _session_key_to_uuid4(session_id: str):
-    return str(uuid.UUID(session_id))
 
 
 @login_required
@@ -112,20 +109,19 @@ def login_sso_callback(request):
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
-                student_netid = decoded_jwt['sub']
-                student_netid = student_netid.upper() if student_netid else None
+                student_netid = decoded_jwt.get('sub', '').upper()
                 student_user = User.objects.get(netid=student_netid)
             except User.DoesNotExist:
                 student_user = User.objects.create_user(netid=student_netid, is_active=True)
-
             authenticate(requests, netid=student_netid)
             login(request, student_user, backend='django.contrib.auth.backends.ModelBackend')
 
-            ChatBotSession.usage_chatbot_connect(
-                session_id=_session_key_to_uuid4(request.session.session_key),
+            chatbot_session = ChatBotSession.usage_chatbot_connect(
                 student_netid=student_netid,
                 is_ployu_student=True
             )
+
+            request.session['session_id'] = uuid2str(chatbot_session.session_id)
             return redirect('index')
 
         elif decoded_jwt['polyuUserType'] == 'Staff':
@@ -136,9 +132,7 @@ def login_sso_callback(request):
             login(request, user)
             return redirect('login_staff')
 
-        ChatBotSession.usage_chatbot_connect(
-            session_id=str(uuid.uuid4())  # generate a session id for unauthenticated user
-        )
+        ChatBotSession.usage_chatbot_connect()
 
     except (Exception, UnauthorizedException) as e:
         logger.warning(e)
@@ -433,10 +427,9 @@ def addstud(request):
         return JsonResponse(response_json, status=201)
 
 
-# @login_required
-@csrf_exempt
+@login_required
 @require_http_methods(['POST'])
-def supervior_join(request):
+def supervisor_join(request):
     student_netid = request.POST.get('student_netid')
     status_code = 200
     try:
@@ -471,20 +464,21 @@ def appointstaff(request):
 @require_http_methods(['POST'])
 def submit_survey(request):
     try:
-        session = ChatBotSession.objects.get(session_id=_session_key_to_uuid4(request.session.session_key))
-        session.language = request.POST.get('language'),
-        session.q1_academic = request.POST.get('q1_academic'),
-        session.q1_interpersonal_relationship = request.POST.get('q1_interpersonal_relationship'),
-        session.q1_career = request.POST.get('q1_career'),
-        session.q1_family = request.POST.get('q1_family'),
-        session.q1_mental_health = request.POST.get('q1_mental_health'),
-        session.q1_others = request.POST.get('q1_others'),
-        session.q2 = request.POST.get('q2'),
-        session.q3 = request.POST.get('q3'),
-        session.q4 = request.POST.get('q4'),
-        session.q5 = request.POST.get('q5'),
-        session.q6_1 = request.POST.get('q6_1'),
-        session.q6_2 = request.POST.get('q6_2'),
+
+        session = ChatBotSession.objects.get(session_id=str2uuid(request.session['session_id']))
+        session.language = request.POST.get('language')
+        session.q1_academic = json.loads(request.POST.get('q1_academic'))
+        session.q1_interpersonal_relationship = json.loads(request.POST.get('q1_interpersonal_relationship'))
+        session.q1_career = json.loads(request.POST.get('q1_career'))
+        session.q1_family = json.loads(request.POST.get('q1_family'))
+        session.q1_mental_health = json.loads(request.POST.get('q1_mental_health'))
+        session.q1_others = json.loads(request.POST.get('q1_others'))
+        session.q2 = json.loads(request.POST.get('q2'))
+        session.q3 = request.POST.get('q3')
+        session.q4 = request.POST.get('q4')
+        session.q5 = json.loads(request.POST.get('q5'))
+        session.q6_1 = json.loads(request.POST.get('q6_1'))
+        session.q6_2 = json.loads(request.POST.get('q6_2'))
         session.score = request.POST.get('score')
         session.save()
         status_code = 200
@@ -502,9 +496,9 @@ def submit_survey(request):
 @require_http_methods(['POST'])
 def end_chatbot(request):
     try:
-        session = ChatBotSession.objects.get(session_id=_session_key_to_uuid4(request.session.session_key))
-        session.first_option = request.POST.get('first_option'),
-        session.feedback_rating = request.POST.get('feedback_rating'),
+        session = ChatBotSession.objects.get(session_id=str2uuid(request.session['session_id']))
+        session.first_option = request.POST.get('first_option')
+        session.feedback_rating = request.POST.get('feedback_rating')
         session.end_time = timezone.localtime()
         session.save()
         status_code = 200
@@ -521,20 +515,22 @@ def end_chatbot(request):
 @login_required
 @require_http_methods(['GET'])
 def export_statistics(request):
-    from_date = timezone.now().date() - timedelta(days=1)
-    to_date = timezone.now().date()
+    from_date = timezone.localdate() - timedelta(days=1)
+    to_date = timezone.localdate()
 
-    ChatBotSession.statis_overview(from_date, to_date)
-    return JsonResponse(response_json, status=200)
+    res = dict()
+    res.update(ChatBotSession.statis_overview(from_date, to_date))
+    res.update(StudentChatHistory.statis_overview(from_date, to_date))
+    return JsonResponse(res, status=200)
 
 
 @login_required
 @require_http_methods(['GET'])
 def get_red_route(request):
-    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
+    from_date = timezone.localdate() - timedelta(days=7)
 
-    ChatBotSession.get_red_route(from_date)
-    return JsonResponse(response_json, status=200)
+    res = ChatBotSession.get_red_route(from_date)
+    return JsonResponse(res, status=200)
 
 
 @login_required
@@ -543,8 +539,9 @@ def export_red_route(request):
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="red_route.xls"'
 
-    from_date = timezone.now().astimezone(hk_time).date() - timedelta(days=7)
-    wb = ChatBotSession.get_red_route_to_excel(from_date)
+    from_date = timezone.localdate() - timedelta(days=7)
+    from_dt = datetime.combine(from_date, datetime.min.time())
+    wb = ChatBotSession.get_red_route_to_excel(from_dt)
 
     wb.save(response)
     return response

@@ -328,7 +328,7 @@ def endchat(request):
             student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
             student_user = User.objects.get(netid=student_netid)
 
-            StudentChatHistory.append_end_chat(student, now, is_no_show)
+            StudentChatHistory.append_end_chat(student, now, is_no_show, endchat=True)
             staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
             staff.status_change_time = now
             student.delete()
