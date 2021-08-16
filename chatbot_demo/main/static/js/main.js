@@ -374,7 +374,7 @@
               ],
             })
             .then(function(res) {
-              surveyData["q2"] = res.value === "Yes";
+              surveyData["q2"] = res.text === "Yes";
               answers[2] =
                 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -548,7 +548,7 @@
               ],
             })
             .then(function(res) {
-              surveyData = res.text === "Yes";
+              surveyData["q6_1"] = res.text === "Yes";
               answers[5] =
                 'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' +
                 res.text +
@@ -707,6 +707,7 @@
     async function dispatch() {
       finish_assessment = true;
       surveyData["score"] = score;
+      console.log("score", surveyData);
       const response = await submitSurvey(surveyData);
       if (response.status_code !== 200) {
         console.log(response.message);
@@ -2338,6 +2339,8 @@
             alert("您必須至少選擇一項！");
             q1_ans();
           } else {
+            const q1SurveyData = getQ1SurveyData(res.value);
+            surveyData = { ...surveyData, ...q1SurveyData };
             answers[1] =
               'Q1. 你此刻想傾談的內容是？ (可選一或多項)<br/><b><font color="#FF0000">' +
               res.text +
@@ -2379,6 +2382,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q2"] = res.value === 1;
               answers[2] =
                 'Q2. 面對以上的事情，你有沒有感到不愉快、擔心或緊張？<br/><b><font color="#FF0000">' +
                 res.text +
@@ -2446,6 +2450,8 @@
               ],
             })
             .then(function(res) {
+              // FIXME
+              surveyData["q3"] = res.text.toLocaleLowerCase();
               answers[3] =
                 'Q3. 你有多經常因為上述的事情而感到不愉快、擔心或緊張？<br/><b><font color="#FF0000">' +
                 res.text +
@@ -2503,6 +2509,8 @@
               ],
             })
             .then(function(res) {
+              // FIXME
+              surveyData["q4"] = res.text.toLocaleLowerCase();
               answers[4] =
                 'Q4. 這些情緒有多經常影響你的日常生活？<br/><b><font color="#FF0000">' +
                 res.text +
@@ -2547,6 +2555,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q6_1"] = res.value === 1;
               answers[5] =
                 'Q5. 你曾否採用一些積極的應對方法 (例如: 運動、呼吸練習、聽音樂等）去面對/紓緩這些情緒嗎?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -2700,8 +2709,15 @@
         });
     }
 
-    function dispatch_tc() {
+    async function dispatch_tc() {
       finish_assessment = true;
+      surveyData["score"] = score;
+      const response = await submitSurvey(surveyData);
+
+      if (response.status_code !== 200) {
+        console.log(response.message);
+      }
+
       if (score <= 6) {
         low_tc();
       } else if (score <= 10) {
@@ -4558,8 +4574,15 @@
         });
     }
 
-    function dispatch_sc() {
+    async function dispatch_sc() {
       finish_assessment = true;
+      surveyData["score"] = score;
+      const response = await submitSurvey(surveyData);
+
+      if (response.status_code !== 200) {
+        console.log(response.message);
+      }
+
       if (score <= 6) {
         low_sc();
       } else if (score <= 10) {
@@ -5807,7 +5830,7 @@
     const addToQueue = async (student_netid, onlineChatSurveyData) => {
       const response = await $.ajax({
         url: "/main/api/addstud/",
-        headers: {'X-CSRFToken': CSRF_TOKEN},
+        headers: { "X-CSRFToken": CSRF_TOKEN },
         method: "POST",
         data: {
           student_netid,
@@ -5827,7 +5850,7 @@
     const getQueueStatus = async (student_netid) => {
       return await $.ajax({
         url: "/main/debug/getseq/",
-        headers: {'X-CSRFToken': CSRF_TOKEN},
+        headers: { "X-CSRFToken": CSRF_TOKEN },
         method: "GET",
         data: {
           student_netid: student_netid,
@@ -5838,7 +5861,7 @@
     const quitQueue = async (student_netid) => {
       return await $.ajax({
         url: "/main/debug/deletestud/",
-        headers: {'X-CSRFToken': CSRF_TOKEN},
+        headers: { "X-CSRFToken": CSRF_TOKEN },
         method: "POST",
         data: {
           student_netid: student_netid,
@@ -5938,9 +5961,10 @@
     };
 
     const submitSurvey = async (surveyData) => {
+      console.log("survey data", surveyData);
       return await $.ajax({
         url: "/main/api/submitsurvey/",
-        headers: {'X-CSRFToken': CSRF_TOKEN},
+        headers: { "X-CSRFToken": CSRF_TOKEN },
         method: "POST",
         data: surveyData,
       });
@@ -5951,7 +5975,7 @@
         surveyData["first_option"] = firstOption;
         const response = await $.ajax({
           url: "/main/api/endchatbot/",
-          headers: {'X-CSRFToken': CSRF_TOKEN},
+          headers: { "X-CSRFToken": CSRF_TOKEN },
           method: "POST",
           data: {
             first_option: firstOption,
@@ -5970,7 +5994,7 @@
       surveyData["feedback_rating"] = feedback_rating;
       const response = await $.ajax({
         url: "/main/api/endchatbot/",
-        headers: {'X-CSRFToken': CSRF_TOKEN},
+        headers: { "X-CSRFToken": CSRF_TOKEN },
         method: "POST",
         data: {
           feedback_rating,
