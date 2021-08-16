@@ -1381,6 +1381,7 @@
 
     function questions_before_OCS() {
       var office_hour = isSAOWorkingHours(new Date());
+      let onlineChatSurveyData = {};
       return botui.message
         .bot({
           loading: true,
@@ -1486,7 +1487,6 @@
                   })
                   .then(function(res) {
                     if (res.value == false) {
-                      // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
                       return botui.message
                         .human({
                           delay: 500,
@@ -1511,8 +1511,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["contactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["personal_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -1529,8 +1529,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactName"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_name"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -1547,8 +1547,7 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["relationship"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["relationship"] = res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -1565,8 +1564,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -1582,7 +1581,8 @@
                         })
                         .then(async function() {
                           const responseMessage = await addToQueue(
-                            student_netid
+                            student_netid,
+                            onlineChatSurveyData
                           );
                           const isAssigned =
                             responseMessage.indexOf(
@@ -3355,6 +3355,7 @@
 
     function questions_before_OCS_tc() {
       var office_hour = isSAOWorkingHours(new Date());
+      let onlineChatSurveyData = {};
       return botui.message
         .bot({
           loading: true,
@@ -3483,8 +3484,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["contactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["personal_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -3501,8 +3502,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactName"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_name"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -3519,8 +3520,7 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["relationship"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["relationship"] = res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -3537,8 +3537,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -3561,7 +3561,8 @@
                         })
                         .then(async function() {
                           const responseMessage = await addToQueue(
-                            student_netid
+                            student_netid,
+                            onlineChatSurveyData
                           );
                           const isAssigned =
                             responseMessage.indexOf(
@@ -5212,6 +5213,7 @@
 
     function questions_before_OCS_sc() {
       var office_hour = isSAOWorkingHours(new Date());
+      let onlineChatSurveyData = {};
       return botui.message
         .bot({
           loading: true,
@@ -5340,8 +5342,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["contactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["personal_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -5358,8 +5360,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactName"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_name"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -5376,8 +5378,7 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["relationship"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["relationship"] = res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -5394,8 +5395,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -5418,7 +5419,8 @@
                         })
                         .then(async function() {
                           const responseMessage = await addToQueue(
-                            student_netid
+                            student_netid,
+                            onlineChatSurveyData
                           );
                           const isAssigned =
                             responseMessage.indexOf(
@@ -5802,12 +5804,15 @@
         .then(_close);
     }
 
-    const addToQueue = async (student_netid) => {
+    const addToQueue = async (student_netid, onlineChatSurveyData) => {
       const response = await $.ajax({
         url: "/main/api/addstud/",
         method: "POST",
         data: {
-          student_netid: student_netid,
+          student_netid,
+          q1: false,
+          q2: false,
+          ...onlineChatSurveyData,
         },
       });
 

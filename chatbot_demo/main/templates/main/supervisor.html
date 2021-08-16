@@ -18,7 +18,7 @@
       {% for student in students %}
       <tr class="chat-queue" data-stud-key="{{ student.id }}">
         <th scope="row" class="seq-no">{{ forloop.counter }}</th>
-        <td>{{ student.student_netid|mask }}</td>
+        <td data-student-netid="{{student.student_netid}}" >{{ student.student_netid|mask }}</td>
         <td>{{ student.chat_request_time|time:'H:i:s' }}</td>
         <td class="status">{{ student.get_student_chat_status_display }}</td>
         <td>{{ student.chat_request_time|duration:now }}</td>
@@ -47,7 +47,32 @@
     const $row = $(row)
     const isChatting = $row.find('td.status').text().toLocaleLowerCase() === 'chatting';
     const counsellor_netid = $row.find('td.counsellor').text();
-    isChatting ? $row.find('td.join-session').append(`<span><a href="/main/chat/stream_room/?staff_netid=${counsellor_netid}" target="_blank">Join</a></span>`) : null
+    const student_id = $row.find('td:first')[0].getAttribute('data-student-netid');
+    isChatting ? $row.find('td.join-session').append(`<span><a href="javascript:void(0)" data-staff-netid="${counsellor_netid}" data-student-netid="${student_id}" class="join-chat-room">Join</a></span>`) : null
+    // isChatting ? $row.find('td.join-session').append(`<span><a href="/main/chat/stream_room/?staff_netid=${counsellor_netid}" target="_blank">Join</a></span>`) : null
+  })
+
+  $(document).on('click', '.join-chat-room', (e) => {
+    const staff_netid = e.target.getAttribute('data-staff-netid');
+    const student_netid = e.target.getAttribute("data-student-netid");
+
+    // mark supervisor join
+    $.ajax({
+      url: '{% url "supervisorjoin" %}',
+      method: 'POST',
+      data: {
+        student_netid,
+      },
+      success: () => {
+        const a = document.createElement('a');
+        a.target= "_blank";
+        a.href= `/main/chat/stream_room/?staff_netid=${staff_netid}`;
+        a.click();
+      },
+      error: (data) => {
+        alert("Failed to join the chatting.")
+      }
+    });
   })
 </script>
 {% endblock %}

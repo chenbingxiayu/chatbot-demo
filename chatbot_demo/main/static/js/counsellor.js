@@ -111,7 +111,7 @@
           document.getElementById("send-message-btn").click();
         }
       })
-      .on("click", "#counsellor-leave-chatroom-btn", async () => {
+      .on("click", ".counsellor-leave-chatroom-btn", async (event) => {
         const result = confirm(
           "Are you sure you want to end the conversation?"
         );
@@ -135,6 +135,8 @@
             }),
           });
 
+          console.log("is no show", $(event.target).hasClass("no-show"));
+
           // debug/endchat/
           const endChatPromise = $.ajax({
             url: "/main/debug/endchat/",
@@ -142,6 +144,7 @@
             data: {
               staff_netid: staffNetid,
               student_netid: studentNetid,
+              is_no_show: $(event.target).hasClass("no-show"),
             },
           });
 
