@@ -5807,6 +5807,7 @@
     const addToQueue = async (student_netid, onlineChatSurveyData) => {
       const response = await $.ajax({
         url: "/main/api/addstud/",
+        headers: {'X-CSRFToken': CSRF_TOKEN},
         method: "POST",
         data: {
           student_netid,
@@ -5826,6 +5827,7 @@
     const getQueueStatus = async (student_netid) => {
       return await $.ajax({
         url: "/main/debug/getseq/",
+        headers: {'X-CSRFToken': CSRF_TOKEN},
         method: "GET",
         data: {
           student_netid: student_netid,
@@ -5836,6 +5838,7 @@
     const quitQueue = async (student_netid) => {
       return await $.ajax({
         url: "/main/debug/deletestud/",
+        headers: {'X-CSRFToken': CSRF_TOKEN},
         method: "POST",
         data: {
           student_netid: student_netid,
@@ -5937,6 +5940,7 @@
     const submitSurvey = async (surveyData) => {
       return await $.ajax({
         url: "/main/api/submitsurvey/",
+        headers: {'X-CSRFToken': CSRF_TOKEN},
         method: "POST",
         data: surveyData,
       });
@@ -5947,6 +5951,7 @@
         surveyData["first_option"] = firstOption;
         const response = await $.ajax({
           url: "/main/api/endchatbot/",
+          headers: {'X-CSRFToken': CSRF_TOKEN},
           method: "POST",
           data: {
             first_option: firstOption,
@@ -5965,6 +5970,7 @@
       surveyData["feedback_rating"] = feedback_rating;
       const response = await $.ajax({
         url: "/main/api/endchatbot/",
+        headers: {'X-CSRFToken': CSRF_TOKEN},
         method: "POST",
         data: {
           feedback_rating,
