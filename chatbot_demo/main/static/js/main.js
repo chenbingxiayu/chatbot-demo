@@ -374,7 +374,7 @@
               ],
             })
             .then(function(res) {
-              surveyData["q2"] = res.text === "Yes";
+              surveyData["q2"] = res.value === 1;
               answers[2] =
                 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -397,7 +397,7 @@
                       })
                       .then(mental_health_101);
                   })
-                  .then(end_);
+                  .then(end);
               }
               score += res.value;
               console.log(score);
@@ -442,7 +442,7 @@
               ],
             })
             .then(function(res) {
-              surveyData["q3"] = res.text.toLocaleLowerCase();
+              surveyData["q3"] = getFrequenceSurveyData(res.value);
               answers[3] =
                 'Q3. How often do you feel sad, worried or tensed?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -502,7 +502,7 @@
               ],
             })
             .then(function(res) {
-              surveyData["q4"] = res.text.toLocaleLowerCase();
+              surveyData["q4"] = getFrequenceSurveyData(res.value);
               answers[4] =
                 'Q4. How often does your daily life being affected by the feelings mentioned above?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -2452,8 +2452,7 @@
               ],
             })
             .then(function(res) {
-              // FIXME
-              surveyData["q3"] = res.text.toLocaleLowerCase();
+              surveyData["q3"] = getFrequenceSurveyData(res.value);
               answers[3] =
                 'Q3. 你有多經常因為上述的事情而感到不愉快、擔心或緊張？<br/><b><font color="#FF0000">' +
                 res.text +
@@ -2511,8 +2510,7 @@
               ],
             })
             .then(function(res) {
-              // FIXME
-              surveyData["q4"] = res.text.toLocaleLowerCase();
+              surveyData["q4"] = getFrequenceSurveyData(res.value);
               answers[4] =
                 'Q4. 這些情緒有多經常影響你的日常生活？<br/><b><font color="#FF0000">' +
                 res.text +
@@ -2557,7 +2555,7 @@
               ],
             })
             .then(function(res) {
-              surveyData["q6_1"] = res.value === 1;
+              surveyData["q5"] = res.value === 0;
               answers[5] =
                 'Q5. 你曾否採用一些積極的應對方法 (例如: 運動、呼吸練習、聽音樂等）去面對/紓緩這些情緒嗎?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -2597,6 +2595,8 @@
                             ],
                           })
                           .then(function(res) {
+                            surveyData["q6_1"] = res.value === 0;
+                            surveyData["q6_2"] = "null";
                             answers[6] =
                               'Q6. 你認為這些應對方法能否有效紓緩你上述的情緒嗎?<br/><b><font color="#FF0000">' +
                               res.text +
@@ -2639,6 +2639,8 @@
                             ],
                           })
                           .then(function(res) {
+                            surveyData["q6_1"] = "null";
+                            surveyData["q6_2"] = res.value === 0;
                             answers[6] =
                               'Q6. 此刻，你認為你有能力有效地紓緩上述情緒嗎？<br/><b><font color="#FF0000">' +
                               res.text +
@@ -2715,7 +2717,6 @@
       finish_assessment = true;
       surveyData["score"] = score;
       const response = await submitSurvey(surveyData);
-
       if (response.status_code !== 200) {
         console.log(response.message);
       }
@@ -4214,6 +4215,8 @@
             alert("您必须至少选择一项！");
             q1_ans();
           } else {
+            const q1SurveyData = getQ1SurveyData(res.value);
+            surveyData = { ...surveyData, ...q1SurveyData };
             answers[1] =
               'Q1. 你此刻想倾谈的内容是？ (可选一或多项)<br/><b><font color="#FF0000">' +
               res.text +
@@ -4255,6 +4258,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q2"] = res.value === 1;
               answers[2] =
                 'Q2. 面对以上的事情，你有没有感到不愉快、担心或紧张？<br/><b><font color="#FF0000">' +
                 res.text +
@@ -4277,7 +4281,7 @@
                       })
                       .then(mental_health_101_sc);
                   })
-                  .then(end__sc);
+                  .then(end_sc);
               }
               score += res.value;
               console.log(score);
@@ -4322,6 +4326,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q3"] = getFrequenceSurveyData(res.value);
               answers[3] =
                 'Q3. 你有多经常因为上述的事情而感到不愉快、担心或紧张？<br/><b><font color="#FF0000">' +
                 res.text +
@@ -4379,6 +4384,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q4"] = getFrequenceSurveyData(res.value);
               answers[4] =
                 'Q4. 这些情绪有多经常影响你的日常生活？<br/><b><font color="#FF0000">' +
                 res.text +
@@ -4423,6 +4429,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q5"] = res.value === 0;
               answers[5] =
                 'Q5. 你曾否采用一些积极的应对方法 (例如: 运动、呼吸练习、听音乐等）去面对/纾缓这些情绪吗?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -4462,6 +4469,8 @@
                             ],
                           })
                           .then(function(res) {
+                            surveyData["q6_1"] = res.value === 0;
+                            surveyData["q6_2"] = "null";
                             answers[6] =
                               'Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?<br/><b><font color="#FF0000">' +
                               res.text +
@@ -4504,6 +4513,8 @@
                             ],
                           })
                           .then(function(res) {
+                            surveyData["q6_1"] = "null";
+                            surveyData["q6_2"] = res.value === 0;
                             answers[6] =
                               'Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？<br/><b><font color="#FF0000">' +
                               res.text +
@@ -5960,6 +5971,23 @@
         q1_others: values.includes("others"),
       };
       return q1SurveyData;
+    };
+
+    const getFrequenceSurveyData = (result) => {
+      switch (result) {
+        case 1:
+          return "rarely";
+        case 2:
+          return "seldom";
+        case 3:
+          return "sometimes";
+        case 4:
+          return "often";
+        case 5:
+          return "always";
+        default:
+          return "null";
+      }
     };
 
     const submitSurvey = async (surveyData) => {
