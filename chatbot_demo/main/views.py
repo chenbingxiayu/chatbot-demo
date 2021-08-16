@@ -160,7 +160,9 @@ def student_logout(request):
 @require_http_methods(['GET'])
 def login_page(request):
     if request.method == "GET":
-        form = StaffLoginForm(auto_id=True)
+        user_group = request.session['user_group']
+
+        form = StaffLoginForm(user_group, auto_id=True)
         return render(request, 'main/login_staff.html', {'form': form})
 
 
@@ -187,7 +189,7 @@ def logout_staff(request):
 @require_http_methods(['POST', 'GET'])
 def chat_console(request):
     staff_netid = request.user.netid
-    user_group = request.session['user_group']
+
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist:
@@ -195,11 +197,8 @@ def chat_console(request):
 
     if request.method == 'POST':
         # check which user group does the user belongs to
-        if user_group == 'counsellor':
-            staff.staff_role = request.POST.get('role')
-        elif user_group == 'app_admin':
-            staff.staff_role = StaffStatus.Role.SUPERVISOR
 
+        staff.staff_role = request.POST.get('role')
         staff.staff_chat_status = request.POST.get('status')
         staff.status_change_time = timezone.localtime()
         staff.save()
