@@ -391,6 +391,7 @@ class ChatBotSession(models.Model):
     class Language(models.TextChoices):
         en_us = 'en-us', _('English')
         zh_hk = 'zh-hk', _('繁體中文')
+        zh_cn = 'zh-cn', _('简体中文')
 
     class FrequencyScale(models.TextChoices):
         rarely = 'rarely', _('Rarely')

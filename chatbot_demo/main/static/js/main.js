@@ -9,6 +9,8 @@
 
     var finish_assessment = false;
     select_language();
+    const surveyData = {};
+    const hasSubmitFirstOption = false;
 
     function select_language() {
       return botui.message
@@ -39,6 +41,7 @@
             })
             .then(function(res) {
               if (res.value == "en") {
+                surveyData["language"] = "en-us";
                 return botui.message
                   .human({
                     photo: client,
@@ -47,6 +50,7 @@
                   })
                   .then(init_choices);
               } else if (res.value == "zh-hant") {
+                surveyData["language"] = "zh-hk";
                 return botui.message
                   .human({
                     photo: client,
@@ -55,6 +59,7 @@
                   })
                   .then(init_choices_tc);
               } else if (res.value == "zh-hans") {
+                surveyData["language"] = "zh-cn";
                 return botui.message
                   .human({
                     photo: client,
@@ -304,12 +309,12 @@
             placeholder: "Please select your answer(s)",
             multipleselect: true,
             options: [
-              { text: "Academic" },
-              { text: "Relationship" },
-              { text: "Career" },
-              { text: "Family" },
-              { text: "Mental Health" },
-              { text: "Other" },
+              { text: "Academic", value: "academic" },
+              { text: "Relationship", value: "relationship" },
+              { text: "Career", value: "career" },
+              { text: "Family", value: "family" },
+              { text: "Mental Health", value: "mental_health" },
+              { text: "Other", value: "others" },
             ],
             button: {
               icon: "check",
@@ -322,6 +327,8 @@
             alert("You have to select at least one item!");
             q1_ans();
           } else {
+            const q1SurveyData = getQ1SurveyData(res.value);
+            surveyData = { ...surveyData, ...q1SurveyData };
             answers[1] =
               'Q1. What bring(s) you here to chat with us? (Can select more than one item)<br/><b><font color="#FF0000">' +
               res.text +
@@ -367,6 +374,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q2"] = res.value === "Yes";
               answers[2] =
                 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -434,6 +442,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q3"] = res.text.toLocaleLowerCase();
               answers[3] =
                 'Q3. How often do you feel sad, worried or tensed?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -493,6 +502,7 @@
               ],
             })
             .then(function(res) {
+              surveyData["q4"] = res.text.toLocaleLowerCase();
               answers[4] =
                 'Q4. How often does your daily life being affected by the feelings mentioned above?<br/><b><font color="#FF0000">' +
                 res.text +
@@ -538,6 +548,7 @@
               ],
             })
             .then(function(res) {
+              surveyData = res.text === "Yes";
               answers[5] =
                 'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' +
                 res.text +
@@ -577,6 +588,7 @@
                             ],
                           })
                           .then(function(res) {
+                            surveyData["q6_1"] = res.text === "Yes";
                             answers[6] =
                               'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' +
                               res.text +
@@ -619,6 +631,7 @@
                             ],
                           })
                           .then(function(res) {
+                            surveyData["q6_2"] = res.text === "Yes";
                             answers[6] =
                               'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' +
                               res.text +
@@ -691,8 +704,14 @@
         });
     }
 
-    function dispatch() {
+    async function dispatch() {
       finish_assessment = true;
+      surveyData["score"] = score;
+      const response = await submitSurvey(surveyData);
+      if (response.status_code !== 200) {
+        console.log(response.message);
+      }
+
       if (score <= 6) {
         low();
       } else if (score <= 10) {
@@ -1063,7 +1082,9 @@
 
     // **************************
 
-    function mental_health_101() {
+    async function mental_health_101() {
+      await submitFirstOptionInfo("mental_health_101");
+
       var office_hour = isSAOWorkingHours(new Date());
       return botui.message
         .bot({
@@ -1205,9 +1226,10 @@
         });
     }
 
-    function T_and_C_of_OCS() {
+    async function T_and_C_of_OCS() {
       // return Promise.resolve().then(questions_before_OCS);
       //Online Chat Services
+      await submitFirstOptionInfo("online_chat_service");
       var myDate = new Date();
       pop_msg = "";
 
@@ -1359,6 +1381,7 @@
 
     function questions_before_OCS() {
       var office_hour = isSAOWorkingHours(new Date());
+      let onlineChatSurveyData = {};
       return botui.message
         .bot({
           loading: true,
@@ -1464,7 +1487,6 @@
                   })
                   .then(function(res) {
                     if (res.value == false) {
-                      // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
                       return botui.message
                         .human({
                           delay: 500,
@@ -1489,8 +1511,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["contactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["personal_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -1507,8 +1529,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactName"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_name"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -1525,8 +1547,7 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["relationship"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["relationship"] = res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -1543,8 +1564,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -1560,7 +1581,8 @@
                         })
                         .then(async function() {
                           const responseMessage = await addToQueue(
-                            student_netid
+                            student_netid,
+                            onlineChatSurveyData
                           );
                           const isAssigned =
                             responseMessage.indexOf(
@@ -1750,7 +1772,9 @@
         });
     }
 
-    function make_appointment_with_counsellors() {
+    async function make_appointment_with_counsellors() {
+      await submitFirstOptionInfo("make_appointment_with_sao_counsellors");
+
       return botui.message
         .bot({
           loading: true,
@@ -1762,7 +1786,8 @@
         .then(further_help);
     }
 
-    function contact_with_counsellors() {
+    async function contact_with_counsellors() {
+      await submitFirstOptionInfo("immediate_contact_with_sao_counsellors");
       return botui.message
         .bot({
           loading: true,
@@ -1774,7 +1799,9 @@
         .then(further_help());
     }
 
-    function polyu_line() {
+    async function polyu_line() {
+      await submitFirstOptionInfo("immediate_contact_with_polyu_line");
+
       return botui.message
         .bot({
           loading: true,
@@ -1786,7 +1813,8 @@
         .then(further_help());
     }
 
-    function community_helpline() {
+    async function community_helpline() {
+      await submitFirstOptionInfo("community_helpline");
       return botui.message
         .bot({
           loading: true,
@@ -1918,9 +1946,10 @@
                 },
               ],
             })
-            .then(function() {
+            .then(async function() {
+              const rating = $(".star.fas").length;
+              await submitRating(rating);
               // fix the stars
-              console.log($(".far"));
 
               $(".far").removeClass("available");
               botui.message.bot({
@@ -2291,12 +2320,12 @@
             placeholder: "請選擇",
             multipleselect: true,
             options: [
-              { text: "學業" },
-              { text: "人際關係" },
-              { text: "工作" },
-              { text: "家庭" },
-              { text: "精神健康" },
-              { text: "其他" },
+              { text: "學業", value: "academic" },
+              { text: "人際關係", value: "relationship" },
+              { text: "工作", value: "career" },
+              { text: "家庭", value: "family" },
+              { text: "精神健康", value: "mental_health" },
+              { text: "其他", value: "others" },
             ],
             button: {
               icon: "check",
@@ -3032,7 +3061,9 @@
       }
     }
 
-    function mental_health_101_tc() {
+    async function mental_health_101_tc() {
+      await submitFirstOptionInfo("mental_health_101");
+
       var office_hour = isSAOWorkingHours(new Date());
       return botui.message
         .bot({
@@ -3169,8 +3200,9 @@
         });
     }
 
-    function T_and_C_of_OCS_tc() {
+    async function T_and_C_of_OCS_tc() {
       //Online Chat Services
+      await submitFirstOptionInfo("online_chat_service");
       var myDate = new Date();
       pop_msg = "";
 
@@ -3323,6 +3355,7 @@
 
     function questions_before_OCS_tc() {
       var office_hour = isSAOWorkingHours(new Date());
+      let onlineChatSurveyData = {};
       return botui.message
         .bot({
           loading: true,
@@ -3451,8 +3484,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["contactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["personal_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -3469,8 +3502,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactName"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_name"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -3487,8 +3520,7 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["relationship"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["relationship"] = res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -3505,8 +3537,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -3529,7 +3561,8 @@
                         })
                         .then(async function() {
                           const responseMessage = await addToQueue(
-                            student_netid
+                            student_netid,
+                            onlineChatSurveyData
                           );
                           const isAssigned =
                             responseMessage.indexOf(
@@ -3725,7 +3758,8 @@
         });
     }
 
-    function make_appointment_with_counsellors_tc() {
+    async function make_appointment_with_counsellors_tc() {
+      await submitFirstOptionInfo("make_appointment_with_sao_counsellors");
       return botui.message
         .bot({
           loading: true,
@@ -3737,7 +3771,8 @@
         .then(further_help_tc);
     }
 
-    function contact_with_counsellors_tc() {
+    async function contact_with_counsellors_tc() {
+      await submitFirstOptionInfo("immediate_contact_with_sao_counsellors");
       return botui.message
         .bot({
           loading: true,
@@ -3749,7 +3784,8 @@
         .then(further_help_tc());
     }
 
-    function polyu_line_tc() {
+    async function polyu_line_tc() {
+      await submitFirstOptionInfo("immediate_contact_with_polyu_line");
       return botui.message
         .bot({
           loading: true,
@@ -3761,7 +3797,8 @@
         .then(further_help_tc());
     }
 
-    function community_helpline_tc() {
+    async function community_helpline_tc() {
+      await submitFirstOptionInfo("community_helpline");
       return botui.message
         .bot({
           loading: true,
@@ -3892,9 +3929,11 @@
                 },
               ],
             })
-            .then(function() {
+            .then(async function() {
+              const rating = $(".star.fas").length;
+              await submitRating(rating);
+
               // fix the stars
-              console.log($(".far"));
 
               $(".far").removeClass("available");
               botui.message.bot({
@@ -4139,12 +4178,12 @@
             placeholder: "请选择",
             multipleselect: true,
             options: [
-              { text: "学业" },
-              { text: "人际关系" },
-              { text: "工作" },
-              { text: "家庭" },
-              { text: "精神健康" },
-              { text: "其他" },
+              { text: "学业", value: "academic" },
+              { text: "人际关系", value: "relationship" },
+              { text: "工作", value: "career" },
+              { text: "家庭", value: "family" },
+              { text: "精神健康", value: "mental_health" },
+              { text: "其他", value: "others" },
             ],
             button: {
               icon: "check",
@@ -4880,7 +4919,9 @@
       }
     }
 
-    function mental_health_101_sc() {
+    async function mental_health_101_sc() {
+      await submitFirstOptionInfo("mental_health_101");
+
       var office_hour = isSAOWorkingHours(new Date());
       return botui.message
         .bot({
@@ -5017,8 +5058,9 @@
         });
     }
 
-    function T_and_C_of_OCS_sc() {
+    async function T_and_C_of_OCS_sc() {
       //Online Chat Services
+      await submitFirstOptionInfo("online_chat_service");
       var myDate = new Date();
       pop_msg = "";
 
@@ -5171,6 +5213,7 @@
 
     function questions_before_OCS_sc() {
       var office_hour = isSAOWorkingHours(new Date());
+      let onlineChatSurveyData = {};
       return botui.message
         .bot({
           loading: true,
@@ -5299,8 +5342,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["contactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["personal_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -5317,8 +5360,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactName"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_name"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -5335,8 +5378,7 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["relationship"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["relationship"] = res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -5353,8 +5395,8 @@
                           });
                         })
                         .then(function(res) {
-                          personalInfo["emergencyContactNumber"] = res.value;
-                          console.log(personalInfo);
+                          onlineChatSurveyData["emergency_contact_number"] =
+                            res.value;
                           return botui.message.add({
                             human: true,
                             photo: client,
@@ -5377,7 +5419,8 @@
                         })
                         .then(async function() {
                           const responseMessage = await addToQueue(
-                            student_netid
+                            student_netid,
+                            onlineChatSurveyData
                           );
                           const isAssigned =
                             responseMessage.indexOf(
@@ -5573,7 +5616,8 @@
         });
     }
 
-    function make_appointment_with_counsellors_sc() {
+    async function make_appointment_with_counsellors_sc() {
+      await submitFirstOptionInfo("make_appointment_with_sao_counsellors");
       return botui.message
         .bot({
           loading: true,
@@ -5585,7 +5629,8 @@
         .then(further_help_sc);
     }
 
-    function contact_with_counsellors_sc() {
+    async function contact_with_counsellors_sc() {
+      await submitFirstOptionInfo("immediate_contact_with_sao_counsellors");
       return botui.message
         .bot({
           loading: true,
@@ -5597,7 +5642,8 @@
         .then(further_help_sc());
     }
 
-    function polyu_line_sc() {
+    async function polyu_line_sc() {
+      await submitFirstOptionInfo("immediate_contact_with_polyu_line");
       return botui.message
         .bot({
           loading: true,
@@ -5609,7 +5655,8 @@
         .then(further_help_sc());
     }
 
-    function community_helpline_sc() {
+    async function community_helpline_sc() {
+      await submitFirstOptionInfo("community_helpline");
       return botui.message
         .bot({
           loading: true,
@@ -5740,9 +5787,10 @@
                 },
               ],
             })
-            .then(function() {
+            .then(async function() {
+              const rating = $(".star.fas").length;
+              await submitRating(rating);
               // fix the stars
-              console.log($(".far"));
 
               $(".far").removeClass("available");
               botui.message.bot({
@@ -5756,12 +5804,15 @@
         .then(_close);
     }
 
-    const addToQueue = async (student_netid) => {
+    const addToQueue = async (student_netid, onlineChatSurveyData) => {
       const response = await $.ajax({
         url: "/main/api/addstud/",
         method: "POST",
         data: {
-          student_netid: student_netid,
+          student_netid,
+          q1: false,
+          q2: false,
+          ...onlineChatSurveyData,
         },
       });
 
@@ -5867,6 +5918,61 @@
             "WAITING_MESSAGE"
           ].replace("{{CURRENT_WAITTING_NUMBER}}", currentWaitingNumber),
         });
+      }
+    };
+
+    const getQ1SurveyData = (result) => {
+      values = result.split(",").map((value) => value.trim());
+      const q1SurveyData = {
+        q1_academic: values.includes("academic"),
+        q1_interpersonal_relationship: values.includes("relationship"),
+        q1_career: values.includes("career"),
+        q1_family: values.includes("family"),
+        q1_mental_health: values.includes("mental_health"),
+        q1_others: values.includes("others"),
+      };
+      return q1SurveyData;
+    };
+
+    const submitSurvey = async (surveyData) => {
+      return await $.ajax({
+        url: "/main/api/submitsurvey/",
+        method: "POST",
+        data: surveyData,
+      });
+    };
+
+    const submitFirstOptionInfo = async (firstOption) => {
+      if (!hasSubmitFirstOption) {
+        surveyData["first_option"] = firstOption;
+        const response = await $.ajax({
+          url: "/main/api/endchatbot/",
+          method: "POST",
+          data: {
+            first_option: firstOption,
+          },
+        });
+
+        if (response.status !== 200) {
+          console.log(response.message);
+        } else {
+          hasSubmitFirstOption = true;
+        }
+      }
+    };
+
+    const submitRating = async (feedback_rating) => {
+      surveyData["feedback_rating"] = feedback_rating;
+      const response = await $.ajax({
+        url: "/main/api/endchatbot/",
+        method: "POST",
+        data: {
+          feedback_rating,
+        },
+      });
+
+      if (response.status !== 200) {
+        console.log(response.message);
       }
     };
   }
