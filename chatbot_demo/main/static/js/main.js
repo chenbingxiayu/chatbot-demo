@@ -6027,6 +6027,7 @@
         headers: { "X-CSRFToken": CSRF_TOKEN },
         method: "POST",
         data: {
+          first_option: surveyData["first_option"],
           feedback_rating,
         },
       });
