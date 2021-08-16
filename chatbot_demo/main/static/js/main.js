@@ -9,7 +9,7 @@
 
     var finish_assessment = false;
     select_language();
-    const surveyData = {};
+    let surveyData = {};
     const hasSubmitFirstOption = false;
 
     function select_language() {
