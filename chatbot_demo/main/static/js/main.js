@@ -589,7 +589,7 @@
                           })
                           .then(function(res) {
                             surveyData["q6_1"] = res.value === 0;
-                            surveyData["q6_2"] = null;
+                            surveyData["q6_2"] = "null";
                             answers[6] =
                               'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' +
                               res.text +
@@ -632,7 +632,7 @@
                             ],
                           })
                           .then(function(res) {
-                            surveyData["q6_1"] = null;
+                            surveyData["q6_1"] = "null";
                             surveyData["q6_2"] = res.value === 0;
                             answers[6] =
                               'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' +
