@@ -548,7 +548,7 @@
               ],
             })
             .then(function(res) {
-              surveyData["q6_1"] = res.text === "Yes";
+              surveyData["q5"] = res.value === 0;
               answers[5] =
                 'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)? (e.g. practising physical exercise, deep breathing, listening to music, etc.)<br/><b><font color="#FF0000">' +
                 res.text +
@@ -588,7 +588,7 @@
                             ],
                           })
                           .then(function(res) {
-                            surveyData["q6_1"] = res.text === "Yes";
+                            surveyData["q6_1"] = res.value === 0;
                             answers[6] =
                               'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' +
                               res.text +
@@ -631,7 +631,7 @@
                             ],
                           })
                           .then(function(res) {
-                            surveyData["q6_2"] = res.text === "Yes";
+                            surveyData["q6_2"] = res.value === 0;
                             answers[6] =
                               'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' +
                               res.text +
