@@ -60,6 +60,7 @@
     $.ajax({
       url: '{% url "supervisorjoin" %}',
       method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken')},
       data: {
         student_netid,
       },

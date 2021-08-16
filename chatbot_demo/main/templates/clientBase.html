@@ -270,6 +270,9 @@
 
 
 {% block footer_script %}
+<script>
+const CSRF_TOKEN = "{{ csrf_token }}";
+</script>
 {% endblock %}
 {% render_bundle 'main' 'js' %}
 </body>
