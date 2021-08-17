@@ -175,7 +175,7 @@
 
         await client.typing.send({
           type: "stream",
-          to: [stream_id],
+          to: [streamId],
           op: "start",
           topic: "chat",
         });
@@ -187,7 +187,7 @@
 
         await client.typing.send({
           type: "stream",
-          to: [stream_id],
+          to: [streamId],
           op: "stop",
           topic: "chat",
         });
