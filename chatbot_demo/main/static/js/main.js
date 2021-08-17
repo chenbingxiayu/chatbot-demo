@@ -5847,8 +5847,8 @@
         method: "POST",
         data: {
           student_netid,
-          q1: false,
-          q2: false,
+          q1: 0, // false
+          q2: 0, // false
           ...onlineChatSurveyData,
         },
       });

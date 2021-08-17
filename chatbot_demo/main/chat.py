@@ -94,6 +94,12 @@ def counsellor(request):
 
         key = client.fetch_user_api_key(staff_email, staff_email)
 
+        student_personal_contact_number = student_status.personal_contact_number
+        student_emergency_contact_name = student_status.emergency_contact_name
+        student_relationship = student_status.relationship
+        student_emergency_contact_number = student_status.emergency_contact_number
+
+
         page_info = {
             'key': key,
             'staff_email': staff_email,
@@ -103,6 +109,10 @@ def counsellor(request):
             'student_netid': student_netid,
             'stream_id': stream_id,
             'zulip_realm': os.getenv('ZULIP_DOMAIN_URL'),
+            'student_personal_contact_number': student_personal_contact_number,
+            'student_emergency_contact_name': student_emergency_contact_name,
+            'student_relationship': student_relationship,
+            'student_emergency_contact_number': student_emergency_contact_number,
         }
 
         return render(request, 'chat/chat_counsellor.html', page_info)
