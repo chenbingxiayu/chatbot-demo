@@ -34,7 +34,7 @@ services:
     environment:
       <<: *common-variables
     depends_on:
-      - mysql
+#      - mysql
       - redis
 
   celery:

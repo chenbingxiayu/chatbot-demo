@@ -262,8 +262,6 @@ def supervisor(request):
 
     students = StudentChatStatus.objects \
         .filter(chat_request_time__gte=today_start()) \
-        .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
-                Q(assigned_counsellor=staff)) \
         .order_by('chat_request_time')
 
     histories = StudentChatHistory.objects \
@@ -293,8 +291,6 @@ def administrator(request):
 
     students = StudentChatStatus.objects \
         .filter(chat_request_time__gte=today_start()) \
-        .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
-                Q(assigned_counsellor=staff)) \
         .order_by('chat_request_time')
 
     histories = StudentChatHistory.objects \
