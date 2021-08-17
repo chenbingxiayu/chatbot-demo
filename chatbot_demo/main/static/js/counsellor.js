@@ -144,7 +144,7 @@
             data: {
               staff_netid: staffNetid,
               student_netid: studentNetid,
-              is_no_show: $(event.target).hasClass("no-show"),
+              is_no_show: $(event.target).hasClass("no-show") ? 1 : 0,
             },
           });
 
