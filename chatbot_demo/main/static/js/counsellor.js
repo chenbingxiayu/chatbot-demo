@@ -174,8 +174,10 @@
         }
 
         await client.typing.send({
-          to: [studentEmail],
+          type: "stream",
+          to: [stream_id],
           op: "start",
+          topic: "chat",
         });
       })
       .on("blur", "#message-text", async () => {
@@ -184,8 +186,10 @@
         }
 
         await client.typing.send({
-          to: [studentEmail],
+          type: "stream",
+          to: [stream_id],
           op: "stop",
+          topic: "chat",
         });
       });
 

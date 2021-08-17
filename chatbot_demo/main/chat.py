@@ -30,6 +30,7 @@ def student(request):
         staff_email = staff_netid + email_suffix
 
         stream_name = _construct_stream_name(staff_netid)
+        stream_id = client.get_stream_id(stream_name)
 
         users = client.get_users()
         
@@ -45,6 +46,7 @@ def student(request):
             'stream_name': stream_name,
             'staff_netid': staff_netid,
             'staff_email': staff_email,
+            'stream_id': stream_id,
             'zulip_realm': os.getenv('ZULIP_DOMAIN_URL'),
         }
 

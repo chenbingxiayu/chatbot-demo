@@ -119,16 +119,20 @@
         }
       })
       .on("focus", "#message-text", async () => {
-        // await client.typing.send({
-        //   to: [staffEmail],
-        //   op: "start",
-        // });
+        await client.typing.send({
+          type: "stream",
+          to: [stream_id],
+          op: "start",
+          topic: "chat",
+        });
       })
       .on("blur", "#message-text", async () => {
-        // await client.typing.send({
-        //   to: [staffEmail],
-        //   op: "stop",
-        // });
+        await client.typing.send({
+          type: "stream",
+          to: [stream_id],
+          op: "stop",
+          topic: "chat",
+        });
       })
       .on("click", ".icon-leave", function() {
         if (confirm("Are you sure you want to quit?")) {

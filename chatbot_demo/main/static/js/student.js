@@ -138,15 +138,18 @@
       })
       .on("focus", "#message-text", async () => {
         await client.typing.send({
-          // TODO update recipient
-          to: [staffEmail],
+          type: "stream",
+          to: [stream_id],
           op: "start",
+          topic: "chat",
         });
       })
       .on("blur", "#message-text", async () => {
         await client.typing.send({
-          to: [staffEmail],
+          type: "stream",
+          to: [stream_id],
           op: "stop",
+          topic: "chat",
         });
       })
       .on("click", ".icon-leave", async function() {
