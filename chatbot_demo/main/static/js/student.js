@@ -13,8 +13,7 @@
     botui.message.add({
       human: false,
       photo: pollyImg,
-      content:
-        "Welcome to integrated counselling service! It nice to meet you.",
+      content: "Welcome to integrated counselling service! Nice to meet you.",
     });
 
     // Listen 'Enter' key press
