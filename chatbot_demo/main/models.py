@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, annotations
+import io
 import logging
 import uuid
 from datetime import datetime, date
 
 import pendulum
-import xlwt
+import xlsxwriter
 from django.db import models, connection
 from django.conf import settings
 from django.utils import timezone
@@ -461,10 +462,12 @@ class ChatBotSession(models.Model):
                 WHERE (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_close_weekday_hour} AND weekday(start_time) IN (0, 1, 2, 3, 4))
                 OR (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_clsoe_sat_hour} AND weekday(start_time)=5)) AS access_office_hr_count,
              (SELECT count(*) FROM session_table WHERE is_ployu_student=TRUE ) AS polyu_student_count,
+             (SELECT count(*) FROM session_table WHERE is_ployu_student=FALSE ) AS non_polyu_student_count,
              (SELECT count(*) FROM session_table WHERE score<=6 ) AS score_green_count,
              (SELECT count(*) FROM session_table WHERE score>=7 AND score<=10 ) AS score_yellow_count,
              (SELECT count(*) FROM session_table WHERE score>=11 AND score<=13 ) AS score_red_count,
-             (SELECT count(*) FROM session_table WHERE first_option='mental_health_101' ) AS 101_access_count
+             (SELECT count(*) FROM session_table WHERE first_option='{cls.RecommendOptions.opt1}' ) AS mh101_access_count,
+             (SELECT count(*) FROM session_table WHERE first_option='{cls.RecommendOptions.opt2}' ) AS poss_access_count
             """
 
         logger.info(query)
@@ -497,26 +500,35 @@ class ChatBotSession(models.Model):
         return res
 
     @classmethod
-    def get_red_route_to_excel(cls, start_dt: datetime) -> xlwt.Workbook:
+    def get_red_route_to_excel(cls, start_dt: datetime) -> io.BytesIO:
         data = cls.get_red_route(start_dt)
+        data = [{
+            'student_netid': '11212356',
+            'datetime': datetime(2020, 10, 10, 10, 10, 10),
+            'date': datetime(2020, 10, 10, 10, 10, 10),
+            'start_time': datetime(2020, 10, 10, 10, 10, 10),
+            'end_time': datetime(2020, 10, 10, 10, 10, 10)
+        }] * 10
 
-        wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet('red_route')
+        output = io.BytesIO()
+        wb = xlsxwriter.Workbook(output)
+        ws = wb.add_worksheet('Red Route')
 
         # Sheet header, first row
-        row_num = 0
-        font_style = xlwt.XFStyle()
         columns = ['Student ID', 'Date', 'Start Time', 'End Time']
         for col_num in range(len(columns)):
-            ws.write(0, col_num, columns[col_num], font_style)
+            ws.write(0, col_num, columns[col_num])
 
-        for row_num, row in enumerate(data):
-            ws.write(row_num + 1, 0, getattr(row, 'student_netid'), font_style)
-            ws.write(row_num + 1, 1, getattr(row, 'date').strftime("%Y/%m/%d"), font_style)
-            ws.write(row_num + 1, 2, getattr(row, 'start_time').strftime('%H:%M'), font_style)
-            ws.write(row_num + 1, 3, getattr(row, 'end_time').strftime('%H:%M'), font_style)
+        for row_num, row in enumerate(data, 1):
+            ws.write(row_num, 0, row['student_netid'])
+            ws.write(row_num, 1, row['date'].strftime("%Y/%m/%d"))
+            ws.write(row_num, 2, row['start_time'].strftime('%H:%M'))
+            ws.write(row_num, 3, row['end_time'].strftime('%H:%M'))
 
-        return wb
+        wb.close()
+        output.seek(0)
+
+        return output
 
 
 ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,

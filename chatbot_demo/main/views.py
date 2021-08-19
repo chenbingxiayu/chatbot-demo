@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 
+import io
 import logging
 import uuid
 import json
 from datetime import datetime, timedelta
 
 import requests
+import xlsxwriter
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -16,8 +18,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, permission_required
-from main.models import User
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 
 from main.exceptions import UnauthorizedException
 from main.models import (
@@ -93,7 +94,8 @@ def login_all(request):
 @csrf_exempt
 def login_sso(request):
     # redirect to rapid connect server
-    response = redirect(sso_auth.destination)
+    # response = redirect(sso_auth.destination)
+    response = redirect('login_sso_callback')
     return response
 
 
@@ -101,12 +103,15 @@ def login_sso(request):
 @require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
-        encoded_jwt = request.POST.get('data')
-        if not encoded_jwt:
-            return render(request, 'main/login_sso.html', {
-                'error_message': "Cannot get JWT"
-            })
-        decoded_jwt = sso_auth.decode(encoded_jwt)
+        # encoded_jwt = request.POST.get('data')
+        # if not encoded_jwt:
+        #     return render(request, 'main/login_sso.html', {
+        #         'error_message': "Cannot get JWT"
+        #     })
+        # decoded_jwt = sso_auth.decode(encoded_jwt)
+        decoded_jwt = dict()
+        decoded_jwt['cn'] = 'staff_01'
+        decoded_jwt['polyuUserType'] = 'Staff'
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
@@ -312,12 +317,29 @@ def staffstatus(request):
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist as e:
-        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
+        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=404)
 
     staff_list = StaffStatus.objects.all()
     now = timezone.now()
     return render(request, 'main/staffstatus.html',
                   {'staff': staff, 'staff_list': staff_list, 'now': now,
+                   'selectable_status': SELECTABLE_STATUS})
+
+
+@login_required
+@permission_required('main.view_staffstatus', raise_exception=True)
+@require_http_methods(['GET', 'POST'])
+def statistics_page(request):
+    staff_netid = request.user.netid
+    try:
+        staff = StaffStatus.objects.get(staff_netid=staff_netid)
+    except StaffStatus.DoesNotExist as e:
+        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=404)
+
+    now = timezone.now()
+    return render(request, 'main/statistics.html',
+                  {'staff': staff,
+                   'now': now,
                    'selectable_status': SELECTABLE_STATUS})
 
 
@@ -510,35 +532,98 @@ def end_chatbot(request):
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(['POST'])
+def get_statistics(request):
+    data = json.loads(request.body)
+    from_date = data.get('fromDate')
+    to_date = data.get('toDate')
+
+    # res = dict()
+    # res.update(ChatBotSession.statis_overview(from_date, to_date))
+    # res.update(StudentChatHistory.statis_overview(from_date, to_date))
+    res = {
+        'total_access_count': 1234,
+        'access_office_hr_count': 1234,
+        'polyu_student_count': 1234,
+        'non_polyu_student_count': 1234,
+        'score_green_count': 1234,
+        'score_yellow_count': 1234,
+        'score_red_count': 1234,
+        'poss_access_count': 1234,
+        'mh101_access_count': 1234,
+        'online_chat_access_count': 1234,
+        'successful_chat_count': 1234
+    }
+    return JsonResponse(res, status=200)
+
+
+@login_required
+@require_http_methods(['POST'])
 def export_statistics(request):
-    from_date = timezone.localdate() - timedelta(days=1)
-    to_date = timezone.localdate()
+    data = json.loads(request.body)
+    from_date = data.get('fromDate')
+    to_date = data.get('toDate')
 
     res = dict()
     res.update(ChatBotSession.statis_overview(from_date, to_date))
     res.update(StudentChatHistory.statis_overview(from_date, to_date))
-    return JsonResponse(res, status=200)
+
+    output = io.BytesIO()
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet('Statistics Overview')
+
+    ws.write(0, 0, 'From')
+    ws.write(0, 1, from_date)
+    ws.write(1, 0, 'To')
+    ws.write(1, 1, to_date)
+
+    row_name = {
+        'No. of access': 'total_access_count',
+        'No. of office hour access': 'access_office_hr_count',
+        'No. of PolyU student': 'polyu_student_count',
+        'No. of non-student': 'non_polyu_student_count',
+        'No. of green': 'score_green_count',
+        'No. of yellow': 'score_yellow_count',
+        'No. of red': 'score_red_count',
+        'No. of access to POSS': 'poss_access_count',
+        'No. of access to Mental Health 101': 'mh101_access_count',
+        'No. of access to Online Chat Service': 'online_chat_access_count',
+        'No. of successful chat with counsellor': 'successful_chat_count'
+    }
+
+    for row_idx, (key, val) in enumerate(row_name.items(), 2):
+        ws.write(row_idx, 0, key)
+        ws.write(row_idx, 1, res[val])
+
+    wb.close()
+    output.seek(0)
+    response = HttpResponse(output,
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="statistics_overview.xlsx"'
+
+    return response
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(['POST'])
 def get_red_route(request):
-    from_date = timezone.localdate() - timedelta(days=7)
+    data = json.loads(request.body)
+    before_date = data.get('beforeDate')
+    from_date = datetime.strptime(before_date, '%Y-%m-%d') - timedelta(days=7)
 
     res = ChatBotSession.get_red_route(from_date)
-    return JsonResponse(res, status=200)
+
+    return JsonResponse(res, safe=False, status=200)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(['POST'])
 def export_red_route(request):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="red_route.xls"'
-
     from_date = timezone.localdate() - timedelta(days=7)
     from_dt = datetime.combine(from_date, datetime.min.time())
-    wb = ChatBotSession.get_red_route_to_excel(from_dt)
+    output = ChatBotSession.get_red_route_to_excel(from_dt)
 
-    wb.save(response)
+    response = HttpResponse(output,
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="red_route.xlsx"'
     return response

@@ -30,6 +30,9 @@
         <li class="nav-item">
           <a class="nav-link" href="/main/page/staffstatus/">Staff Status</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/main/page/statistics/">Statistics</a>
+        </li>
       </ul>
     </div>
     <button class="btn logout-btn my-2 my-sm-0" type="button" style="background-color: #dcdcdc">Logout</button>
@@ -76,13 +79,115 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-
     const host = window.location.host
     const getCookie = (name) => (
       document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
     )
 
+    const statOverviewData = {
+      total_access_count: '',
+      access_office_hr_count: '',
+      polyu_student_count: '',
+      non_polyu_student_count: '',
+      score_green_count: '',
+      score_yellow_count: '',
+      score_red_count: '',
+      poss_access_count: '',
+      mh101_access_count: '',
+      online_chat_access_count: '',
+      successful_chat_count: ''
+    }
+
+    const statOverviewTableHTML = (statOverviewData) => `
+        <table class="table col-sm-6 table-bordered" id="statOverviewTable">
+          <thead>
+            <tr>
+             <th scope="col">Items</th>
+             <th scope="col">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+             <th scope="row">No. of access</th>
+             <td>${statOverviewData.total_access_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <th scope="row">No. of office hour access</th>
+             <td>${statOverviewData.access_office_hr_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <th scope="row">No. of PolyU student</th>
+             <td>${statOverviewData.polyu_student_count}</td>
+            </tr>
+            <tr>
+             <th scope="row">No. of non-student</th>
+             <td>${statOverviewData.non_polyu_student_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <th scope="row" rowspan="3">Scores count</th>
+             <td style="color: green">${statOverviewData.score_green_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <td style="color: #b9b900">${statOverviewData.score_yellow_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <td style="color: red">${statOverviewData.score_red_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <th scope="row">No. of access to POSS</th>
+             <td>${statOverviewData.poss_access_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <th scope="row">No. of access to Mental Health 101</th>
+             <td>${statOverviewData.mh101_access_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <th scope="row">No. of access to Online Chat Service</th>
+             <td>${statOverviewData.online_chat_access_count.toLocaleString()}</td>
+            </tr>
+            <tr>
+             <th scope="row">No. of successful chat with counsellor</th>
+             <td>${statOverviewData.successful_chat_count.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      `
+
+    const redRouteTableHTML = (redRouteTableData) => {
+      let tableHead = (tableBody) => `
+        <table class="table col-sm-6 table-bordered" id="redRouteTable">
+          <thead>
+            <tr>
+             <th scope="col">#</th>
+             <th scope="col">Student ID</th>
+             <th scope="col">Date</th>
+             <th scope="col">Start Time</th>
+             <th scope="col">End Time</th>
+            </tr>
+          </thead>
+          ${tableBody}
+        </table>
+      `
+
+      let tableBody = (item, idx) => `
+        <tbody>
+          <tr>
+           <th scope="row">${idx}</th>
+           <td>${item.student_netid}</td>
+           <td>${item.date}</td>
+           <td>${item.start_time}</td>
+           <td>${item.end_time}</td>
+          </tr>
+        </tbody>
+      `
+      const renderedTableBody = redRouteTableData.reduce((acc, item, idx) => acc + tableBody(item, idx + 1), '')
+      return tableHead(renderedTableBody)
+    }
+
+
     $(document).ready(() => {
+      $('#statOverviewTable').replaceWith(statOverviewTableHTML(statOverviewData))
+      $('#redRouteTable').replaceWith(redRouteTableHTML([]))
     })
 
     $(document).on('click', '.start-chat-with-student', (e) => {
@@ -215,6 +320,101 @@
     setTimeout(function(){
       window.location.reload(1);
     }, 30000);
+
+    function fileDownload(blob_data, filename) {
+      const url = window.URL.createObjectURL(blob_data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+    };
+
+    $('#stat-overview__fromDate').on('change', (e) => {
+        $('#stat-overview__toDate')[0].min = e.target.value;
+    });
+    $('#stat-overview__toDate').on('change', (e) => {
+        $('#stat-overview__fromDate')[0].max = e.target.value;
+    });
+
+    $('#stat-overview__submit').on('click', () => {
+        const fromDate = $('#stat-overview__fromDate')[0].value
+        const toDate = $('#stat-overview__toDate')[0].value
+
+        if (!(fromDate && toDate)) {
+            alert('Please select a valid date range!')
+            return
+        }
+        axios.post('/main/api/get_statistics/', {
+            fromDate: fromDate,
+            toDate: toDate
+          }, {
+            headers: { 'X-CSRFToken': getCookie('csrftoken')}
+          }).then((res) => {
+            Object.assign(statOverviewData, res.data)
+            $('#statOverviewTable').replaceWith(statOverviewTableHTML(statOverviewData))
+        })
+    });
+
+    $('#stat-overview__export').on('click', () => {
+        const fromDate = $('#stat-overview__fromDate')[0].value
+        const toDate = $('#stat-overview__toDate')[0].value
+
+        if (!(fromDate && toDate)) {
+            alert('Please select a valid date range!')
+            return
+        }
+
+        axios.post('/main/api/export_statistics/', {
+            fromDate: fromDate,
+            toDate: toDate
+        }, {
+            headers: { 'X-CSRFToken': getCookie('csrftoken')},
+            responseType: 'blob'
+        }).then((res) => {
+          fileDownload(res.data, 'statistics_overview.xlsx')
+        })
+    });
+
+    $('#red-route__beforeDate')[0].max = new Date().toISOString().split("T")[0]
+
+    $('#red-route__submit').on('click', () => {
+        const beforeDate = $('#red-route__beforeDate')[0].value
+
+        if (!beforeDate) {
+            alert('Please enter a valid date!')
+            return
+        }
+        axios.post('/main/api/get_red_route/', {
+            beforeDate: beforeDate,
+        }, {
+            headers: { 'X-CSRFToken': getCookie('csrftoken')}
+        }).then((res) => {
+            $('#redRouteTable').replaceWith(redRouteTableHTML(res.data))
+        })
+    });
+
+    $('#red-route__export').on('click', () => {
+        const beforeDate = $('#red-route__beforeDate')[0].value
+
+        if (!beforeDate) {
+            alert('Please enter a valid date!')
+            return
+        }
+
+        axios.post('/main/api/export_red_route/', {
+            beforeDate: beforeDate,
+        }, {
+            headers: { 'X-CSRFToken': getCookie('csrftoken')},
+            responseType: 'blob'
+        }).then((res) => {
+            fileDownload(res.data, 'red_route.xlsx')
+        })
+    });
+
+
+
 
   </script>
   {% block extra_js %}{% endblock extra_js %}
