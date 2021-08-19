@@ -76,8 +76,7 @@ def dequeue_student():
 
     now = timezone.now()
     students = StudentChatStatus.objects \
-        .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING,
-                chat_request_time__lt=now - timedelta(minutes=WAIT_LIMIT)) \
+        .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
         .order_by('chat_request_time') \
         .all()
 
