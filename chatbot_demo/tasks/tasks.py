@@ -74,7 +74,6 @@ def dequeue_student():
     :return:
     """
 
-    now = timezone.now()
     students = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
         .order_by('chat_request_time') \
