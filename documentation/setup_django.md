@@ -41,8 +41,12 @@
 
 4. Add User Group
    
-   We will add two user groups, `app_admin` and `counsellor`.
-   `administrator` and `supervisor` will be granted `app_admin`. 
+   We will add three user groups, `app_admin`, `supervisor` and `counsellor`.
+   
+   `administrator` will be granted `app_admin`.
+   
+   `supervisor` will be granted `supervisor`.
+   
    `online triage`, `DO` and `counsellor` will be granted `counsellor`. 
 
    app_admin
