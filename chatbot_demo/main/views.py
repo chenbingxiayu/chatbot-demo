@@ -94,8 +94,7 @@ def login_all(request):
 @csrf_exempt
 def login_sso(request):
     # redirect to rapid connect server
-    # response = redirect(sso_auth.destination)
-    response = redirect('login_sso_callback')
+    response = redirect(sso_auth.destination)
     return response
 
 
@@ -103,15 +102,12 @@ def login_sso(request):
 @require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
-        # encoded_jwt = request.POST.get('data')
-        # if not encoded_jwt:
-        #     return render(request, 'main/login_sso.html', {
-        #         'error_message': "Cannot get JWT"
-        #     })
-        # decoded_jwt = sso_auth.decode(encoded_jwt)
-        decoded_jwt = dict()
-        decoded_jwt['cn'] = 'staff_01'
-        decoded_jwt['polyuUserType'] = 'Staff'
+        encoded_jwt = request.POST.get('data')
+        if not encoded_jwt:
+            return render(request, 'main/login_sso.html', {
+                'error_message': "Cannot get JWT"
+            })
+        decoded_jwt = sso_auth.decode(encoded_jwt)
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
@@ -537,22 +533,10 @@ def get_statistics(request):
     from_date = data.get('fromDate')
     to_date = data.get('toDate')
 
-    # res = dict()
-    # res.update(ChatBotSession.statis_overview(from_date, to_date))
-    # res.update(StudentChatHistory.statis_overview(from_date, to_date))
-    res = {
-        'total_access_count': 1234,
-        'access_office_hr_count': 1234,
-        'polyu_student_count': 1234,
-        'non_polyu_student_count': 1234,
-        'score_green_count': 1234,
-        'score_yellow_count': 1234,
-        'score_red_count': 1234,
-        'poss_access_count': 1234,
-        'mh101_access_count': 1234,
-        'online_chat_access_count': 1234,
-        'successful_chat_count': 1234
-    }
+    res = dict()
+    res.update(ChatBotSession.statis_overview(from_date, to_date))
+    res.update(StudentChatHistory.statis_overview(from_date, to_date))
+
     return JsonResponse(res, status=200)
 
 
@@ -563,8 +547,7 @@ def export_statistics(request):
     from_date = data.get('fromDate')
     to_date = data.get('toDate')
 
-    res = dict()
-    res.update(ChatBotSession.statis_overview(from_date, to_date))
+    res = ChatBotSession.statis_overview(from_date, to_date)
     res.update(StudentChatHistory.statis_overview(from_date, to_date))
 
     output = io.BytesIO()
@@ -618,9 +601,9 @@ def get_red_route(request):
 @login_required
 @require_http_methods(['POST'])
 def export_red_route(request):
-    from_date = timezone.localdate() - timedelta(days=7)
-    from_dt = datetime.combine(from_date, datetime.min.time())
-    output = ChatBotSession.get_red_route_to_excel(from_dt)
+    data = json.loads(request.body)
+    before_date = data.get('beforeDate')
+    output = ChatBotSession.get_red_route_to_excel(before_date)
 
     response = HttpResponse(output,
                             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

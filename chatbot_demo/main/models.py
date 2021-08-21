@@ -4,6 +4,7 @@ import io
 import logging
 import uuid
 from datetime import datetime, date
+from typing import Dict
 
 import pendulum
 import xlsxwriter
@@ -330,7 +331,7 @@ class StudentChatHistory(models.Model):
             emergency_contact_number=student.emergency_contact_number).save()
 
     @classmethod
-    def statis_overview(cls, start: datetime, end: datetime):
+    def statis_overview(cls, start: datetime, end: datetime) -> Dict:
         # Convert all time value to in utc
         start_time = start.astimezone(utc_time)
         end_time = end.astimezone(utc_time)
@@ -441,7 +442,7 @@ class ChatBotSession(models.Model):
         return session
 
     @classmethod
-    def statis_overview(cls, start: datetime, end: datetime):
+    def statis_overview(cls, start: datetime, end: datetime) -> Dict:
         # Convert all time value to in utc
         start_time = start.astimezone(utc_time).replace(tzinfo=None)
         end_time = end.astimezone(utc_time).replace(tzinfo=None)
@@ -478,7 +479,7 @@ class ChatBotSession(models.Model):
         return res
 
     @classmethod
-    def get_red_route(cls, start_dt: datetime):
+    def get_red_route(cls, start_dt: datetime) -> Dict:
         query = f"""
             SELECT
                 `{cls._meta.db_table}`.`student_netid`,
@@ -502,13 +503,6 @@ class ChatBotSession(models.Model):
     @classmethod
     def get_red_route_to_excel(cls, start_dt: datetime) -> io.BytesIO:
         data = cls.get_red_route(start_dt)
-        data = [{
-            'student_netid': '11212356',
-            'datetime': datetime(2020, 10, 10, 10, 10, 10),
-            'date': datetime(2020, 10, 10, 10, 10, 10),
-            'start_time': datetime(2020, 10, 10, 10, 10, 10),
-            'end_time': datetime(2020, 10, 10, 10, 10, 10)
-        }] * 10
 
         output = io.BytesIO()
         wb = xlsxwriter.Workbook(output)

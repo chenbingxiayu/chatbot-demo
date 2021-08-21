@@ -155,7 +155,7 @@
 
     const redRouteTableHTML = (redRouteTableData) => {
       let tableHead = (tableBody) => `
-        <table class="table col-sm-6 table-bordered" id="redRouteTable">
+        <table class="table col-sm-6 table-bordered table-striped" id="redRouteTable">
           <thead>
             <tr>
              <th scope="col">#</th>
@@ -412,10 +412,7 @@
             fileDownload(res.data, 'red_route.xlsx')
         })
     });
-
-
-
-
+    
   </script>
   {% block extra_js %}{% endblock extra_js %}
 </body>
