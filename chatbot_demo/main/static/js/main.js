@@ -89,7 +89,7 @@
                 action: [
                   { text: "Counselling ChatBOT", value: 1 },
                   {
-                    text: "Mental Health Educational Materials/Resources",
+                    text: "Mental Health Educational Material/Resources",
                     value: 2,
                   },
                   { text: "Online Chat (Live)", value: 4 },
@@ -172,7 +172,7 @@
                 action: [
                   { text: "Counselling ChatBOT", value: 1 },
                   {
-                    text: "Mental Health Educational Materials/Resources",
+                    text: "Mental Health Educational Material/Resources",
                     value: 2,
                   },
                   { text: "Make Appointment with SAO Counsellors", value: 5 },
@@ -282,7 +282,7 @@
           content:
             "Hi, " +
             name +
-            ". To know you better, please answer a few questions below. So I can provide you with the right support.<br/><br/> It is not supposed to treat as formal psychological or diagnostic assessment.",
+            ". To know you better, please answer a few questions below. So I can provide you with the right support.<br/><br/> It is not supposed to treat it as a formal psychological or diagnostic assessment.",
         })
         .then(function() {
           botui.message
@@ -393,7 +393,7 @@
                         delay: 1500,
                         photo: polly,
                         content:
-                          'Keep it up! We encourage you to take a look at the "Mental Health Educational Materials/Resources" to know more tips for enhancing your psychological and mental wellness.',
+                          'Keep it up! We encourage you to take a look at the "Mental Health Educational Material/Resources" to know more tips for enhancing your psychological and mental wellness.',
                       })
                       .then(mental_health_101);
                   })
@@ -739,7 +739,7 @@
             delay: 3500,
             photo: polly,
             content:
-              'Keep it up! We encourage you to take a look at the "Mental Health Educational Materials/Resources" to know more tips for enhancing your psychological and mental wellness.',
+              'Keep it up! We encourage you to take a look at the "Mental Health Educational Material/Resources" to know more tips for enhancing your psychological and mental wellness.',
           });
         })
         .then(function() {
@@ -747,7 +747,7 @@
             .button({
               addMessage: false,
               action: [
-                { text: "Mental Health Educational Materials/Resources" },
+                { text: "Mental Health Educational Material/Resources" },
               ],
             })
             .then(function(res) {
@@ -782,7 +782,7 @@
             delay: 1000,
             photo: polly,
             content:
-              "We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Materials/Resources<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline",
+              "We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Material/Resources<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline",
           })
           .then(function() {
             return botui.action
@@ -791,7 +791,7 @@
                 action: [
                   { text: "Make Appointment with SAO Counsellors", value: 3 },
                   {
-                    text: "Mental Health Educational Materials/Resources",
+                    text: "Mental Health Educational Material/Resources",
                     value: 1,
                   },
                   { text: "Immediate Contact with SAO Counsellors", value: 4 },
@@ -872,7 +872,7 @@
                 action: [
                   { text: "Make Appointment with SAO Counsellors", value: 3 },
                   {
-                    text: "Mental Health Educational Materials/Resources",
+                    text: "Mental Health Educational Material/Resources",
                     value: 1,
                   },
                   {
@@ -1440,7 +1440,7 @@
                       addMessage: false,
                       action: [
                         {
-                          text: "Mental Health Educational Materials/Resources",
+                          text: "Mental Health Educational Material/Resources",
                           value: true,
                         },
                         { text: "No, thank you!", value: false },
@@ -1885,7 +1885,7 @@
                     content: res.text,
                   })
                   .then(function() {
-                    if (score > 10 || service_list == true) {
+                    if (service_list == true) {
                       botui.message.bot({
                         loading: true,
                         photo: polly,
@@ -3356,7 +3356,7 @@
                     delay: 1500,
                     photo: polly,
                     content:
-                      "如有需要，歡迎你致電 (852)27666800 與SAO輔導員聯絡。",
+                      "如有需要，歡迎你致電 (852)27666800 與學生事務處（SAO）輔導員聯絡。",
                   })
                   .then(further_help_tc);
               });
@@ -3465,7 +3465,7 @@
                       "Q2.請問你曾否經歷以下狀況:<br/><br/>" +
                       "- 自我傷害及/或傷害他人及/或暴力的意念和行為；<br/>及/或<br/><br/>" +
                       "- 因精神病患而入住醫院；<br/>及/或<br/><br/>" +
-                      "- 經心理學家及/或精神科醫生及/或家庭醫一種或多於一種的精神病患，如: 抑鬱症/焦慮症/思覺失調/精神分裂症/人格障礙等<br/>及/或<br/><br/>" +
+                      "- 經心理學家及/或精神科醫生及/或家庭醫生確診一種或多於一種的精神病患，如: 抑鬱症/焦慮症/思覺失調/精神分裂症/人格障礙等<br/>及/或<br/><br/>" +
                       "- 正在服用醫生處方的精神科藥物",
                   })
                   .then(function() {
@@ -3884,7 +3884,7 @@
                     content: res.text,
                   })
                   .then(function() {
-                    if (score > 10 || service_list == true) {
+                    if (service_list == true) {
                       botui.message.bot({
                         loading: true,
                         photo: polly,
@@ -4417,7 +4417,7 @@
           delay: 2500,
           photo: polly,
           content:
-            "Q5. 你你曾否采用一些积极的应对方法 (例如: 运动、呼吸练习、听音乐等）去面对/纾缓这些情绪吗?",
+            "Q5. 你曾否采用一些积极的应对方法 (例如: 运动、呼吸练习、听音乐等）去面对/纾缓这些情绪吗?",
         })
         .then(function() {
           return botui.action
@@ -5759,7 +5759,7 @@
                     content: res.text,
                   })
                   .then(function() {
-                    if (score > 10 || service_list == true) {
+                    if (service_list == true) {
                       botui.message.bot({
                         loading: true,
                         photo: polly,
