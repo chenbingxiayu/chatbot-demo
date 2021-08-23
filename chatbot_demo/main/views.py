@@ -94,7 +94,8 @@ def login_all(request):
 @csrf_exempt
 def login_sso(request):
     # redirect to rapid connect server
-    response = redirect(sso_auth.destination)
+    # response = redirect(sso_auth.destination)
+    response = redirect(login_sso_callback)
     return response
 
 
@@ -102,12 +103,15 @@ def login_sso(request):
 @require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
-        encoded_jwt = request.POST.get('data')
-        if not encoded_jwt:
-            return render(request, 'main/login_sso.html', {
-                'error_message': "Cannot get JWT"
-            })
-        decoded_jwt = sso_auth.decode(encoded_jwt)
+        # encoded_jwt = request.POST.get('data')
+        # if not encoded_jwt:
+        #     return render(request, 'main/login_sso.html', {
+        #         'error_message': "Cannot get JWT"
+        #     })
+        # decoded_jwt = sso_auth.decode(encoded_jwt)
+        decoded_jwt = dict()
+        decoded_jwt['polyuUserType'] = 'Staff'
+        decoded_jwt['cn'] = 'admin_01'
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
@@ -205,14 +209,16 @@ def chat_console(request):
         staff.save()
         staff.refresh_from_db()
 
-    if staff.staff_role in ('online_triage', 'do', 'counsellor'):
+    if staff.staff_role in (StaffStatus.Role.ONLINETRIAGE,
+                            StaffStatus.Role.DO,
+                            StaffStatus.Role.COUNSELLOR):
         return redirect('counsellor')
-    elif staff.staff_role == 'supervisor':
+    elif staff.staff_role == StaffStatus.Role.SUPERVISOR:
         return redirect('supervisor')
-    elif staff.staff_role == 'administrator':
+    elif staff.staff_role == StaffStatus.Role.ADMIN:
         return redirect('administrator')
     else:
-        return redirect('login_page')
+        return redirect('login')
 
 
 @login_required

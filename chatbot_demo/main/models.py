@@ -144,7 +144,7 @@ class StaffStatus(models.Model):
         DO = 'do', _('DO')
         COUNSELLOR = 'counsellor', _('Counsellor')
         SUPERVISOR = 'supervisor', _('Supervisor')
-        ADMIN = 'admin', _('Admin')
+        ADMIN = 'admin', _('Administrator')
 
     class ChatStatus(models.TextChoices):
         AVAILABLE = 'available', _('Available')
