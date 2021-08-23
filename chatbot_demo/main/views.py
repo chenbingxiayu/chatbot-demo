@@ -94,8 +94,7 @@ def login_all(request):
 @csrf_exempt
 def login_sso(request):
     # redirect to rapid connect server
-    # response = redirect(sso_auth.destination)
-    response = redirect(login_sso_callback)
+    response = redirect(sso_auth.destination)
     return response
 
 
@@ -103,15 +102,12 @@ def login_sso(request):
 @require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
-        # encoded_jwt = request.POST.get('data')
-        # if not encoded_jwt:
-        #     return render(request, 'main/login_sso.html', {
-        #         'error_message': "Cannot get JWT"
-        #     })
-        # decoded_jwt = sso_auth.decode(encoded_jwt)
-        decoded_jwt = dict()
-        decoded_jwt['polyuUserType'] = 'Staff'
-        decoded_jwt['cn'] = 'admin_01'
+        encoded_jwt = request.POST.get('data')
+        if not encoded_jwt:
+            return render(request, 'main/login_sso.html', {
+                'error_message': "Cannot get JWT"
+            })
+        decoded_jwt = sso_auth.decode(encoded_jwt)
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
