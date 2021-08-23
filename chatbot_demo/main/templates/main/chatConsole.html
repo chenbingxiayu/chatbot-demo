@@ -27,12 +27,16 @@
     <a class="navbar-brand" href="/main/page/chatconsole/">Chat Console</a>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
+        {% if request.session.user_group in 'supervisor,app_admin' %}
         <li class="nav-item">
           <a class="nav-link" href="/main/page/staffstatus/">Staff Status</a>
         </li>
+        {% endif %}
+        {% if request.session.user_group in 'app_admin' %}
         <li class="nav-item">
           <a class="nav-link" href="/main/page/statistics/">Statistics</a>
         </li>
+        {% endif %}
       </ul>
     </div>
     <button class="btn logout-btn my-2 my-sm-0" type="button" style="background-color: #dcdcdc">Logout</button>
@@ -412,7 +416,7 @@
             fileDownload(res.data, 'red_route.xlsx')
         })
     });
-    
+
   </script>
   {% block extra_js %}{% endblock extra_js %}
 </body>

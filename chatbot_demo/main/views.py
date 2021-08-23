@@ -322,7 +322,7 @@ def staffstatus(request):
 
 
 @login_required
-@permission_required('main.view_staffstatus', raise_exception=True)
+@permission_required('main.view_user', raise_exception=True)
 @require_http_methods(['GET', 'POST'])
 def statistics_page(request):
     staff_netid = request.user.netid
