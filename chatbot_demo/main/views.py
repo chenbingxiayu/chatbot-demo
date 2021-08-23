@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 
+import io
 import logging
 import uuid
 import json
 from datetime import datetime, timedelta
 
 import requests
+import xlsxwriter
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -16,8 +18,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, permission_required
-from main.models import User
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 
 from main.exceptions import UnauthorizedException
 from main.models import (
@@ -160,7 +161,9 @@ def student_logout(request):
 @require_http_methods(['GET'])
 def login_page(request):
     if request.method == "GET":
-        form = StaffLoginForm(auto_id=True)
+        user_group = request.session['user_group']
+
+        form = StaffLoginForm(user_group, auto_id=True)
         return render(request, 'main/login_staff.html', {'form': form})
 
 
@@ -187,7 +190,7 @@ def logout_staff(request):
 @require_http_methods(['POST', 'GET'])
 def chat_console(request):
     staff_netid = request.user.netid
-    user_group = request.session['user_group']
+
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist:
@@ -195,11 +198,8 @@ def chat_console(request):
 
     if request.method == 'POST':
         # check which user group does the user belongs to
-        if user_group == 'counsellor':
-            staff.staff_role = request.POST.get('role')
-        elif user_group == 'app_admin':
-            staff.staff_role = StaffStatus.Role.SUPERVISOR
 
+        staff.staff_role = request.POST.get('role')
         staff.staff_chat_status = request.POST.get('status')
         staff.status_change_time = timezone.localtime()
         staff.save()
@@ -312,12 +312,29 @@ def staffstatus(request):
     try:
         staff = StaffStatus.objects.get(staff_netid=staff_netid)
     except StaffStatus.DoesNotExist as e:
-        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=400)
+        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=404)
 
     staff_list = StaffStatus.objects.all()
     now = timezone.now()
     return render(request, 'main/staffstatus.html',
                   {'staff': staff, 'staff_list': staff_list, 'now': now,
+                   'selectable_status': SELECTABLE_STATUS})
+
+
+@login_required
+@permission_required('main.view_user', raise_exception=True)
+@require_http_methods(['GET', 'POST'])
+def statistics_page(request):
+    staff_netid = request.user.netid
+    try:
+        staff = StaffStatus.objects.get(staff_netid=staff_netid)
+    except StaffStatus.DoesNotExist as e:
+        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=404)
+
+    now = timezone.now()
+    return render(request, 'main/statistics.html',
+                  {'staff': staff,
+                   'now': now,
                    'selectable_status': SELECTABLE_STATUS})
 
 
@@ -510,35 +527,85 @@ def end_chatbot(request):
 
 
 @login_required
-@require_http_methods(['GET'])
-def export_statistics(request):
-    from_date = timezone.localdate() - timedelta(days=1)
-    to_date = timezone.localdate()
+@require_http_methods(['POST'])
+def get_statistics(request):
+    data = json.loads(request.body)
+    from_date = data.get('fromDate')
+    to_date = data.get('toDate')
 
     res = dict()
     res.update(ChatBotSession.statis_overview(from_date, to_date))
     res.update(StudentChatHistory.statis_overview(from_date, to_date))
+
     return JsonResponse(res, status=200)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(['POST'])
+def export_statistics(request):
+    data = json.loads(request.body)
+    from_date = data.get('fromDate')
+    to_date = data.get('toDate')
+
+    res = ChatBotSession.statis_overview(from_date, to_date)
+    res.update(StudentChatHistory.statis_overview(from_date, to_date))
+
+    output = io.BytesIO()
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet('Statistics Overview')
+
+    ws.write(0, 0, 'From')
+    ws.write(0, 1, from_date)
+    ws.write(1, 0, 'To')
+    ws.write(1, 1, to_date)
+
+    row_name = {
+        'No. of access': 'total_access_count',
+        'No. of office hour access': 'access_office_hr_count',
+        'No. of PolyU student': 'polyu_student_count',
+        'No. of non-student': 'non_polyu_student_count',
+        'No. of green': 'score_green_count',
+        'No. of yellow': 'score_yellow_count',
+        'No. of red': 'score_red_count',
+        'No. of access to POSS': 'poss_access_count',
+        'No. of access to Mental Health 101': 'mh101_access_count',
+        'No. of access to Online Chat Service': 'online_chat_access_count',
+        'No. of successful chat with counsellor': 'successful_chat_count'
+    }
+
+    for row_idx, (key, val) in enumerate(row_name.items(), 2):
+        ws.write(row_idx, 0, key)
+        ws.write(row_idx, 1, res[val])
+
+    wb.close()
+    output.seek(0)
+    response = HttpResponse(output,
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="statistics_overview.xlsx"'
+
+    return response
+
+
+@login_required
+@require_http_methods(['POST'])
 def get_red_route(request):
-    from_date = timezone.localdate() - timedelta(days=7)
+    data = json.loads(request.body)
+    before_date = data.get('beforeDate')
+    from_date = datetime.strptime(before_date, '%Y-%m-%d') - timedelta(days=7)
 
     res = ChatBotSession.get_red_route(from_date)
-    return JsonResponse(res, status=200)
+
+    return JsonResponse(res, safe=False, status=200)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(['POST'])
 def export_red_route(request):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="red_route.xls"'
+    data = json.loads(request.body)
+    before_date = data.get('beforeDate')
+    output = ChatBotSession.get_red_route_to_excel(before_date)
 
-    from_date = timezone.localdate() - timedelta(days=7)
-    from_dt = datetime.combine(from_date, datetime.min.time())
-    wb = ChatBotSession.get_red_route_to_excel(from_dt)
-
-    wb.save(response)
+    response = HttpResponse(output,
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="red_route.xlsx"'
     return response

@@ -199,7 +199,7 @@ CELERY_RESULT_BACKEND = REDIS_CONN
 CELERY_BEAT_SCHEDULE = {
     "assignment_tasks": {
         "task": "tasks.tasks.assignment_tasks",
-        "schedule": timedelta(seconds=60),
+        "schedule": timedelta(seconds=30),
     }
 }
 

@@ -170,14 +170,17 @@ class StatisticTestCase(TestCase):
         self.assertEqual(res['total_access_count'], 70)
         self.assertEqual(res['access_office_hr_count'], 27)
         self.assertEqual(res['polyu_student_count'], 70 / 2)
+        self.assertEqual(res['non_polyu_student_count'], 70 / 2)
         self.assertListEqual(list(res.keys()), [
             'total_access_count',
             'access_office_hr_count',
             'polyu_student_count',
+            'non_polyu_student_count',
             'score_green_count',
             'score_yellow_count',
             'score_red_count',
-            '101_access_count',
+            'mh101_access_count',
+            'poss_access_count',
             'online_chat_access_count',
             'successful_chat_count'
         ])

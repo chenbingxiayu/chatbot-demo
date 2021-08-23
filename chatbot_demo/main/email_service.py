@@ -10,11 +10,11 @@ from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 
-smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-smtp_port = os.getenv("SMTP_PORT", 465)
+smtp_server = os.getenv("SMTP_SERVER", "smtp.office365.com")
+smtp_port = os.getenv("SMTP_PORT", 587)
 email_user = os.getenv("EMAIL_USER", "sao")
 email_pw = os.getenv("EMAIL_PW")
-domain = os.getenv("EMAIL_DOMAIN", "gmail.com")
+domain = os.getenv("EMAIL_DOMAIN", "connect.polyu.hk")
 SENDER = "Student Affairs Office"
 chatroom_url = 'http://localhost:8787/main/createRoom/'
 

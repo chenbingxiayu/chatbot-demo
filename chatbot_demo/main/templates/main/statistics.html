@@ -1,0 +1,56 @@
+{% extends 'main/chatConsole.html' %}
+{% block content %}
+{% load template_filter %}
+<div class="statistics-container">
+  <div class="row">
+    <div class="col-2">
+      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Statistics Overview</a>
+        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Red Route</a>
+      </div>
+    </div>
+    <div class="col-10">
+      <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+          <div>Please select the date range.</div>
+          <form class="form-inline m-3">
+            <div class="form-group row">
+              <label for="stat-overview__fromDate" class="col-sm-2 col-form-label">From</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="stat-overview__fromDate">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="stat-overview__toDate" class="col-sm-2 col-form-label">To</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="stat-overview__toDate">
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary ml-5 m-1" id="stat-overview__submit">Fetch</button>
+            <button type="button" class="btn btn-primary m-1" id="stat-overview__export">Export</button>
+          </form>
+          <div class="table-responsive">
+            <table class="table col-sm-6" id="statOverviewTable"></table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+          <div>List red route students within 7 days before a specific date.</div>
+          <form class="form-inline m-3">
+            <div class="form-group row">
+              <label for="red-route__beforeDate" class="col-sm-2 col-form-label">Before</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="red-route__beforeDate">
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary ml-5 m-1" id="red-route__submit">Fetch</button>
+            <button type="button" class="btn btn-primary m-1" id="red-route__export">Export</button>
+          </form>
+          <div class="table-responsive" style="max-height: 560px; max-width: fit-content">
+            <table class="table col-sm-6 table-bordered table-striped" id="redRouteTable"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
