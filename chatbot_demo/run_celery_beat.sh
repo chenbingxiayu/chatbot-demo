@@ -9,5 +9,4 @@ else
   echo "Run in containerized environment"
 fi
 
-rm celerybeat*
-celery -A chatbot_demo beat -l info
+celery -A chatbot_demo beat -l info -s tasks/db/celerybeat-schedule

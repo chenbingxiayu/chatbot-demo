@@ -12,14 +12,11 @@ logger = logging.getLogger(__name__)
 
 smtp_server = os.getenv("SMTP_SERVER", "smtp.office365.com")
 smtp_port = os.getenv("SMTP_PORT", 587)
-email_user = os.getenv("EMAIL_USER", "sao")
+email_user = os.getenv("EMAIL_USER")
 email_pw = os.getenv("EMAIL_PW")
-domain = os.getenv("EMAIL_DOMAIN", "connect.polyu.hk")
+domain = os.getenv("EMAIL_DOMAIN")
 SENDER = "Student Affairs Office"
 chatroom_url = 'http://localhost:8787/main/createRoom/'
-
-# Create a secure SSL context
-context = ssl.create_default_context()
 
 
 class EmailTemplate:
@@ -101,25 +98,31 @@ Regards
         msg = EmailMessage()
         msg['Subject'] = subject
         msg['From'] = Address(SENDER, self.user, domain)
-        msg['To'] = destination
+        msg['To'] = Address(destination, destination, domain)
 
         msg.set_content(msesage)
 
         return msg
 
     def send(self, template_name: str, destination: str, template_data: Dict = None):
+        logger.info("Composing email.")
         template = self.email_templates[template_name]
         message = template.render(template_data)
         msg = self.compose(destination, template.subject, message)
 
         try:
-            with smtplib.SMTP_SSL(self.server, self.port, context=context) as server:
-                server.login(self.user, self.pw)
+            with smtplib.SMTP(self.server, self.port) as server:
+                server.starttls()
+                server.login(f"{self.user}@{domain}", self.pw)
                 server.send_message(msg)
-        except socket.error as e:
+        except (socket.error, Exception) as e:
             logger.warning(e)
-        except Exception as e:
-            logger.warning(e)
+            logger.warning("Email sent fail.")
+
+        logger.info("Successfully sent.")
 
 
 email_service = EmailService(smtp_server, smtp_port, email_user, email_pw)
+
+if __name__ == '__main__':
+    email_service.send('new_assignment', 'staff_id')

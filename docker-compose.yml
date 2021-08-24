@@ -62,14 +62,11 @@ services:
       - redis
 
   dashboard:
-    build: ./chatbot_demo
-    command: ./run_flower.sh
+    image: mher/flower
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
     ports:
       - 5555:5555
-    env_file:
-      - .env.docker
-    environment:
-      <<: *common-variables
     depends_on:
       - redis
 

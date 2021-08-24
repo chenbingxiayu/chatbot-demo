@@ -19,6 +19,7 @@ def reassign_counsellor():
 
     :return:
     """
+    logger.info("Run re-assignment task")
     now = timezone.now()
     role_ranking = ROLE_RANKING + [None]
 
@@ -28,6 +29,7 @@ def reassign_counsellor():
         .order_by('chat_request_time') \
         .all()
 
+    successful_count = 0
     for student in students:
         with transaction.atomic():
             try:
@@ -40,8 +42,11 @@ def reassign_counsellor():
                         staff.assign_to(student)
                         logger.info(f"{staff} assigned to {student}")
                         staff.notify_assignment()
+                        successful_count += 1
             except TransactionManagementError as e:
                 logger.warning(e)
+
+    logger.info(f"{successful_count}/{len(students)} student was re-assigned.")
 
 
 def assign_staff(student: StudentChatStatus) -> bool:
@@ -73,16 +78,21 @@ def dequeue_student():
 
     :return:
     """
-
+    logger.info("Run dequeue task")
     students = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.WAITING) \
         .order_by('chat_request_time') \
         .all()
 
+    successful_count = 0
     for student in students:
         if not assign_staff(student):
             # there is no available staff, we can stop looping
             break
+
+        successful_count += 1
+
+    logger.info(f"{successful_count}/{len(students)} students has been assigned.")
 
 
 @shared_task
