@@ -135,7 +135,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(and_C_of_OCS);
+                    .then(T_and_C_of_OCS);
                 }
                 if (res.value == 5) {
                   return botui.message
