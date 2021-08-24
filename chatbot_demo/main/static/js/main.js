@@ -135,7 +135,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(T_and_C_of_OCS);
+                    .then(and_C_of_OCS);
                 }
                 if (res.value == 5) {
                   return botui.message
@@ -1738,7 +1738,14 @@
                         });
                     }
                   })
-                  .then(end);
+                  .then(function() {
+                    botui.message.bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 1500,
+                        content: "Thank you for using our service.",
+                    })
+                  }).then(end);
               }
             });
         });
@@ -3740,7 +3747,14 @@
                         });
                     }
                   })
-                  .then(end_tc);
+                  .then(function() {
+                    botui.message.bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 1500,
+                        content: "多謝你使用我們的服務。",
+                    })
+                  }).then(end_tc);
               }
             });
         });
@@ -5615,7 +5629,14 @@
                         });
                     }
                   })
-                  .then(end_sc);
+                  .then(function() {
+                    botui.message.bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 1500,
+                        content: "多谢你使用我们的服务。",
+                    })
+                  }).then(end_sc);
               }
             });
         });
