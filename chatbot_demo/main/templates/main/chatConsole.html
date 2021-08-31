@@ -190,6 +190,12 @@
 
 
     $(document).ready(() => {
+      setTimeout(() => {
+        if ($('#assigned').length > 0) {
+          alert('You have an incoming chat request, please click the link to enter the chat room.')
+        }
+      }, 300)
+
       $('#statOverviewTable').replaceWith(statOverviewTableHTML(statOverviewData))
       $('#redRouteTable').replaceWith(redRouteTableHTML([]))
     })
@@ -231,6 +237,7 @@
     /**
      * Create the room creation link
      * @param student_id
+     * @param status
      * @returns {string}
      */
     function createRoomEl(student_id, status) {
@@ -278,10 +285,7 @@
       ws.onmessage = function(event) {
         let data = JSON.parse(event.data)
         if (data.type === 'update_queue') {
-          location.reload()
-        } else if (data.type === 'assignment') {
-          alert('You have an incoming chat request, please click the link to enter the chat room.')
-          location.reload()
+          window.location.reload()
         }
       }
       return ws
@@ -321,9 +325,9 @@
     })
 
     // FIXME remove later
-    setTimeout(function(){
-      window.location.reload(1);
-    }, 30000);
+    // setTimeout(function(){
+    //   window.location.reload(1);
+    // }, 30000);
 
     function fileDownload(blob_data, filename) {
       const url = window.URL.createObjectURL(blob_data);
@@ -381,7 +385,10 @@
         })
     });
 
-    $('#red-route__beforeDate')[0].max = new Date().toISOString().split("T")[0]
+    if ($('#red-route__beforeDate').length > 0) {
+      $('#red-route__beforeDate')[0].max = new Date().toISOString().split("T")[0]
+    }
+
 
     $('#red-route__submit').on('click', () => {
         const beforeDate = $('#red-route__beforeDate')[0].value

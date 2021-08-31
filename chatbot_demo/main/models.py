@@ -194,13 +194,13 @@ class StaffStatus(models.Model):
 
     def notify_assignment(self):
         logger.info("notify staff")
-        async_to_sync(channel_layer.group_send)(
-            f'staff_{self.staff_netid}', {
-                'type': 'send_assignment_alert',
-                'content': {
-                    'type': 'assignment'
-                }
-            })
+        # async_to_sync(channel_layer.group_send)(
+        #     f'staff_{self.staff_netid}', {
+        #         'type': 'send_assignment_alert',
+        #         'content': {
+        #             'type': 'assignment'
+        #         }
+        #     })
 
         email_service.send('new_assignment', self.staff_netid)
 

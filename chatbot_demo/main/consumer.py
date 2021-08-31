@@ -43,10 +43,10 @@ class AssignmentConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, content, **kwargs):
         pass
 
-    async def send_assignment_alert(self, event):
-        logger.info('send assignment alert to frontend')
-        if event.get('content'):
-            await self.send_json(event['content'])
+    # async def send_assignment_alert(self, event):
+    #     logger.info('send assignment alert to frontend')
+    #     if event.get('content'):
+    #         await self.send_json(event['content'])
 
     async def refresh_chat_queue(self, event):
         logger.info('waiting queue updated')

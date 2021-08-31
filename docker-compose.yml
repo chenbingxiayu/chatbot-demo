@@ -8,7 +8,7 @@ services:
   redis:
     image: redis:5-alpine
     ports:
-      - 6379:6379
+      - "6379:6379"
 
   mysql:
     image: mysql:8.0.25
@@ -28,13 +28,13 @@ services:
     volumes:
       - ./chatbot_demo:/app
     ports:
-      - 8899:8899
+      - "8899:8899"
     env_file:
       - .env.docker
     environment:
       <<: *common-variables
     depends_on:
-#      - mysql
+      #      - mysql
       - redis
 
   celery:
@@ -46,6 +46,7 @@ services:
       - .env.docker
     environment:
       <<: *common-variables
+#      MYSQL_HOST: host.docker.internal
     depends_on:
       - redis
 
@@ -66,7 +67,7 @@ services:
     environment:
       CELERY_BROKER_URL: redis://redis:6379/0
     ports:
-      - 5555:5555
+      - "5555:5555"
     depends_on:
       - redis
 
