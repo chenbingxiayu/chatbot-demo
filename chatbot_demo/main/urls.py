@@ -7,6 +7,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('response', views.auto_response, name='auto_response'),
     path('response_api', views.response_api, name='response_api'),
+
+    # web pages
     path('login/staff/', views.login_page, name='login_staff'),
     path('page/chatconsole/', views.chat_console, name='chat_console'),
     path('page/counsellor/', views.counsellor, name='counsellor'),
@@ -14,6 +16,8 @@ urlpatterns = [
     path('page/administrator/', views.administrator, name='administrator'),
     path('page/staffstatus/', views.staffstatus, name='staffstatus'),
     path('page/statistics/', views.statistics_page, name='statispage'),
+
+    # APIs
     path('api/logout/', views.logout_staff, name='logout_staff'),
     path('api/findstaff/', views.findstaff, name='findstaff'),
     path('api/updatestaff/', views.updatestaff, name='updatestaff'),

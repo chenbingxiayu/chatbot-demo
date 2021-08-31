@@ -30,7 +30,7 @@ from main.models import (
     SELECTABLE_STATUS
 )
 from main.forms import StaffLoginForm
-from main.utils import today_start, uuid2str, str2uuid
+from main.utils import day_start, uuid2str, str2uuid
 from main.signals import update_queue
 from tasks.tasks import assign_staff
 from main.auth import sso_auth
@@ -94,7 +94,8 @@ def login_all(request):
 @csrf_exempt
 def login_sso(request):
     # redirect to rapid connect server
-    response = redirect(sso_auth.destination)
+    # response = redirect(sso_auth.destination)
+    response = redirect('login_sso_callback')
     return response
 
 
@@ -102,12 +103,16 @@ def login_sso(request):
 @require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
-        encoded_jwt = request.POST.get('data')
-        if not encoded_jwt:
-            return render(request, 'main/login_sso.html', {
-                'error_message': "Cannot get JWT"
-            })
-        decoded_jwt = sso_auth.decode(encoded_jwt)
+        # encoded_jwt = request.POST.get('data')
+        # if not encoded_jwt:
+        #     return render(request, 'main/login_sso.html', {
+        #         'error_message': "Cannot get JWT"
+        #     })
+        # decoded_jwt = sso_auth.decode(encoded_jwt)
+
+        decoded_jwt = dict()
+        decoded_jwt['polyuUserType'] = 'Staff'
+        decoded_jwt['cn'] = 'staff_01'
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
@@ -231,20 +236,23 @@ def counsellor(request):
         return render(request, 'main/404.html')
 
     students = StudentChatStatus.objects \
-        .filter(chat_request_time__gte=today_start()) \
+        .filter(chat_request_time__gte=day_start()) \
         .filter(Q(student_chat_status=StudentChatStatus.ChatStatus.WAITING) |
                 Q(assigned_counsellor=staff)) \
         .order_by('chat_request_time')
 
     histories = StudentChatHistory.objects \
-        .filter(chat_request_time__gte=today_start()) \
+        .filter(chat_request_time__gte=day_start()) \
         .filter(Q(assigned_counsellor=staff)) \
         .order_by('chat_request_time')
+
+    high_risk_students = ChatBotSession.get_high_risk_student()
 
     return render(request, 'main/counsellor.html',
                   {'staff': staff,
                    'students': students,
                    'histories': histories,
+                   'high_risk_students': high_risk_students,
                    'now': now,
                    'selectable_status': SELECTABLE_STATUS})
 
@@ -263,11 +271,11 @@ def supervisor(request):
         return render(request, 'main/404.html')
 
     students = StudentChatStatus.objects \
-        .filter(chat_request_time__gte=today_start()) \
+        .filter(chat_request_time__gte=day_start()) \
         .order_by('chat_request_time')
 
     histories = StudentChatHistory.objects \
-        .filter(chat_request_time__gte=today_start()) \
+        .filter(chat_request_time__gte=day_start()) \
         .order_by('chat_request_time')
 
     return render(request, 'main/supervisor.html',
@@ -292,11 +300,11 @@ def administrator(request):
         return render(request, 'main/404.html')
 
     students = StudentChatStatus.objects \
-        .filter(chat_request_time__gte=today_start()) \
+        .filter(chat_request_time__gte=day_start()) \
         .order_by('chat_request_time')
 
     histories = StudentChatHistory.objects \
-        .filter(chat_request_time__gte=today_start()) \
+        .filter(chat_request_time__gte=day_start()) \
         .order_by('chat_request_time')
     return render(request, 'main/administrator.html',
                   {'staff': staff,

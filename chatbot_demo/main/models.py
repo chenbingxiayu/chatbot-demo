@@ -3,7 +3,7 @@ from __future__ import unicode_literals, annotations
 import io
 import logging
 import uuid
-from datetime import datetime, date
+from datetime import datetime, date, time, timedelta
 from typing import Dict
 
 import pendulum
@@ -21,7 +21,7 @@ from channels.layers import get_channel_layer
 
 from main.email_service import email_service
 from main.exceptions import UnauthorizedException
-from main.utils import hk_time, utc_time, tz_offset
+from main.utils import hk_time, utc_time, tz_offset, day_start
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
@@ -433,6 +433,12 @@ class ChatBotSession(models.Model):
     feedback_rating = models.IntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     @classmethod
+    def get_high_risk_student(cls):
+        prev_working_day = BusinessCalender.get_prev_working_day()
+        return cls.objects.filter(score__gte=11, start_time__gte=day_start(prev_working_day)) \
+            .values('student_netid', 'start_time', 'end_time')
+
+    @classmethod
     def usage_chatbot_connect(cls, student_netid: str = None,
                               is_ployu_student: bool = False) -> ChatBotSession:
         session = cls.objects.create(student_netid=student_netid,
@@ -523,6 +529,26 @@ class ChatBotSession(models.Model):
         output.seek(0)
 
         return output
+
+
+class BusinessCalender(models.Model):
+    class Meta:
+        db_table = 'business-calender'
+
+    date = models.DateField(primary_key=True)
+    is_working_day = models.BooleanField()
+    office_hr_end = models.DateTimeField(null=True)
+
+    office_hr_begin = time(9, 0, 0)
+
+    @classmethod
+    def is_working_day_(cls, date: datetime.date):
+        return cls.objects.filter(date=date).first()
+
+    @classmethod
+    def get_prev_working_day(cls):
+        default = timezone.localdate() - timedelta(days=1)
+        return default
 
 
 ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,

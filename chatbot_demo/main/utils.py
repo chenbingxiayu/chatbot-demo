@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, date
 
 import pendulum
 from typing import Optional
@@ -12,13 +12,15 @@ utc_time = pendulum.timezone('utc')
 tz_offset = 8
 
 
-def today_start() -> datetime:
+def day_start(d: date = None) -> datetime:
     """
+    Return day start of today if no args provided
     Y-m-D 00:00:00T+0800
 
     :return:
     """
-    return timezone.localtime().replace(hour=0, minute=0, second=0, microsecond=0)
+    d = d or timezone.localdate()
+    return datetime.combine(d, datetime.min.time())
 
 
 def uuid2str(obj: uuid.UUID) -> str:
