@@ -100,3 +100,7 @@ def assignment_tasks():
     reassign_counsellor()
     dequeue_student()
     update_queue.send(sender=None)
+
+
+def end_all_chat():
+    pass

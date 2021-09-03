@@ -16,6 +16,7 @@ urlpatterns = [
     path('page/administrator/', views.administrator, name='administrator'),
     path('page/staffstatus/', views.staffstatus, name='staffstatus'),
     path('page/statistics/', views.statistics_page, name='statispage'),
+    path('page/calendar/', views.calendar_page, name='calendarpage'),
 
     # APIs
     path('api/logout/', views.logout_staff, name='logout_staff'),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('api/export_statistics/', views.export_statistics, name='export_statistics'),
     path('api/get_red_route/', views.get_red_route, name='get_red_route'),
     path('api/export_red_route/', views.export_red_route, name='export_red_route'),
+    path('api/update_calendar/', views.update_calendar, name='update_calendar'),
     path('user/login/', views.login_all, name='login'),
     path('user/login-sso/', views.login_sso, name='login_sso'),
     path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback'),

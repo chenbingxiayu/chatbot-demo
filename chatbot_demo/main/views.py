@@ -4,10 +4,12 @@ import io
 import logging
 import uuid
 import json
+import csv
 from datetime import datetime, timedelta
 
 import requests
 import xlsxwriter
+from django.db.transaction import TransactionManagementError
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -27,7 +29,7 @@ from main.models import (
     StudentChatStatus,
     StudentChatHistory,
     ChatBotSession,
-    SELECTABLE_STATUS
+    SELECTABLE_STATUS, BusinessCalendar
 )
 from main.forms import StaffLoginForm
 from main.utils import day_start, uuid2str, str2uuid
@@ -112,7 +114,7 @@ def login_sso_callback(request):
 
         decoded_jwt = dict()
         decoded_jwt['polyuUserType'] = 'Staff'
-        decoded_jwt['cn'] = 'staff_01'
+        decoded_jwt['cn'] = 'admin_01'
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
@@ -278,10 +280,13 @@ def supervisor(request):
         .filter(chat_request_time__gte=day_start()) \
         .order_by('chat_request_time')
 
+    high_risk_students = ChatBotSession.get_high_risk_student()
+
     return render(request, 'main/supervisor.html',
                   {'staff': staff,
                    'students': students,
                    'histories': histories,
+                   'high_risk_students': high_risk_students,
                    'now': now,
                    'selectable_status': SELECTABLE_STATUS})
 
@@ -306,10 +311,14 @@ def administrator(request):
     histories = StudentChatHistory.objects \
         .filter(chat_request_time__gte=day_start()) \
         .order_by('chat_request_time')
+
+    high_risk_students = ChatBotSession.get_high_risk_student()
+
     return render(request, 'main/administrator.html',
                   {'staff': staff,
                    'students': students,
                    'histories': histories,
+                   'high_risk_students': high_risk_students,
                    'now': now,
                    'selectable_status': SELECTABLE_STATUS})
 
@@ -341,10 +350,29 @@ def statistics_page(request):
     except StaffStatus.DoesNotExist as e:
         return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=404)
 
-    now = timezone.now()
-    return render(request, 'main/statistics.html',
+    return render(request,
+                  'main/statistics.html',
                   {'staff': staff,
-                   'now': now,
+                   'selectable_status': SELECTABLE_STATUS})
+
+
+@login_required
+@permission_required('main.view_user', raise_exception=True)
+@require_http_methods(['GET', 'POST'])
+def calendar_page(request):
+    staff_netid = request.user.netid
+    try:
+        staff = StaffStatus.objects.get(staff_netid=staff_netid)
+    except StaffStatus.DoesNotExist as e:
+        return JsonResponse({"error": f"staff_netid: {staff_netid} does not exist"}, status=404)
+
+    start_date = BusinessCalendar.objects.order_by('date').first()
+    end_date = BusinessCalendar.objects.order_by('-date').first()
+
+    return render(request, 'main/calendar.html',
+                  {'staff': staff,
+                   'start_date': start_date.date if start_date else None,
+                   'end_date': end_date.date if end_date else None,
                    'selectable_status': SELECTABLE_STATUS})
 
 
@@ -619,3 +647,46 @@ def export_red_route(request):
                             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="red_route.xlsx"'
     return response
+
+
+@login_required
+@require_http_methods(['POST'])
+def update_calendar(request):
+    file = request.FILES.get('file')
+    if not file:
+        msg = 'No file uploaded'
+        logger.warning(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        return JsonResponse(response_json, status=400)
+
+    decoded_file = file.read().decode('utf-8')
+    io_string = io.StringIO(decoded_file)
+    calendar_dates = [line for line in csv.reader(io_string, delimiter=',')]
+
+    try:
+        BusinessCalendar.update_items(calendar_dates)
+    except (TransactionManagementError, Exception) as e:
+        msg = str(e)
+        logger.warning(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        return JsonResponse(response_json, status=500)
+
+    return JsonResponse(response_json, status=200)
+
+
+# @login_required
+@csrf_exempt
+@require_http_methods(['GET'])
+def is_working_day(request, date: str):
+    try:
+        res = BusinessCalendar.is_working_day_(date)
+    except ValueError as e:
+        msg = str(e)
+        logger.warning(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        return JsonResponse(response_json, status=200)
+
+    return JsonResponse({'is_working_day': res}, status=200)
