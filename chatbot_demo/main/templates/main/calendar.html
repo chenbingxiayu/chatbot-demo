@@ -1,0 +1,25 @@
+{% extends 'main/chatConsole.html' %}
+{% block content %}
+<div>
+  <div>
+    {% if start_date %}
+    <p>Calendar have been configured between {{ start_date }} and {{ end_date }}</p>
+    {% else %}
+    <p>Please configure the calendar by upload a csv file</p>
+    {% endif %}
+  </div>
+  <form>
+    <div class="form-group row">
+      <div class="col-1">
+        <label for="input-business-calendar" class="col-form-label">Upload Calendar</label>
+      </div>
+      <div class="col-3 mt-1">
+        <input type="file" class="form-control-file" id="input-business-calendar" accept=".csv">
+      </div>
+      <div class="col-2">
+        <button type="button" class="btn btn-primary" id="upload-business-calendar">Upload</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

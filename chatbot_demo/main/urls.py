@@ -7,6 +7,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('response', views.auto_response, name='auto_response'),
     path('response_api', views.response_api, name='response_api'),
+
+    # web pages
     path('login/staff/', views.login_page, name='login_staff'),
     path('page/chatconsole/', views.chat_console, name='chat_console'),
     path('page/counsellor/', views.counsellor, name='counsellor'),
@@ -14,6 +16,9 @@ urlpatterns = [
     path('page/administrator/', views.administrator, name='administrator'),
     path('page/staffstatus/', views.staffstatus, name='staffstatus'),
     path('page/statistics/', views.statistics_page, name='statispage'),
+    path('page/calendar/', views.calendar_page, name='calendarpage'),
+
+    # APIs
     path('api/logout/', views.logout_staff, name='logout_staff'),
     path('api/findstaff/', views.findstaff, name='findstaff'),
     path('api/updatestaff/', views.updatestaff, name='updatestaff'),
@@ -26,12 +31,14 @@ urlpatterns = [
     path('api/export_statistics/', views.export_statistics, name='export_statistics'),
     path('api/get_red_route/', views.get_red_route, name='get_red_route'),
     path('api/export_red_route/', views.export_red_route, name='export_red_route'),
+    path('api/update_calendar/', views.update_calendar, name='update_calendar'),
+    path('api/working_day/<str:date>/', views.is_working_day, name='working_day'),
     path('user/login/', views.login_all, name='login'),
     path('user/login-sso/', views.login_sso, name='login_sso'),
     path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback'),
     path('user/logout/student/', views.student_logout, name='student_logout'),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-    path('i18n/', include('django.conf.urls.i18n')),
+    path('i18n/', include('django.conf.urls.i18n'))
 ]
 
 debug_urls = [

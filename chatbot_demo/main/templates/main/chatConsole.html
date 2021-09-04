@@ -36,6 +36,9 @@
         <li class="nav-item">
           <a class="nav-link" href="/main/page/statistics/">Statistics</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/main/page/calendar/">Calendar</a>
+        </li>
         {% endif %}
       </ul>
     </div>
@@ -423,6 +426,38 @@
             fileDownload(res.data, 'red_route.xlsx')
         })
     });
+
+    $('#upload-business-calendar').on('click', () => {
+      const fileList = $('#input-business-calendar')[0].files
+      if (fileList.length === 0) return
+
+      let file = fileList[0]
+      let formData = new FormData()
+      formData.append('file', file)
+
+      for (var pair of formData.entries()) {
+          console.log(pair[0]+ ', ' + pair[1]);
+      }
+
+      $.ajax({
+          type: 'POST',
+          url: '/main/api/update_calendar/',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+            // 'Content-Type': 'multipart/form-data'
+          },
+          data: formData,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: () => {
+            window.location.reload()
+          },
+          error: (err) => {
+            alert("Failed to read csv file. Invalid data format.")
+          }
+      });
+    })
 
   </script>
   {% block extra_js %}{% endblock extra_js %}

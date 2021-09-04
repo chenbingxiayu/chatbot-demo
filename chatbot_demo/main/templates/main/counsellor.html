@@ -2,36 +2,64 @@
 {% block content %}
 {% load template_filter %}
 <div class="table-container">
-  <table id="chat-status-table" class="table table-striped table-bordered table-responsive-md">
-    <thead>
-      <tr>
-        <th scope="col" class="seq-no">Waiting Sequence</th>
-        <th scope="col">Student ID</th>
-        <th scope="col">Time (request time)</th>
-        <th scope="col">Status</th>
-        <th scope="col">Duration</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for student in students %}
-      <tr data-stud-key="{{ student.id }}">
-        <th scope="row" class="seq-no">{{ forloop.counter }}</th>
-        <td data-student-netid="{{student.student_netid}}">{{ student.student_netid|mask }}</td>
-        <td>{{ student.chat_request_time|time:'H:i:s' }}</td>
-        <td class="chat-status">{{ student.get_student_chat_status_display }}</td>
-        <td>{{ student.chat_request_time|duration:now }}</td>
-      </tr>
-      {% endfor %}
-      {% for history in histories %}
-      <tr>
-        <th scope="row" class="seq-no"></th>
-        <td>{{ history.student_netid|mask }}</td>
-        <td>{{ history.chat_request_time|time:'H:i:s' }}</td>
-        <td class="chat-status">End</td>
-        <td>{{ history.chat_request_time|duration:now }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
+  <div class="row">
+    <div class=" col-6">
+      <h3 class="ml-3">Waiting Queue and History</h3>
+      <table id="chat-status-table" class="table table-striped table-bordered table-responsive-md">
+        <thead>
+          <tr>
+            <th scope="col" class="seq-no">Waiting Sequence</th>
+            <th scope="col">Student ID</th>
+            <th scope="col">Time (request time)</th>
+            <th scope="col">Status</th>
+            <th scope="col">Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          <tr data-stud-key="{{ student.id }}">
+            <th scope="row" class="seq-no">{{ forloop.counter }}</th>
+            <td data-student-netid="{{student.student_netid}}">{{ student.student_netid|mask }}</td>
+            <td>{{ student.chat_request_time|time:'H:i:s' }}</td>
+            <td class="chat-status">{{ student.get_student_chat_status_display }}</td>
+            <td>{{ student.chat_request_time|duration:now }}</td>
+          </tr>
+          {% endfor %}
+          {% for history in histories %}
+          <tr>
+            <th scope="row" class="seq-no"></th>
+            <td>{{ history.student_netid|mask }}</td>
+            <td>{{ history.chat_request_time|time:'H:i:s' }}</td>
+            <td class="chat-status">End</td>
+            <td>{{ history.chat_request_time|duration:now }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-4">
+      <h3 class="ml-3">High Risk Students</h3>
+      <table id="high-risk-table" class="table table-striped table-bordered table-responsive-md">
+        <thead>
+        <tr>
+          <th scope="col" class="seq-no">#</th>
+          <th scope="col">Student ID</th>
+          <th scope="col">Start Time</th>
+          <th scope="col">End Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for student in high_risk_students %}
+        <tr>
+          <th scope="row" class="seq-no">{{ forloop.counter }}</th>
+          <td>{{ student.student_netid|mask }}</td>
+          <td>{{ student.start_time|time:'H:i:s' }}</td>
+          <td>{{ student.end_time|time:'H:i:s' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 {% endblock %}

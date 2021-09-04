@@ -3,12 +3,11 @@ from __future__ import unicode_literals, annotations
 import io
 import logging
 import uuid
-from datetime import datetime, date
-from typing import Dict
+from datetime import datetime, date, time, timedelta
+from typing import Dict, List
 
-import pendulum
 import xlsxwriter
-from django.db import models, connection
+from django.db import models, connection, transaction
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -21,7 +20,7 @@ from channels.layers import get_channel_layer
 
 from main.email_service import email_service
 from main.exceptions import UnauthorizedException
-from main.utils import hk_time, utc_time, tz_offset
+from main.utils import hk_time, utc_time, tz_offset, day_start
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
@@ -269,9 +268,6 @@ class StudentChatStatus(models.Model):
             student.add_to_queue()
             logger.info(f'Unassigned {student}')
 
-    def usage_online_chatting_connect(self):
-        pass
-
 
 class StudentChatHistory(models.Model):
     """
@@ -337,16 +333,16 @@ class StudentChatHistory(models.Model):
         end_time = end.astimezone(utc_time)
 
         query = f"""
-            WITH 
+            WITH
                 selected_table AS  (
-                SELECT 
+                SELECT
                     *
                 FROM
                     `{DB_NAME}`.`{cls._meta.db_table}`
                 WHERE
                     `{DB_NAME}`.`{cls._meta.db_table}`.`chat_request_time` BETWEEN '{start_time}' AND '{end_time}'
             )
-            SELECT 
+            SELECT
              (SELECT count(*) FROM selected_table) AS online_chat_access_count,
              (SELECT count(*) FROM selected_table WHERE student_chat_status='{StudentChatStatus.ChatStatus.END}'
                 AND is_no_show=FALSE) AS successful_chat_count
@@ -433,6 +429,12 @@ class ChatBotSession(models.Model):
     feedback_rating = models.IntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     @classmethod
+    def get_high_risk_student(cls):
+        five_days_ago = timezone.localdate() - timedelta(days=5)
+        return cls.objects.filter(score__gte=11, start_time__gte=day_start(five_days_ago)) \
+            .values('student_netid', 'start_time', 'end_time')
+
+    @classmethod
     def usage_chatbot_connect(cls, student_netid: str = None,
                               is_ployu_student: bool = False) -> ChatBotSession:
         session = cls.objects.create(student_netid=student_netid,
@@ -448,18 +450,18 @@ class ChatBotSession(models.Model):
         end_time = end.astimezone(utc_time).replace(tzinfo=None)
 
         query = f"""
-            WITH 
+            WITH
                 session_table AS  (
-                SELECT 
+                SELECT
                     *
                 FROM
                     `{DB_NAME}`.`{cls._meta.db_table}`
                 WHERE
                     `{DB_NAME}`.`{cls._meta.db_table}`.`start_time` BETWEEN '{start_time}' AND '{end_time}'
             )
-            SELECT 
+            SELECT
              (SELECT count(*) FROM session_table) AS total_access_count,
-             (SELECT count(*) FROM session_table 
+             (SELECT count(*) FROM session_table
                 WHERE (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_close_weekday_hour} AND weekday(start_time) IN (0, 1, 2, 3, 4))
                 OR (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_clsoe_sat_hour} AND weekday(start_time)=5)) AS access_office_hr_count,
              (SELECT count(*) FROM session_table WHERE is_ployu_student=TRUE ) AS polyu_student_count,
@@ -523,6 +525,55 @@ class ChatBotSession(models.Model):
         output.seek(0)
 
         return output
+
+
+class BusinessCalendar(models.Model):
+    class Meta:
+        db_table = 'business-calendar'
+
+    date = models.CharField(primary_key=True, max_length=10)
+    is_working_day = models.BooleanField()
+    office_hr_end = models.CharField(null=True, max_length=5)
+
+    office_hr_begin = '09:00'
+
+    @classmethod
+    def update_items(cls, calendar_dates: List[List[str]]):
+        """
+        calendar_dates: .e.g [['Y-m-d', 'H:M'], ['Y-m-d', '']]
+        """
+        with transaction.atomic():
+            for date_, office_hr_end in calendar_dates:
+                business_date = cls(date=date_,
+                                    is_working_day=office_hr_end != '',
+                                    office_hr_end=office_hr_end)
+                business_date.save()
+
+    @classmethod
+    def is_working_day_(cls, date_: str):
+        try:
+            calendar_date = cls.objects.get(date=date_)
+        except BusinessCalendar.DoesNotExist as e:
+            logger.warning(e)
+            raise ValueError(f'date: {date_} not found.')
+
+        return calendar_date.is_working_day
+
+    @classmethod
+    def get_prev_working_day(cls) -> datetime:
+
+        today = timezone.localdate().strftime('%Y-%m-%d')
+        prev_working_day = cls.objects \
+            .filter(is_working_day=True, date__lt=today) \
+            .order_by('-date') \
+            .first()
+
+        if prev_working_day:
+            prev_working_day = prev_working_day.strptime('%Y-%m-%d')
+        else:
+            prev_working_day = timezone.localdate() - timedelta(days=1)
+
+        return prev_working_day
 
 
 ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,

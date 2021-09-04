@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 from datetime import timedelta
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -82,7 +83,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'chatbot_demo.wsgi.application'
 ASGI_APPLICATION = "chatbot_demo.asgi.application"
-
 
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 REDIS_PORT = os.getenv('REDIS_PORT', '6379')
@@ -200,9 +200,12 @@ CELERY_BEAT_SCHEDULE = {
     "assignment_tasks": {
         "task": "tasks.tasks.assignment_tasks",
         "schedule": timedelta(seconds=30),
+    },
+    "end_all_chat_task": {
+        "task": "tasks.tasks.end_all_chat_task",
+        "schedule": crontab(minute=0, hour=0),
     }
 }
-
 
 WEBPACK_LOADER = {
     "DEFAULT": {
