@@ -6,7 +6,7 @@ from django.db.transaction import TransactionManagementError
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
-from main.models import StaffStatus, StudentChatStatus, ROLE_RANKING
+from main.models import StaffStatus, StudentChatStatus, ROLE_RANKING, StudentChatHistory, User
 from main.signals import update_queue
 
 logger = get_task_logger(__name__)
@@ -20,7 +20,7 @@ def reassign_counsellor():
     :return:
     """
     logger.info("Run re-assignment task")
-    now = timezone.now()
+    now = timezone.localtime()
     role_ranking = ROLE_RANKING + [None]
 
     students = StudentChatStatus.objects \
@@ -102,5 +102,34 @@ def assignment_tasks():
     update_queue.send(sender=None)
 
 
-def end_all_chat():
-    pass
+@shared_task
+def end_all_chat_task():
+    logger.info("Clear up all chats.")
+    now = timezone.localtime()
+
+    logger.info("Deleting all students..")
+    students = StudentChatStatus.objects.all()
+    for student in students:
+        student_user = None
+        try:
+            student_user = User.objects.get(netid=student.student_netid)
+        except User.DoesNotExist as e:
+            logger.warning(e)
+
+        is_end_chat = (student.student_chat_status == StudentChatStatus.ChatStatus.CHATTING)
+        is_no_show = False if student.student_chat_status == StudentChatStatus.ChatStatus.CHATTING else None
+        StudentChatHistory.append_end_chat(student, now, is_no_show, endchat=is_end_chat)
+        student.delete()
+        if student_user:
+            student_user.delete()
+    logger.info("Complete deleting all students.")
+
+    logger.info("Setting all staff to offline..")
+    all_staff = StaffStatus.objects.all()
+    for staff in all_staff:
+        staff.staff_chat_status = StaffStatus.ChatStatus.OFFLINE
+        staff.status_change_time = now
+        staff.staff_stream_id = None
+        staff.save()
+    logger.info("Complete setting all staff to offline.")
+

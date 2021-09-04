@@ -6,7 +6,6 @@ import uuid
 from datetime import datetime, date, time, timedelta
 from typing import Dict, List
 
-import pendulum
 import xlsxwriter
 from django.db import models, connection, transaction
 from django.conf import settings
@@ -268,9 +267,6 @@ class StudentChatStatus(models.Model):
             student.assigned_counsellor = None
             student.add_to_queue()
             logger.info(f'Unassigned {student}')
-
-    def usage_online_chatting_connect(self):
-        pass
 
 
 class StudentChatHistory(models.Model):
