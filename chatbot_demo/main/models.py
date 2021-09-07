@@ -4,7 +4,7 @@ import io
 import logging
 import uuid
 from datetime import datetime, date, time, timedelta
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import xlsxwriter
 from django.db import models, connection, transaction
@@ -538,20 +538,33 @@ class BusinessCalendar(models.Model):
 
     office_hr_begin = '09:00'
 
+    date_format = '%Y-%m-%d'
+    time_format = '%H:%M'
+
+    def _validate_input(self, row: int, date_: str, time_: str) -> Tuple[str, str]:
+        try:
+            cleaned_date = datetime.strptime(date_, self.date_format).strftime(self.date_format)
+            cleaned_time = datetime.strptime(time_, self.time_format).strftime(self.time_format)
+        except ValueError:
+            raise ValueError(f'Value format invalid in row {row}.')
+
+        return cleaned_date, cleaned_time
+
     @classmethod
     def update_items(cls, calendar_dates: List[List[str]]):
         """
         calendar_dates: .e.g [['Y-m-d', 'H:M'], ['Y-m-d', '']]
         """
         with transaction.atomic():
-            for date_, office_hr_end in calendar_dates:
-                business_date = cls(date=date_,
-                                    is_working_day=office_hr_end != '',
-                                    office_hr_end=office_hr_end)
+            for row, (date_, office_hr_end) in enumerate(calendar_dates, 1):
+                cleaned_date, cleaned_office_hr_end = cls._validate_input(row, date_, office_hr_end)
+                business_date = cls(date=cleaned_date,
+                                    is_working_day=cleaned_office_hr_end != '',
+                                    office_hr_end=cleaned_office_hr_end)
                 business_date.save()
 
     @classmethod
-    def is_working_day_(cls, date_: str):
+    def is_working_day_(cls, date_: str) -> bool:
         try:
             calendar_date = cls.objects.get(date=date_)
         except BusinessCalendar.DoesNotExist as e:
@@ -563,14 +576,14 @@ class BusinessCalendar(models.Model):
     @classmethod
     def get_prev_working_day(cls) -> datetime:
 
-        today = timezone.localdate().strftime('%Y-%m-%d')
+        today = timezone.localdate().strftime(cls.date_format)
         prev_working_day = cls.objects \
             .filter(is_working_day=True, date__lt=today) \
             .order_by('-date') \
             .first()
 
         if prev_working_day:
-            prev_working_day = prev_working_day.strptime('%Y-%m-%d')
+            prev_working_day = prev_working_day.strptime(cls.date_format)
         else:
             prev_working_day = timezone.localdate() - timedelta(days=1)
 
