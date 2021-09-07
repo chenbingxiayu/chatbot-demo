@@ -456,22 +456,18 @@ def addstud(request):
                                     "emergency_contact_name": request.POST.get('emergency_contact_name'),
                                     "relationship": request.POST.get('relationship'),
                                     "emergency_contact_number": request.POST.get('emergency_contact_number'),
-                                    "student_chat_status": None,
+                                    "student_chat_status": StudentChatStatus.ChatStatus.WAITING,
+                                    "chat_request_time": timezone.localtime(),
                                     "last_assign_time": None,
                                     "chat_start_time": None,
                                     "assigned_counsellor": None})
     msg = f"Student is {'created' if created else 'updated'}."
 
-    if assign_staff(student):
-        msg += f" Student is assigned to a staff."
-        response_json['message'] = msg
-        return JsonResponse(response_json, status=201)
-    else:
-        student.add_to_queue()
-        update_queue.send(sender=None)
-        msg += f" No staff available, added student to queue."
-        response_json['message'] = msg
-        return JsonResponse(response_json, status=201)
+    student.add_to_queue()
+    update_queue.send(sender=None)
+    msg += f" No staff available, added student to queue."
+    response_json['message'] = msg
+    return JsonResponse(response_json, status=201)
 
 
 @login_required

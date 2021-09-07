@@ -4,9 +4,12 @@ import logging
 import smtplib
 import socket
 from string import Formatter
+from typing import Dict, List
+
+from django.conf import settings
+
 from email.message import EmailMessage
 from email.headerregistry import Address
-from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -14,9 +17,12 @@ smtp_server = os.getenv("SMTP_SERVER", "smtp.office365.com")
 smtp_port = os.getenv("SMTP_PORT", 587)
 email_user = os.getenv("EMAIL_USER")
 email_pw = os.getenv("EMAIL_PW")
-domain = os.getenv("EMAIL_DOMAIN")
+sender_domain = os.getenv("SENDER_DOMAIN")
+receiver_domain = os.getenv("RECEIVER_DOMAIN")
 SENDER = "Student Affairs Office"
 chatroom_url = 'http://localhost:8787/main/createRoom/'
+
+context = ssl.create_default_context()
 
 
 class EmailTemplate:
@@ -97,8 +103,12 @@ Regards
     def compose(self, destination: str, subject: str, msesage: str) -> EmailMessage:
         msg = EmailMessage()
         msg['Subject'] = subject
-        msg['From'] = Address(SENDER, self.user, domain)
-        msg['To'] = Address(destination, destination, domain)
+        msg['From'] = Address(SENDER, self.user, sender_domain)
+        if settings.DEBUG:
+            logger.info('Under testing environment. Email will send to test user.')
+            msg['To'] = Address('Test Receiver', 'cws.mhcp', 'polyu.edu.hk')
+        else:
+            msg['To'] = Address(destination, destination, receiver_domain)
 
         msg.set_content(msesage)
 
@@ -113,7 +123,7 @@ Regards
         try:
             with smtplib.SMTP(self.server, self.port) as server:
                 server.starttls()
-                server.login(f"{self.user}@{domain}", self.pw)
+                server.login(f"{self.user}@{sender_domain}", self.pw)
                 server.send_message(msg)
         except (socket.error, Exception) as e:
             logger.warning(e)

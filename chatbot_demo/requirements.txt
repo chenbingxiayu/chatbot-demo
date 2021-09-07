@@ -1,5 +1,5 @@
 asgiref==3.3.4
-certifi==2020.12.5
+certifi
 chardet==4.0.0
 redis==3.5.3
 Django==3.2.4

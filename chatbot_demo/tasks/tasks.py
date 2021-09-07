@@ -31,6 +31,7 @@ def reassign_counsellor():
 
     successful_count = 0
     for student in students:
+        success = False
         with transaction.atomic():
             try:
                 assigned_staff = student.assigned_counsellor
@@ -41,10 +42,14 @@ def reassign_counsellor():
                     if staff:
                         staff.assign_to(student)
                         logger.info(f"{staff} assigned to {student}")
-                        staff.notify_assignment()
+                        success = True
                         successful_count += 1
             except TransactionManagementError as e:
                 logger.warning(e)
+
+        # Send email outside the transaction
+        if success:
+            staff.notify_assignment()
 
     logger.info(f"{successful_count}/{len(students)} student was re-assigned.")
 
@@ -57,6 +62,7 @@ def assign_staff(student: StudentChatStatus) -> bool:
     :param student:
     :return: whether the student is assigned to a staff
     """
+    success = False
     for role in ROLE_RANKING:
         with transaction.atomic():
             try:
@@ -64,10 +70,14 @@ def assign_staff(student: StudentChatStatus) -> bool:
                 if staff:
                     staff.assign_to(student)
                     logger.info(f"{staff} assigned to {student}")
-                    staff.notify_assignment()
-                    return True
+                    success = True
+
             except TransactionManagementError as e:
                 logger.warning(e)
+
+        if success:
+            staff.notify_assignment()
+            return True
 
     return False
 

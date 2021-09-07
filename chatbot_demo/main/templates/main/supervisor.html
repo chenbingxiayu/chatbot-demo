@@ -50,8 +50,8 @@
         <tr>
           <th scope="col" class="seq-no">#</th>
           <th scope="col">Student ID</th>
+          <th scope="col">Date</th>
           <th scope="col">Start Time</th>
-          <th scope="col">End Time</th>
         </tr>
         </thead>
         <tbody>
@@ -59,8 +59,8 @@
         <tr>
           <th scope="row" class="seq-no">{{ forloop.counter }}</th>
           <td>{{ student.student_netid|mask }}</td>
+          <td>{{ student.start_time|date:'Y-m-d' }}</td>
           <td>{{ student.start_time|time:'H:i:s' }}</td>
-          <td>{{ student.end_time|time:'H:i:s' }}</td>
         </tr>
         {% endfor %}
         </tbody>

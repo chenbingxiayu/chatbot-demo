@@ -432,7 +432,8 @@ class ChatBotSession(models.Model):
     def get_high_risk_student(cls):
         five_days_ago = timezone.localdate() - timedelta(days=5)
         return cls.objects.filter(score__gte=11, start_time__gte=day_start(five_days_ago)) \
-            .values('student_netid', 'start_time', 'end_time')
+            .order_by('-start_time') \
+            .values('student_netid', 'start_time')
 
     @classmethod
     def usage_chatbot_connect(cls, student_netid: str = None,
