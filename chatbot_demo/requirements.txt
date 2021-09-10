@@ -11,7 +11,7 @@ pytz==2021.1
 pytzdata==2020.1
 requests==2.25.1
 six==1.16.0
-sqlparse==0.4.1
+sqlparse==0.4.2
 urllib3==1.26.5
 channels==3.0.3
 django-celery-results~=2.0
