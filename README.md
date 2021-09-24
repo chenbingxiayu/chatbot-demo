@@ -115,3 +115,19 @@ docker image rm  {IMAGE ID}
 # or
 docker rmi $(docker images -a -q)
 ```
+
+
+
+# compile js file
+```
+cd chatbot_demo
+npm install
+```
+
+# developement mode
+```
+npm run build
+```
+
+# production mode
+npm run prod
