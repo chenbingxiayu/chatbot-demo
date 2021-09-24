@@ -124,10 +124,12 @@ cd chatbot_demo
 npm install
 ```
 
-# developement mode
+## developement mode
 ```
 npm run build
 ```
 
-# production mode
+## production mode
+```
 npm run prod
+```
