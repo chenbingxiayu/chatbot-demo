@@ -125,11 +125,48 @@ npm install
 ```
 
 ## developement mode
+开发的时候将setting.py 里面STATS_FILE 设置为 os.path.join(BASE_DIR, "webpack-stats.json")
+```
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": not DEBUG,
+        "BUNDLE_DIR_NAME": "/",
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats.json"),
+        "POLL_INTERVAL": 0.1,
+        "TIMEOUT": None,
+        "IGNORE": [".*\.hot-update.js", ".+\.map"]
+    }
+}
+```
+
+编译文件命令
 ```
 npm run build
 ```
 
 ## production mode
+开发完成后上传最终生产环境的文件，将setting.py 里面STATS_FILE 设置为 os.path.join(BASE_DIR, "webpack-stats-prod.json")
+
+```
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": not DEBUG,
+        "BUNDLE_DIR_NAME": "/",
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats-prod.json"),
+        "POLL_INTERVAL": 0.1,
+        "TIMEOUT": None,
+        "IGNORE": [".*\.hot-update.js", ".+\.map"]
+    }
+}
+```
+编译文件命令
 ```
 npm run prod
 ```
+需要commit的文件为 
+改动的js文件
+webpack-stats-prod.json
+新生成的chatbot_demo/main/static/main-xxxxxxxxx.js文件
+旧的chatbot_demo/main/static/main-xxxxxxxxx.js删除
+
+
