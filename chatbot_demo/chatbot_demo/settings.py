@@ -63,6 +63,27 @@ AUTHENTICATION_BACKENDS = (
     'main.auth.AuthBackend',
 )
 
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'user_attributes': ('netid', 'first_name', 'last_name'),
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
 ROOT_URLCONF = 'chatbot_demo.urls'
 
 TEMPLATES = [
@@ -96,7 +117,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
