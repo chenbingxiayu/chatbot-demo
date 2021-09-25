@@ -1,10 +1,10 @@
 from datetime import timedelta
 
-from django.utils import timezone
-from django.db import transaction
-from django.db.transaction import TransactionManagementError
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from django.db import transaction
+from django.db.transaction import TransactionManagementError
+from django.utils import timezone
 
 from main.models import StaffStatus, StudentChatStatus, ROLE_RANKING, StudentChatHistory, User
 from main.signals import update_queue

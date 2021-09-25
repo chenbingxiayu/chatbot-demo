@@ -1,21 +1,18 @@
-import json
 import logging
-from datetime import timedelta
 
 from django.core import serializers
 from django.db import IntegrityError, transaction
-from django.http import JsonResponse, HttpResponse
+from django.forms.models import model_to_dict
+from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.forms.models import model_to_dict
 
 from main.models import (
     StaffStatus,
     StudentChatStatus,
     StudentChatHistory,
     User,
-    ChatBotSession,
     ROLE_RANKING,
 )
 from tasks.tasks import reassign_counsellor, dequeue_student

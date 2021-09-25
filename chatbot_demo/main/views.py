@@ -1,28 +1,28 @@
 from __future__ import unicode_literals
 
-import io
-import logging
-import uuid
-import json
 import csv
+import io
+import json
+import logging
 from datetime import datetime, timedelta
 
 import requests
 import xlsxwriter
-from django.db.transaction import TransactionManagementError
-
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.template import loader
-from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
-from django.db.models import Q
-from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.decorators import login_required, permission_required
+from django.db.models import Q
+from django.db.transaction import TransactionManagementError
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.template import loader
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
+from main.auth import sso_auth
 from main.exceptions import UnauthorizedException
+from main.forms import StaffLoginForm
 from main.models import (
     User,
     StaffStatus,
@@ -31,13 +31,8 @@ from main.models import (
     ChatBotSession,
     SELECTABLE_STATUS, BusinessCalendar
 )
-from main.forms import StaffLoginForm
-from main.utils import day_start, uuid2str, str2uuid
 from main.signals import update_queue
-from tasks.tasks import assign_staff
-from main.auth import sso_auth
-
-COOKIE_MAX_AGE = 8 * 60 * 60
+from main.utils import day_start, uuid2str, str2uuid
 
 logger = logging.getLogger('django')
 response_json = {'status': 'success'}
@@ -119,7 +114,6 @@ def login_sso_callback(request):
                 student_user = User.objects.create_user(netid=student_netid, is_active=True)
             authenticate(requests, netid=student_netid)
             login(request, student_user, backend='django.contrib.auth.backends.ModelBackend')
-
             chatbot_session = ChatBotSession.usage_chatbot_connect(
                 student_netid=student_netid,
                 is_ployu_student=True
@@ -667,8 +661,7 @@ def update_calendar(request):
     return JsonResponse(response_json, status=200)
 
 
-# @login_required
-@csrf_exempt
+@login_required
 @require_http_methods(['GET'])
 def is_working_day(request, date: str):
     try:

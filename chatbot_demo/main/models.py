@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, annotations
+
 import io
 import logging
 import uuid
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, timedelta
 from typing import Dict, List, Tuple
 
 import xlsxwriter
-from django.db import models, connection, transaction
+from channels.layers import get_channel_layer
 from django.conf import settings
-from django.utils import timezone
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
-
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
+from django.db import models, connection, transaction
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 from main.email_service import email_service
 from main.exceptions import UnauthorizedException
-from main.utils import hk_time, utc_time, tz_offset, day_start
+from main.utils import utc_time, tz_offset, day_start
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()

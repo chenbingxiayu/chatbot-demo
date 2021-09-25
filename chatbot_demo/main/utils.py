@@ -2,10 +2,8 @@ import uuid
 from datetime import datetime, date
 
 import pendulum
-from typing import Optional
-
-from django.utils import timezone
 from django.conf import settings
+from django.utils import timezone
 
 hk_time = pendulum.timezone(settings.TIME_ZONE)
 utc_time = pendulum.timezone('utc')
