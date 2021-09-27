@@ -167,6 +167,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+SECURE_SSL_REDIRECT=True
+
 LANGUAGES = (
     ('en', ('English')),
     ('zh-hant', ('中文繁體')),
