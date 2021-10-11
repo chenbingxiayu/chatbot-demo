@@ -87,18 +87,15 @@ If you need to make some changes, please don't commit on `backend` branch, and c
 
 Please specify all your environment variables inside file `.env.docker`, try not to explicitly write in source code.
 
-```bash
-cat .env.docker
-nano .env.docker
-```
-
 3. Rebuild image
 
 ```bash
-docker-compose up -d --build django
+docker-compose up -d --build django celery celery_beat
 ```
 
-Then it will build the newer image for our chatbot services. Once this process is done, it has successfully depolyed.
+Then it will build the newer image for our chatbot services.
+`celery` and `celery_beat` are modules responsible for the scheduled tasks. 
+Once this process is done, it has successfully depolyed.
 
 4. Remove containers and images
 
