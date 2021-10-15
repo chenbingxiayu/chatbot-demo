@@ -463,7 +463,7 @@
                       loading: true,
                       photo: polly,
                       content:
-                        "Awareness is the first step of change that helps to aid our self-understanding and steps of healing to take.",
+                        "Awareness is the first step of change that helps to aid our cls-understanding and steps of healing to take.",
                     })
                     .then(function() {
                       return botui.message.bot({
@@ -1432,7 +1432,7 @@
                       delay: 1500,
                       photo: polly,
                       content:
-                        "You are always welcome to read our online self-help materials here.",
+                        "You are always welcome to read our online cls-help materials here.",
                     });
                   })
                   .then(function() {
@@ -1474,7 +1474,7 @@
                     delay: 3000,
                     content:
                       "Q2.Do you have a history of any of the following:<br/><br/>" +
-                      "- Having thoughts of hurting yourself or others, or engaging in self-harming or violent behaviors<br/><br/>" +
+                      "- Having thoughts of hurting yourself or others, or engaging in cls-harming or violent behaviors<br/><br/>" +
                       "- Being admitted to a psychiatric ward, or hospitalized due to a psychiatric condition<br/><br/>" +
                       "- Being diagnosed of mental health problem or illness by psychologists, psychiatrists or doctors, e.g. Major Depressive Disorder, Anxiety Disorder, Schizophrenia, and any Personality Disorders etc <br/><br/>" +
                       "- Being prescribed with medications for treating a mental health related condition",
@@ -2235,28 +2235,21 @@
       }
     }
 
-    function isSAOWorkingHours(now) {
-      // TODO: always return true in dev
+    async function isSAOWorkingHours(now) {
+        // TODO: always return true in dev
       return true;
 
-      var weekday = now.getDay();
-      var hours = now.getHours();
-      // Mon - Fri
-      if (weekday >= 1 && weekday <= 5) {
-        // 9:00-19:00
-        if (hours >= 9 && hours < 19) {
-          return true;
-        }
-      }
+      const response = await $.ajax({
+        url: "/main/api/working_hour/",
+        headers: {"X-CSRFToken": CSRF_TOKEN},
+        method: "GET"
+      });
 
-      // Sat
-      if (weekday == 6) {
-        // 9:00 - 12:00
-        if (hours >= 9 && hours < 12) {
-          return true;
-        }
+      if (response.status == 200) {
+          return res.is_working_hour
       }
-      return false;
+      console.log(response.message)
+      return false
     }
 
     function get_name_tc() {

@@ -10,6 +10,7 @@ import requests
 import xlsxwriter
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core import serializers
 from django.db.models import Q
 from django.db.transaction import TransactionManagementError
 from django.http import HttpResponse, JsonResponse
@@ -650,7 +651,7 @@ def update_calendar(request):
     calendar_dates = [line for line in csv.reader(io_string, delimiter=',')]
 
     try:
-        BusinessCalendar.update_items(calendar_dates)
+        BusinessCalendar.update_items_from_csv(calendar_dates)
     except (TransactionManagementError, Exception) as e:
         msg = str(e)
         logger.warning(msg)
@@ -665,7 +666,7 @@ def update_calendar(request):
 @require_http_methods(['GET'])
 def is_working_day(request, date: str):
     try:
-        res = BusinessCalendar.is_working_day_(date)
+        calendar_date = BusinessCalendar.get_date(date)
     except ValueError as e:
         msg = str(e)
         logger.warning(msg)
@@ -673,4 +674,19 @@ def is_working_day(request, date: str):
         response_json['message'] = msg
         return JsonResponse(response_json, status=200)
 
-    return JsonResponse({'is_working_day': res}, status=200)
+    return JsonResponse({'is_working_day': calendar_date.is_working_day}, status=200)
+
+
+@login_required
+@require_http_methods(['GET'])
+def is_working_hour(request):
+    try:
+        res = BusinessCalendar.is_working_hour()
+    except ValueError as e:
+        msg = str(e)
+        logger.warning(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        return JsonResponse(response_json, status=200)
+
+    return JsonResponse({'is_working_hour': res}, status=200)

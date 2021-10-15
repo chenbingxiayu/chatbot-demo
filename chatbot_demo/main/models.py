@@ -193,7 +193,7 @@ class StaffStatus(models.Model):
     def notify_assignment(self):
         logger.info("notify staff")
         # async_to_sync(channel_layer.group_send)(
-        #     f'staff_{self.staff_netid}', {
+        #     f'staff_{cls.staff_netid}', {
         #         'type': 'send_assignment_alert',
         #         'content': {
         #             'type': 'assignment'
@@ -536,41 +536,59 @@ class BusinessCalendar(models.Model):
     office_hr_end = models.CharField(null=True, max_length=5)
 
     office_hr_begin = '09:00'
-
+    office_hr_end_sat = '12:00'
+    date_format_from_csv = '%d/%m/%Y'
     date_format = '%Y-%m-%d'
     time_format = '%H:%M'
+    lunch_break = ('12:00', '13:00')
 
-    def _validate_input(self, row: int, date_: str, time_: str) -> Tuple[str, str]:
+    @classmethod
+    def _validate_input(cls, row_idx: int, row: List[str]) -> Tuple[str, str]:
+        cleaned_time = None
         try:
-            cleaned_date = datetime.strptime(date_, self.date_format).strftime(self.date_format)
-            cleaned_time = datetime.strptime(time_, self.time_format).strftime(self.time_format)
+            cleaned_date = datetime.strptime(row[0], cls.date_format_from_csv).strftime(cls.date_format)
+            if row[4] not in ('Saturday', 'public holiday'):
+                cleaned_time = datetime.strptime(row[1], cls.time_format).strftime(cls.time_format)
         except ValueError:
-            raise ValueError(f'Value format invalid in row {row}.')
+            raise ValueError(f'Value format invalid in row {row_idx}.')
 
         return cleaned_date, cleaned_time
 
     @classmethod
-    def update_items(cls, calendar_dates: List[List[str]]):
+    def update_items_from_csv(cls, calendar_dates: List[List[str]]):
         """
         calendar_dates: .e.g [['Y-m-d', 'H:M'], ['Y-m-d', '']]
         """
         with transaction.atomic():
-            for row, (date_, office_hr_end) in enumerate(calendar_dates, 1):
-                cleaned_date, cleaned_office_hr_end = cls._validate_input(row, date_, office_hr_end)
+            for row_idx, row in enumerate(calendar_dates):
+                cleaned_date, cleaned_office_hr_end = cls._validate_input(row_idx, row)
                 business_date = cls(date=cleaned_date,
-                                    is_working_day=cleaned_office_hr_end != '',
+                                    is_working_day=row[4] != 'public holiday',
                                     office_hr_end=cleaned_office_hr_end)
                 business_date.save()
 
     @classmethod
-    def is_working_day_(cls, date_: str) -> bool:
+    def get_date(cls, date_: str):
         try:
             calendar_date = cls.objects.get(date=date_)
         except BusinessCalendar.DoesNotExist as e:
             logger.warning(e)
             raise ValueError(f'date: {date_} not found.')
+        return calendar_date
 
-        return calendar_date.is_working_day
+    @classmethod
+    def is_working_hour(cls) -> bool:
+        today = timezone.localdate()
+        calendar_date = cls.get_date(today)
+        if calendar_date.is_working_day:
+            time_now = timezone.localtime().strftime(cls.time_format)
+            office_hr_end = calendar_date.office_hr_end
+            if today.isoweekday() in (1, 2, 3, 4, 5):
+                return (cls.office_hr_begin < time_now < cls.lunch_break[0]) or \
+                       (cls.lunch_break[1] < time_now < office_hr_end)
+            elif today.isoweekday() == 6:  # Sat
+                return cls.office_hr_begin < time_now < cls.office_hr_end_sat
+        return False
 
     @classmethod
     def get_prev_working_day(cls) -> datetime:
