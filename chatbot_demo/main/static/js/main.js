@@ -2234,7 +2234,26 @@
           });
       }
     }
+   
+const isSAOWorkingHours = async (now) => {
+  // TODO: always return true in dev
+  //return true;
+  return await $.ajax({
+      url: "/main/api/working_hour/",
+      headers: {"X-CSRFToken": CSRF_TOKEN},
+      method: "GET"
+  });
 
+  if (response.status == 200) {
+      console.log(response.message)
+      return res.is_working_hour
+  } else {
+      return false
+  }
+}
+    
+    
+    /*
     async function isSAOWorkingHours(now) {
         // TODO: always return true in dev
       return true;
@@ -2251,7 +2270,9 @@
       console.log(response.message)
       return false
     }
-
+    */
+    
+    
     function get_name_tc() {
       return botui.message
         .bot({
