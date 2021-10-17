@@ -2238,18 +2238,15 @@
     const isSAOWorkingHours = async (now) => {
       // TODO: always return true in dev
       // return true;
-
-      const response = await $.ajax({
+      let isWorkingHr = false;
+      await $.ajax({
         url: "/main/api/working_hour/",
         headers: {"X-CSRFToken": CSRF_TOKEN},
         method: "GET"
-      });
-
-      if (response.status === 200) {
-          return res.is_working_hour
-      }
-      console.log(response.message)
-      return false
+      }).done((res) => {
+        isWorkingHr = res.is_working_hour
+      }).fail((err) => console.log(err.responseJSON))
+      return isWorkingHr
     }
     
     

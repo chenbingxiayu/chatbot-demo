@@ -92,7 +92,8 @@ def login_all(request):
 @csrf_exempt
 def login_sso(request):
     # redirect to rapid connect server
-    response = redirect(sso_auth.destination)
+    # response = redirect(sso_auth.destination)
+    response = redirect('login_sso_callback')
     return response
 
 
@@ -100,12 +101,15 @@ def login_sso(request):
 @require_http_methods(['POST', 'GET'])
 def login_sso_callback(request):
     try:
-        encoded_jwt = request.POST.get('data')
-        if not encoded_jwt:
-            return render(request, 'main/login_sso.html', {
-                'error_message': "Cannot get JWT"
-            })
-        decoded_jwt = sso_auth.decode(encoded_jwt)
+        # encoded_jwt = request.POST.get('data')
+        # if not encoded_jwt:
+        #     return render(request, 'main/login_sso.html', {
+        #         'error_message': "Cannot get JWT"
+        #     })
+        # decoded_jwt = sso_auth.decode(encoded_jwt)
+        decoded_jwt = dict()
+        decoded_jwt['polyuUserType'] = 'Staff'
+        decoded_jwt['cn'] = 'staff_01'
 
         if decoded_jwt['polyuUserType'] == 'Student':
             try:
@@ -672,7 +676,7 @@ def is_working_day(request, date: str):
         logger.warning(msg)
         response_json['status'] = 'fail'
         response_json['message'] = msg
-        return JsonResponse(response_json, status=200)
+        return JsonResponse(response_json, status=404)
 
     return JsonResponse({'is_working_day': calendar_date.is_working_day}, status=200)
 
@@ -687,6 +691,6 @@ def is_working_hour(request):
         logger.warning(msg)
         response_json['status'] = 'fail'
         response_json['message'] = msg
-        return JsonResponse(response_json, status=200)
+        return JsonResponse(response_json, status=404)
 
     return JsonResponse({'is_working_hour': res}, status=200)
