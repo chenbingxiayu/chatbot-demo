@@ -2245,7 +2245,7 @@
         method: "GET"
       });
 
-      if (response.status == 200) {
+      if (response.status === 200) {
           return res.is_working_hour
       }
       console.log(response.message)
