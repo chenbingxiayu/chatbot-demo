@@ -2235,22 +2235,22 @@
       }
     }
    
-const isSAOWorkingHours = async (now) => {
-  // TODO: always return true in dev
-  //return true;
-  return await $.ajax({
-      url: "/main/api/working_hour/",
-      headers: {"X-CSRFToken": CSRF_TOKEN},
-      method: "GET"
-  });
+    const isSAOWorkingHours = async (now) => {
+      // TODO: always return true in dev
+      // return true;
 
-  if (response.status == 200) {
+      const response = await $.ajax({
+        url: "/main/api/working_hour/",
+        headers: {"X-CSRFToken": CSRF_TOKEN},
+        method: "GET"
+      });
+
+      if (response.status == 200) {
+          return res.is_working_hour
+      }
       console.log(response.message)
-      return res.is_working_hour
-  } else {
       return false
-  }
-}
+    }
     
     
     /*
