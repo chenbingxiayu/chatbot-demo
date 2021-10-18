@@ -73,7 +73,7 @@
     }
 
     function init_choices() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -774,7 +774,7 @@
     }
 
     function mid_recommendations() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -957,7 +957,7 @@
     }
 
     function high_recommendations() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -1088,7 +1088,7 @@
     async function mental_health_101() {
       await submitFirstOptionInfo("mental_health_101");
 
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       return botui.message
         .bot({
           loading: true,
@@ -1383,7 +1383,7 @@
     }
 
     function questions_before_OCS() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       let onlineChatSurveyData = {};
       return botui.message
         .bot({
@@ -1761,7 +1761,7 @@
             "<font color=black>In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.</font>",
         })
         .then(function() {
-          var office_hour = isSAOWorkingHours(new Date());
+          var office_hour = await isSAOWorkingHours(new Date());
           if (office_hour == true) {
             contact_with_counsellors();
           } else {
@@ -2078,7 +2078,7 @@
     // Traditional chinese
 
     function init_choices_tc() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -2244,8 +2244,8 @@
         headers: {"X-CSRFToken": CSRF_TOKEN},
         method: "GET"
       }).done((res) => {
-        Promise.resolve(res.is_working_hour).then(function (result){isWorkingHr = result})
-      }).fail((err) => console.log(err.responseJSON))
+        isWorkingHr = res.is_working_hour
+      }).fail((err) => console.log(err.responseJSON));
       return isWorkingHr
     }
     
@@ -2796,7 +2796,7 @@
     }
 
     function mid_recommendations_tc() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -2972,7 +2972,7 @@
     }
 
     function high_recommendations_tc() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -3101,7 +3101,7 @@
     async function mental_health_101_tc() {
       await submitFirstOptionInfo("mental_health_101");
 
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       return botui.message
         .bot({
           loading: true,
@@ -3391,7 +3391,7 @@
     }
 
     function questions_before_OCS_tc() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       let onlineChatSurveyData = {};
       return botui.message
         .bot({
@@ -3781,7 +3781,7 @@
             "<font color=black>在緊急情況下，請即致電999或到鄰近的急症室求助。</font>", //? In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.
         })
         .then(function() {
-          var office_hour = isSAOWorkingHours(new Date());
+          var office_hour = await isSAOWorkingHours(new Date());
           if (office_hour == true) {
             contact_with_counsellors_tc();
           } else {
@@ -3994,7 +3994,7 @@
     // Simplified chinese
 
     function init_choices_sc() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -4678,7 +4678,7 @@
     }
 
     function mid_recommendations_sc() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -4854,7 +4854,7 @@
     }
 
     function high_recommendations_sc() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       if (office_hour == true) {
         return botui.message
           .bot({
@@ -4983,7 +4983,7 @@
     async function mental_health_101_sc() {
       await submitFirstOptionInfo("mental_health_101");
 
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       return botui.message
         .bot({
           loading: true,
@@ -5273,7 +5273,7 @@
     }
 
     function questions_before_OCS_sc() {
-      var office_hour = isSAOWorkingHours(new Date());
+      var office_hour = await isSAOWorkingHours(new Date());
       let onlineChatSurveyData = {};
       return botui.message
         .bot({
@@ -5663,7 +5663,7 @@
             "<font color=black>在紧急情况下，请即致电999或到邻近的急症室求助。</font>", //? In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.
         })
         .then(function() {
-          var office_hour = isSAOWorkingHours(new Date());
+          var office_hour = await isSAOWorkingHours(new Date());
           if (office_hour == true) {
             contact_with_counsellors_sc();
           } else {
