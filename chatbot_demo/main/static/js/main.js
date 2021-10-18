@@ -2244,7 +2244,7 @@
         headers: {"X-CSRFToken": CSRF_TOKEN},
         method: "GET"
       }).done((res) => {
-        isWorkingHr = res.is_working_hour
+        Promise.resolve(res.is_working_hour).then(function (result){isWorkingHr = result})
       }).fail((err) => console.log(err.responseJSON))
       return isWorkingHr
     }
