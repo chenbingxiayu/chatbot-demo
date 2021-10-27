@@ -46,7 +46,7 @@ services:
       - .env.docker
     environment:
       <<: *common-variables
-#      MYSQL_HOST: host.docker.internal
+#      MYSQL_HOST: host.docker.internal  # test in local
     depends_on:
       - redis
 

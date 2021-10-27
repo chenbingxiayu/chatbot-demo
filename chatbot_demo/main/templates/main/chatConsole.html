@@ -193,11 +193,11 @@
 
 
     $(document).ready(() => {
-      setTimeout(() => {
-        if ($('#assigned').length > 0) {
-          alert('You have an incoming chat request, please click the link to enter the chat room.')
-        }
-      }, 300)
+      // setTimeout(() => {
+      //   if ($('#assigned').length > 0) {
+      //     alert('You have an incoming chat request, please click the link to enter the chat room.')
+      //   }
+      // }, 300)
 
       $('#statOverviewTable').replaceWith(statOverviewTableHTML(statOverviewData))
       $('#redRouteTable').replaceWith(redRouteTableHTML([]))
@@ -278,14 +278,14 @@
     function openWebSocket() {
       let protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
       const ws = new WebSocket(`${protocol}://${host}/ws/notify_assignment/`)
-      ws.onopen = function(event) {
+      ws.onopen = (event) => {
         console.debug('websocket opened')
       }
-      ws.onclose = function(event) {
+      ws.onclose = (event) => {
         console.debug('websocket closed')
       }
       const $this = $
-      ws.onmessage = function(event) {
+      ws.onmessage = (event) => {
         let data = JSON.parse(event.data)
         if (data.type === 'update_queue') {
           window.location.reload()

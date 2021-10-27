@@ -1,6 +1,7 @@
 import random
-from datetime import date, datetime, timedelta
+from datetime import timedelta
 from unittest.mock import patch
+
 from django.test import TestCase, Client
 from django.urls import reverse
 
