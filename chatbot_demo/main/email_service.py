@@ -15,12 +15,14 @@ logger = logging.getLogger(__name__)
 
 smtp_server = os.getenv("SMTP_SERVER", "smtp.office365.com")
 smtp_port = os.getenv("SMTP_PORT", 587)
-email_user = os.getenv("EMAIL_USER")
-email_pw = os.getenv("EMAIL_PW")
+sender_user = os.getenv("SENDER_USER")
+sender_pw = os.getenv("SENDER_PW")
 sender_domain = os.getenv("SENDER_DOMAIN")
+
+receiver_user = os.getenv("RECEIVER_USER")
 receiver_domain = os.getenv("RECEIVER_DOMAIN")
-SENDER = "Student Affairs Office"
-chatroom_url = 'http://localhost:8787/main/createRoom/'
+sender_name = "Student Affairs Office"
+chatroom_url = 'https://ics-sao.polyu.edu.hk/main/chat/counsellor/'
 
 context = ssl.create_default_context()
 
@@ -103,7 +105,7 @@ Regards
     def compose(self, destination: str, subject: str, msesage: str) -> EmailMessage:
         msg = EmailMessage()
         msg['Subject'] = subject
-        msg['From'] = Address(SENDER, self.user, sender_domain)
+        msg['From'] = Address(sender_name, self.user, sender_domain)
         if settings.DEBUG:
             logger.info('Under testing environment. Email will send to test user.')
             msg['To'] = Address('Test Receiver', 'cws.mhcp', 'polyu.edu.hk')
@@ -132,7 +134,7 @@ Regards
         logger.info("Successfully sent.")
 
 
-email_service = EmailService(smtp_server, smtp_port, email_user, email_pw)
+email_service = EmailService(smtp_server, smtp_port, sender_user, sender_pw)
 
 if __name__ == '__main__':
     email_service.send('new_assignment', 'staff_id')
