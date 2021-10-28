@@ -22,4 +22,4 @@ flower~=1.0
 pyjwt==2.1.0
 celery==5.1.2
 zulip==0.7.1
-django-webpack-loader
+django-webpack-loader==1.4.1
