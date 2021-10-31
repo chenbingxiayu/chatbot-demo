@@ -142,4 +142,3 @@ def end_all_chat_task():
         staff.staff_stream_id = None
         staff.save()
     logger.info("Complete setting all staff to offline.")
-

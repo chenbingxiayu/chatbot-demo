@@ -3,6 +3,7 @@ from __future__ import unicode_literals, annotations
 
 import io
 import logging
+import threading
 import uuid
 from datetime import datetime, timedelta
 from typing import Dict, List, Tuple
@@ -200,7 +201,9 @@ class StaffStatus(models.Model):
         #         }
         #     })
 
-        email_service.send('new_assignment', self.staff_netid)
+        # send email asynchronously
+        t = threading.Thread(target=email_service.send, args=('new_assignment', self.staff_netid,))
+        t.start()
 
 
 class StudentChatStatus(models.Model):
