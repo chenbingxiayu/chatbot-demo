@@ -1611,7 +1611,6 @@
                             let count = 0;
                             while (true) {
                               // request after 5 sec
-
                               await new Promise((resolve) =>
                                 setTimeout(resolve, 5000)
                               );
@@ -1655,7 +1654,6 @@
                           if (
                             currentStatus.toLocaleLowerCase() === "assigned"
                           ) {
-                            let count = 0;
                             while (true) {
                               const stu = await getStatusByStudentNetId(
                                 student_netid
@@ -1664,25 +1662,14 @@
                                 await botui.message.add({
                                   delay: 1000,
                                   photo: polly,
-                                  content: `please click the <a target="_blank" href="/main/chat/student/">link</a> to enter the chat room.`,
+                                  content: `You have been assigned to a counsellor, please click the <a target="_blank" href="/main/chat/student/">link</a> to enter the chat room.`,
                                 });
                                 break;
-                              } else {
-                                // count % 23 === 0 means 2 * n mins
-                                if (count === 0 || count % 23 === 0) {
-                                  await botui.message.add({
-                                    delay: 1000,
-                                    photo: polly,
-                                    content:
-                                      "You have been assigned to a counsellor, please wait.",
-                                  });
-                                }
-                                count++;
-                                // request after 5 sec
-                                await new Promise((resolve) =>
-                                  setTimeout(resolve, 5000)
-                                );
                               }
+                              // request after 5 sec
+                              await new Promise((resolve) =>
+                                setTimeout(resolve, 5000)
+                              ); 
                             }
                           }
                         })
@@ -2234,7 +2221,7 @@
           });
       }
     }
-   
+
     const isSAOWorkingHours = async (now) => {
       // TODO: always return true in dev
       // return true;
@@ -3624,7 +3611,6 @@
                             let count = 0;
                             while (true) {
                               // request after 5 sec
-
                               await new Promise((resolve) =>
                                 setTimeout(resolve, 5000)
                               );
@@ -3668,7 +3654,6 @@
                           if (
                             currentStatus.toLocaleLowerCase() === "assigned"
                           ) {
-                            let count = 0;
                             while (true) {
                               const stu = await getStatusByStudentNetId(
                                 student_netid
@@ -3677,24 +3662,14 @@
                                 await botui.message.add({
                                   delay: 1000,
                                   photo: polly,
-                                  content: `請點擊 <a target="_blank" href="/main/chat/student/">連結</a> 進入聊天室.`,
+                                  content: `你已經分配到一個輔導員，請點擊 <a target="_blank" href="/main/chat/student/">連結</a> 進入聊天室.`,
                                 });
                                 break;
-                              } else {
-                                // count % 23 === 0 means 2 * n mins
-                                if (count === 0 || count % 23 === 0) {
-                                  await botui.message.add({
-                                    delay: 1000,
-                                    photo: polly,
-                                    content: "你已經分配到一個輔導員，請稍等",
-                                  });
-                                }
-                                count++;
-                                // request after 5 sec
-                                await new Promise((resolve) =>
-                                  setTimeout(resolve, 5000)
-                                );
-                              }
+                              } 
+                              // request after 5 sec
+                              await new Promise((resolve) =>
+                              setTimeout(resolve, 5000)
+                              );
                             }
                           }
                         })
@@ -5550,7 +5525,6 @@
                           if (
                             currentStatus.toLocaleLowerCase() === "assigned"
                           ) {
-                            let count = 0;
                             while (true) {
                               const stu = await getStatusByStudentNetId(
                                 student_netid
@@ -5559,24 +5533,14 @@
                                 await botui.message.add({
                                   delay: 1000,
                                   photo: polly,
-                                  content: `请点击 <a target="_blank" href="/main/chat/student/">连结</a> 进入聊天室。`,
+                                  content: `你已经分配到一个辅导员，请点击 <a target="_blank" href="/main/chat/student/">连结</a> 进入聊天室。`,
                                 });
                                 break;
-                              } else {
-                                // count % 23 === 0 means 2 * n mins
-                                if (count === 0 || count % 23 === 0) {
-                                  await botui.message.add({
-                                    delay: 1000,
-                                    photo: polly,
-                                    content: "你已经分配到一个辅导员，请稍等",
-                                  });
-                                }
-                                count++;
-                                // request after 5 sec
-                                await new Promise((resolve) =>
-                                  setTimeout(resolve, 5000)
-                                );
                               }
+                              // request after 5 sec
+                              await new Promise((resolve) =>
+                              setTimeout(resolve, 5000)
+                            ); 
                             }
                           }
                         })
@@ -5884,7 +5848,6 @@
           ...onlineChatSurveyData,
         },
       });
-
       if (response.status == "success") {
         return Promise.resolve(response.message);
       } else {

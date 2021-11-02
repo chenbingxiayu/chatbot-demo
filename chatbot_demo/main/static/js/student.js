@@ -16,6 +16,7 @@
       content: "Welcome to integrated counselling service! Nice to meet you.",
     });
 
+
     // Listen 'Enter' key press
     $(document).on("keyup", "#message-text", (event) => {
       if (event.keyCode === 13) {
@@ -175,7 +176,13 @@
       .on("click", ".icon-home", function() {
         location.reload();
       });
-
+    const stuEnterRoomMsg = {
+      to: streamName,
+      type: "stream",
+      topic: "chat",
+      content: 'Student has entered the Online Chatroom',
+    };
+    await client.messages.send(stuEnterRoomMsg);
     try {
       await client.callOnEachEvent(handleEvent, ["streams"]);
     } catch (error) {
