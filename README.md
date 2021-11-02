@@ -76,18 +76,14 @@ Our chatbot images is built from source code. So every time we want to deploy th
 
 ```bash
 cd /root/chatbot/chatbot-demo
-git branch  # currently switched to 'backend' for testing purpose
-git checkout backend
 git pull
 ```
 
-If you need to make some changes, please don't commit on `backend` branch, and checkout a new branch instead. 
-
 2. Edit environment variables
 
-Please specify all your environment variables inside file `.env.docker`, try not to explicitly write in source code.
+Please specify all your environment variables inside file `.env.docker`, and don't commit into this repo.
 
-3. Rebuild image
+3. Deploy backend
 
 ```bash
 docker-compose up -d --build django celery celery_beat
@@ -97,13 +93,21 @@ Then it will build the newer image for our chatbot services.
 `celery` and `celery_beat` are modules responsible for the scheduled tasks. 
 Once this process is done, it has successfully depolyed.
 
-4. Remove containers and images
+4. Check logs
 
-I will always clean the unused image at the end.
+```bash
+# check the containers' name out
+docker ps -a
+
+docker logs chatbot-demo_celery_1
+docker logs <container name>
+```
+
+5. Remove containers and images
 
 ```bash
 docker-compose down
-docker rm -f $(docker ps -a -q) // delete all containers
+docker rm -f $(docker ps -a -q) // delete all conainers
 docker volume rm $(docker volume ls -q) // remove all docker-compose volumes
 
 # Remove images
