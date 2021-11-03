@@ -72,7 +72,7 @@ class EmailService:
     email_templates = {
         'new_assignment': EmailTemplate(subject="Requesting CWS Online Chat Service",
                                         body=f"""Dear Counsellor
-            
+
 We have received a request from a student for using our Online Chat Service just now.
 Please click the following link to start the chat with the student accordingly.
 
@@ -108,7 +108,8 @@ Regards
         msg['From'] = Address(sender_name, self.user, sender_domain)
         if settings.DEBUG:
             logger.info('Under testing environment. Email will send to test user.')
-            msg['To'] = Address('Test Receiver', 'cws.mhcp', 'polyu.edu.hk')
+            msg['To'] = (Address('Test Receiver', 'ocwsc', 'polyu.edu.hk'),
+                         Address('16904228r', '16904228r', 'connect.polyu.hk'))
         else:
             msg['To'] = Address(destination, destination, receiver_domain)
 
@@ -124,6 +125,7 @@ Regards
 
         try:
             with smtplib.SMTP(self.server, self.port) as server:
+                server.ehlo()
                 server.starttls()
                 server.login(f"{self.user}@{sender_domain}", self.pw)
                 server.send_message(msg)
