@@ -318,22 +318,24 @@ def endchat(request):
     staff_netid = request.POST.get('staff_netid')
     is_no_show = request.POST.get('is_no_show')
     now = timezone.localtime()
+    try:
+        staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
+        staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
+        staff.status_change_time = now
+        staff.save()
+    except Exception as e:
+        logger.warning(str(e))
 
-    with transaction.atomic():
-        try:
-            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
-            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
-            student_user = User.objects.get(netid=student_netid)
+    try:
+        student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
+        student_user = User.objects.get(netid=student_netid)
 
-            StudentChatHistory.append_end_chat(student, now, is_no_show, endchat=True)
-            staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
-            staff.status_change_time = now
-            student.delete()
-            student_user.delete()
-            staff.save()
-        except Exception as e:
-            logger.warning(e)
-            return JsonResponse({'status': 'success', 'error': str(e)}, status=400)
+        StudentChatHistory.append_end_chat(student, now, is_no_show, endchat=True)
+        student.delete()
+        student_user.delete()
+
+    except Exception as e:
+        logger.warning(str(e))
 
     return JsonResponse({'status': 'success'}, status=200)
 
