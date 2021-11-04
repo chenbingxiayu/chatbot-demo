@@ -29,7 +29,7 @@ from main.models import (
     StudentChatStatus,
     StudentChatHistory,
     ChatBotSession,
-    SELECTABLE_STATUS, BusinessCalendar
+    SELECTABLE_STATUS, BusinessCalendar, delete_student_user
 )
 from main.signals import update_queue
 from main.utils import day_start, uuid2str, str2uuid
@@ -143,12 +143,7 @@ def student_logout(request):
     student_netid = request.user.netid
     logout(request)
 
-    try:
-        student_user = User.objects.get(netid=student_netid)
-        student_user.delete()
-
-    except User.DoesNotExist:
-        return render(request, 'main/404.html')
+    delete_student_user(student_netid)
 
     return redirect('login')
 

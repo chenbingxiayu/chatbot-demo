@@ -13,7 +13,7 @@ from main.models import (
     StudentChatStatus,
     StudentChatHistory,
     User,
-    ROLE_RANKING,
+    ROLE_RANKING, delete_student_user,
 )
 from tasks.tasks import reassign_counsellor, dequeue_student
 
@@ -319,23 +319,23 @@ def endchat(request):
     is_no_show = request.POST.get('is_no_show')
     now = timezone.localtime()
     try:
-        staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
-        staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
-        staff.status_change_time = now
-        staff.save()
+        with transaction.atomic():
+            staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
+            staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
+            staff.status_change_time = now
+            staff.save()
     except Exception as e:
         logger.warning(str(e))
 
     try:
-        student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
-        student_user = User.objects.get(netid=student_netid)
-
-        StudentChatHistory.append_end_chat(student, now, is_no_show, endchat=True)
-        student.delete()
-        student_user.delete()
-
+        with transaction.atomic():
+            student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
+            StudentChatHistory.append_end_chat(student, now, is_no_show, endchat=True)
+            student.delete()
     except Exception as e:
         logger.warning(str(e))
+
+    delete_student_user(student_netid)
 
     return JsonResponse({'status': 'success'}, status=200)
 
