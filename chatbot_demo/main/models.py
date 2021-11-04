@@ -50,7 +50,7 @@ def delete_student_user(student_netid: str):
         student_user = User.objects.get(netid=student_netid)
         student_user.delete()
     except User.DoesNotExist:
-        logger.warning('student_user not exit.')
+        logger.warning('student_user not exist.')
 
 
 class UserManager(BaseUserManager):
