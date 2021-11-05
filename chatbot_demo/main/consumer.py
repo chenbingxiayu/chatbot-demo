@@ -16,8 +16,11 @@ class AssignmentConsumer(AsyncJsonWebsocketConsumer):
 
         :return:
         """
-        staff_id = self.scope['user'].netid
-        if not staff_id:
+        if hasattr(self.scope['user'], 'netid'):
+            staff_id = self.scope['user'].netid
+            if not staff_id:
+                return
+        else:
             return
 
         # This is a staff specific group

@@ -496,10 +496,10 @@ class ChatBotSession(models.Model):
         query = f"""
             SELECT
                 `{cls._meta.db_table}`.`student_netid`,
-                `{cls._meta.db_table}`.`start_time` AS `datetime`, #  full datetime, used to sort the results
-                CAST(`{cls._meta.db_table}`.`start_time` AS DATE) AS `date`,
-                CAST(`{cls._meta.db_table}`.`start_time` AS TIME) AS `start_time`,
-                CAST(`{cls._meta.db_table}`.`end_time` AS TIME) AS `end_time`
+                DATE_ADD(`{cls._meta.db_table}`.`start_time`, INTERVAL 8 HOUR) AS `datetime`, #  full datetime, used to sort the results
+                CAST(DATE_ADD(`{cls._meta.db_table}`.`start_time`, INTERVAL 8 HOUR) AS DATE) AS `date`,
+                CAST(DATE_ADD(`{cls._meta.db_table}`.`start_time`, INTERVAL 8 HOUR) AS TIME) AS `start_time`,
+                CAST(DATE_ADD(`{cls._meta.db_table}`.`end_time`, INTERVAL 8 HOUR) AS TIME) AS `end_time`
             FROM
                 `{DB_NAME}`.`{cls._meta.db_table}`
             WHERE
@@ -530,7 +530,11 @@ class ChatBotSession(models.Model):
             ws.write(row_num, 0, row['student_netid'])
             ws.write(row_num, 1, row['date'].strftime("%Y/%m/%d"))
             ws.write(row_num, 2, row['start_time'].strftime('%H:%M'))
-            ws.write(row_num, 3, row['end_time'].strftime('%H:%M'))
+            end_time = row.get('end_time')
+            if end_time:
+                ws.write(row_num, 3, end_time.strftime('%H:%M'))
+            else:
+                ws.write(row_num, 3, None)
 
         wb.close()
         output.seek(0)

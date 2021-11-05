@@ -140,10 +140,16 @@ def login_sso_callback(request):
 @login_required
 @require_http_methods(['GET'])
 def student_logout(request):
+    # To prevent a staff been deleted by accident
+    try:
+        is_stud = not request.user.get_groups()
+    except UnauthorizedException:
+        is_stud = True
     student_netid = request.user.netid
     logout(request)
 
-    delete_student_user(student_netid)
+    if is_stud:
+        delete_student_user(student_netid)
 
     return redirect('login')
 
@@ -551,9 +557,13 @@ def get_statistics(request):
     from_date = data.get('fromDate')
     to_date = data.get('toDate')
 
-    res = dict()
-    res.update(ChatBotSession.statis_overview(from_date, to_date))
-    res.update(StudentChatHistory.statis_overview(from_date, to_date))
+    f = datetime.strptime(from_date, '%Y-%m-%d')
+    t = datetime.strptime(to_date, '%Y-%m-%d')
+
+    res = {
+        **ChatBotSession.statis_overview(f, t),
+        **StudentChatHistory.statis_overview(f, t)
+    }
 
     return JsonResponse(res, status=200)
 
@@ -565,8 +575,13 @@ def export_statistics(request):
     from_date = data.get('fromDate')
     to_date = data.get('toDate')
 
-    res = ChatBotSession.statis_overview(from_date, to_date)
-    res.update(StudentChatHistory.statis_overview(from_date, to_date))
+    f = datetime.strptime(from_date, '%Y-%m-%d')
+    t = datetime.strptime(to_date, '%Y-%m-%d')
+
+    res = {
+        **ChatBotSession.statis_overview(f, t),
+        **StudentChatHistory.statis_overview(f, t)
+    }
 
     output = io.BytesIO()
     wb = xlsxwriter.Workbook(output)
@@ -621,7 +636,11 @@ def get_red_route(request):
 def export_red_route(request):
     data = json.loads(request.body)
     before_date = data.get('beforeDate')
-    output = ChatBotSession.get_red_route_to_excel(before_date)
+    if before_date is None:
+        d = timezone.localtime()
+    else:
+        d = datetime.strptime(before_date, '%Y-%m-%d')
+    output = ChatBotSession.get_red_route_to_excel(d - timedelta(days=7))
 
     response = HttpResponse(output,
                             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
