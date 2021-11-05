@@ -201,8 +201,12 @@
 
       setInterval(() => {
         // $('.table-container').load(window.location.href + ' .table-container')
-        window.location.reload()
-      }, 15000)
+        const isStatisPage = $('.statistics-container').length
+        const isCalendarPage = $('.calendar-container').length
+        if (!(isStatisPage || isCalendarPage)) {
+          window.location.reload()
+        }
+      }, 5000)
 
       $('#statOverviewTable').replaceWith(statOverviewTableHTML(statOverviewData))
       $('#redRouteTable').replaceWith(redRouteTableHTML([]))
