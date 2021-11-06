@@ -557,6 +557,10 @@ class BusinessCalendar(models.Model):
     time_format = '%H:%M'
     lunch_break = ('12:00', '13:00')
 
+    def __str__(self):
+        return f"{self.__class__.__name__}(date={self.date}, is_working_day={self.is_working_day}, " \
+               f"office_hr_end={self.office_hr_end})"
+
     @classmethod
     def _validate_input(cls, row_idx: int, row: List[str]) -> Tuple[str, str]:
         cleaned_time = None
@@ -595,6 +599,8 @@ class BusinessCalendar(models.Model):
     def is_working_hour(cls) -> bool:
         today = timezone.localdate()
         calendar_date = cls.get_date(today)
+        logger.info(calendar_date)
+
         if calendar_date.is_working_day:
             time_now = timezone.localtime().strftime(cls.time_format)
             office_hr_end = calendar_date.office_hr_end
