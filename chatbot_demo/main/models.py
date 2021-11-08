@@ -504,6 +504,7 @@ class ChatBotSession(models.Model):
                 `{DB_NAME}`.`{cls._meta.db_table}`
             WHERE
                 `{cls._meta.db_table}`.`start_time` > '{start_dt.astimezone(utc_time).replace(tzinfo=None)}'
+                AND `{cls._meta.db_table}`.`score` >= 11
             ORDER BY `{cls._meta.db_table}`.`start_time` ASC
         """
 
