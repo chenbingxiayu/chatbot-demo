@@ -36,6 +36,12 @@ services:
     depends_on:
       #      - mysql
       - redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8899/health/"]
+      interval: 15s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
 
   celery:
     build: ./chatbot_demo

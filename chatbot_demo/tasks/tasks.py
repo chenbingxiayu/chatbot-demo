@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from asgiref.sync import sync_to_async
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.db import transaction
@@ -15,7 +16,7 @@ WAIT_LIMIT = 5  # in minutes
 
 def reassign_counsellor():
     """
-     Re-assign counsellor if the student has waited to long
+     Re-assign counsellor if the student has waited too long
 
     :return:
     """
@@ -51,7 +52,7 @@ def reassign_counsellor():
         if success:
             staff.notify_assignment()
 
-    logger.info(f"{successful_count}/{len(students)} student was re-assigned.")
+    logger.info(f"{successful_count}/{len(students)} students were re-assigned.")
 
 
 def assign_staff(student: StudentChatStatus) -> bool:
@@ -102,7 +103,7 @@ def dequeue_student():
 
         successful_count += 1
 
-    logger.info(f"{successful_count}/{len(students)} students has been assigned.")
+    logger.info(f"{successful_count}/{len(students)} students have been assigned.")
 
 
 @shared_task

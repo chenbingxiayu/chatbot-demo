@@ -39,6 +39,8 @@ class SSOAuth:
 
     @property
     def destination(self) -> str:
+        if self.__destination is None:
+            return 'login_sso_callback'
         return self.__destination
 
     def decode(self, token: str) -> Dict:

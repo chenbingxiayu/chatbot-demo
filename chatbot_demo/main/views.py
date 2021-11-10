@@ -38,6 +38,11 @@ logger = logging.getLogger('django')
 response_json = {'status': 'success'}
 
 
+@require_http_methods(['GET'])
+def health(request):
+    return JsonResponse({}, status=200)
+
+
 @login_required
 def index(request):
     student_netid = request.user.netid
