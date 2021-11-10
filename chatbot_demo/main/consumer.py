@@ -46,8 +46,11 @@ class AssignmentConsumer(AsyncJsonWebsocketConsumer):
         except Exception as e:
             logger.exception(e)
             logger.error("Error when disconnect websocket")
-            logger.error(f"self.groupname: {self.groupname}")
-            logger.error(f"self.channel_name: {self.channel_name}")
+            if hasattr(self, 'groupname'):
+                logger.error(f"self.groupname: {self.groupname}")
+            if hasattr(self, 'channel_name'):
+                logger.error(f"self.channel_name: {self.channel_name}")
+            await self.close()
 
     async def receive_json(self, content, **kwargs):
         pass
