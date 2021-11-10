@@ -50,7 +50,7 @@ def reassign_counsellor():
 
         # Send email outside the transaction
         if success:
-            staff.notify_assignment()
+            staff.notify_assignment(student.student_netid)
 
     logger.info(f"{successful_count}/{len(students)} students were re-assigned.")
 
@@ -77,7 +77,7 @@ def assign_staff(student: StudentChatStatus) -> bool:
                 logger.warning(e)
 
         if success:
-            staff.notify_assignment()
+            staff.notify_assignment(student.student_netid)
             return True
 
     return False

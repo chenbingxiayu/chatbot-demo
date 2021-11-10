@@ -63,6 +63,7 @@ debug_urls = [
 chat_urls = [
     path('chat/student/', chat.student, name='chat_student'),
     path('chat/counsellor/', chat.counsellor, name='chat_counsellor'),
+    path('chat/counsellor_from_email/', chat.counsellor_from_email, name='chat_counsellor_from_email'),
     path('chat/subscribe_stream/', chat.subscribe_stream, name='chat_subscribe_stream'),
     path('chat/unsubscribe_stream/', chat.unsubscribe_stream, name='chat_unsubscribe_stream'),
     path('chat/delete_stream/', chat.delete_stream, name='chat_delete_stream'),
