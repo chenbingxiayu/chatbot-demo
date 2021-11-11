@@ -208,9 +208,10 @@ class StaffStatus(models.Model):
         #             'type': 'assignment'
         #         }
         #     })
-    
+
         # send email asynchronously
-        t = threading.Thread(target=email_service.send, args=('new_assignment', self.staff_netid, {'student_netid': student_netid}))
+        template_data = {'student_netid': student_netid}
+        t = threading.Thread(target=email_service.send, args=('new_assignment', self.staff_netid, template_data))
         t.start()
 
 

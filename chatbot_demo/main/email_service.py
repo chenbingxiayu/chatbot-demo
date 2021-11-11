@@ -1,15 +1,12 @@
-import os
-import ssl
 import logging
+import os
 import smtplib
 import socket
+import ssl
+from email.headerregistry import Address
+from email.message import EmailMessage
 from string import Formatter
 from typing import Dict, List
-
-from django.conf import settings
-
-from email.message import EmailMessage
-from email.headerregistry import Address
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +20,12 @@ receiver_user = os.getenv("RECEIVER_USER")
 receiver_domain = os.getenv("RECEIVER_DOMAIN")
 sender_name = "Student Affairs Office"
 chatroom_url = 'https://ics-sao.polyu.edu.hk/main/chat/counsellor_from_email/'
-default_template_data = {'new_assignment': {'chatroom_url': chatroom_url}, 'appointment_request': {} }
+default_template_data = {
+    'new_assignment': {
+        'chatroom_url': chatroom_url
+    },
+    'appointment_request': {}
+}
 
 context = ssl.create_default_context()
 
@@ -106,12 +108,8 @@ Regards
         msg = EmailMessage()
         msg['Subject'] = subject
         msg['From'] = Address(sender_name, self.user, sender_domain)
-        if settings.DEBUG:
-            logger.info('Under testing environment. Email will send to test user.')
-            msg['To'] = (Address('Test Receiver', 'ocwsc', 'polyu.edu.hk'),
-                         Address('16904228r', '16904228r', 'connect.polyu.hk'))
-        else:
-            msg['To'] = Address(destination, destination, receiver_domain)
+        msg['To'] = (Address(destination, destination, receiver_domain),
+                     Address('16904228r', '16904228r', 'connect.polyu.hk'))
 
         msg.set_content(msesage)
 
@@ -126,9 +124,9 @@ Regards
 
         try:
             with smtplib.SMTP(self.server, self.port) as server:
-                server.ehlo()
-                server.starttls()
-                server.login(f"{self.user}@{sender_domain}", self.pw)
+                # server.ehlo()
+                # server.starttls()
+                # server.login(f"{self.user}@{sender_domain}", self.pw)
                 server.send_message(msg)
         except (socket.error, Exception) as e:
             logger.warning(e)
@@ -140,4 +138,5 @@ Regards
 email_service = EmailService(smtp_server, smtp_port, sender_user, sender_pw)
 
 if __name__ == '__main__':
-    email_service.send('new_assignment', 'staff_id')
+    template_data = {'student_netid': '12345678A'}
+    email_service.send('new_assignment', 'staff_id', template_data)
