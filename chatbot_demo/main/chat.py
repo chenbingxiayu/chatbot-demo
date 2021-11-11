@@ -2,12 +2,15 @@ import logging
 import os
 import json
 from .zulip.zulip import ZulipClient
+from django.http import HttpRequest, QueryDict
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
 from main.models import StudentChatStatus
+from main.debug_api import startchat
 from django.contrib.auth.decorators import login_required
 
 
@@ -65,7 +68,6 @@ def counsellor(request):
         student_netid = student_status.student_netid.upper()
         student_email = student_netid + email_suffix
         staff_email = staff_netid + email_suffix
-
         users = client.get_users()
 
         staff = next(
@@ -121,6 +123,21 @@ def counsellor(request):
     except Exception as e:
         logger.error(e)
 
+@login_required
+def counsellor_from_email(request):
+    try:  
+        student_netid = request.GET.get('student_netid')
+        staff_netid = request.user.netid
+
+        startchat_request = HttpRequest()
+        startchat_request.method = 'POST'
+        qd = QueryDict(f'student_netid={student_netid}&staff_netid={staff_netid}')
+        startchat_request.POST = qd
+        startchat(startchat_request)
+        
+        return redirect('chat_counsellor')
+    except Exception as e:
+        logger.error(e)
 
 @csrf_exempt
 @require_http_methods(['POST'])

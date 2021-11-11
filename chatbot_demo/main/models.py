@@ -199,7 +199,7 @@ class StaffStatus(models.Model):
         student.save()
         self.save()
 
-    def notify_assignment(self):
+    def notify_assignment(self, student_netid):
         logger.info("notify staff")
         # async_to_sync(channel_layer.group_send)(
         #     f'staff_{cls.staff_netid}', {
@@ -208,9 +208,9 @@ class StaffStatus(models.Model):
         #             'type': 'assignment'
         #         }
         #     })
-
+    
         # send email asynchronously
-        t = threading.Thread(target=email_service.send, args=('new_assignment', self.staff_netid,))
+        t = threading.Thread(target=email_service.send, args=('new_assignment', self.staff_netid, {'student_netid': student_netid}))
         t.start()
 
 

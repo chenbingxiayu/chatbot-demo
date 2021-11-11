@@ -22,7 +22,8 @@ sender_domain = os.getenv("SENDER_DOMAIN")
 receiver_user = os.getenv("RECEIVER_USER")
 receiver_domain = os.getenv("RECEIVER_DOMAIN")
 sender_name = "Student Affairs Office"
-chatroom_url = 'https://ics-sao.polyu.edu.hk/main/chat/counsellor/'
+chatroom_url = 'https://ics-sao.polyu.edu.hk/main/chat/counsellor_from_email/'
+default_template_data = {'new_assignment': {'chatroom_url': chatroom_url}, 'appointment_request': {} }
 
 context = ssl.create_default_context()
 
@@ -71,12 +72,12 @@ class EmailTemplate:
 class EmailService:
     email_templates = {
         'new_assignment': EmailTemplate(subject="Requesting CWS Online Chat Service",
-                                        body=f"""Dear Counsellor
+                                        body="""Dear Counsellor
 
 We have received a request from a student for using our Online Chat Service just now.
 Please click the following link to start the chat with the student accordingly.
 
-{chatroom_url}
+{chatroom_url}?student_netid={student_netid}
 
 All the best, 
 Counselling and Wellness Section
@@ -88,7 +89,6 @@ Student Affairs Office"""
 I would like to make appointment with SAO counsellor on the following date and time:
 Date: {appointment_date}
 Time: {appointment_time}
-
 Looking forward to your reply.
 
 Regards
@@ -120,7 +120,8 @@ Regards
     def send(self, template_name: str, destination: str, template_data: Dict = None):
         logger.info("Composing email.")
         template = self.email_templates[template_name]
-        message = template.render(template_data)
+        combined_template_data = {**default_template_data[template_name], **template_data}
+        message = template.render(combined_template_data)
         msg = self.compose(destination, template.subject, message)
 
         try:
