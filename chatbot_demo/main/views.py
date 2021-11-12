@@ -692,7 +692,8 @@ def is_working_day(request, date: str):
         response_json['message'] = msg
         return JsonResponse(response_json, status=404)
 
-    return JsonResponse({'is_working_day': calendar_date.is_working_day}, status=200)
+    # TODO: revert this after uat testing
+    return JsonResponse({'is_working_day': True}, status=200)
 
 
 @login_required
@@ -707,4 +708,5 @@ def is_working_hour(request):
         response_json['message'] = msg
         return JsonResponse(response_json, status=404)
 
-    return JsonResponse({'is_working_hour': res}, status=200)
+    # TODO: revert this after uat testing
+    return JsonResponse({'is_working_hour': True}, status=200)
