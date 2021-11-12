@@ -95,6 +95,27 @@ Looking forward to your reply.
 
 Regards
 {requester_name}"""
+                                             ),
+        'notification_student': EmailTemplate(subject="Thank you for your interest in using CWS Online Chat Service",
+                                             body="""Dear Student
+
+Since you have not entered into the chat room, we are not able to provide the Online Chat Service. In case of need, you can contact our student counsellors through the below ways:
+
+1. By phone at 2766 6800 during our office hours (Monday – Friday: 09.00 – 19.00). 
+2. Email: stud.counselling@polyu.edu.hk 
+3. PolyU LINE: Non-Office Hours Student Counselling Hotline Service 
+·        Hotline: (852) 8100 1583
+·        00.00 to 09.00 and 19.00 to 00.00 (Monday – Friday) 
+·        00.00 to 09.00 and 12.00 to 00.00 (Saturday) 
+·        24-hour round the clock on Sunday and Public Holidays 
+ 
+In case of emergency or facing an imminent risk, please call the police at 999 for immediate assistance.
+
+Thank you very much for your time.
+
+All the best 
+Counselling and Wellness Section
+Student Affairs Office"""
                                              )
     }
 
@@ -139,4 +160,5 @@ email_service = EmailService(smtp_server, smtp_port, sender_user, sender_pw)
 
 if __name__ == '__main__':
     template_data = {'student_netid': '12345678A'}
-    email_service.send('new_assignment', 'staff_id', template_data)
+    #email_service.send('new_assignment', 'staff_id', template_data)
+    email_service.send('notification_student', 'student_netid', template_data)
