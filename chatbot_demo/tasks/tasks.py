@@ -11,7 +11,7 @@ from main.models import StaffStatus, StudentChatStatus, ROLE_RANKING, StudentCha
 from main.signals import update_queue
 
 logger = get_task_logger(__name__)
-WAIT_LIMIT = 5  # in minutes
+WAIT_LIMIT = 3  # in minutes
 
 
 def reassign_counsellor():
