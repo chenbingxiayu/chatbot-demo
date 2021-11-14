@@ -1,28 +1,41 @@
 (async () => {
-  if ("undefined" != typeof isStudentPage && isStudentPage) {
-    const zulip = require("zulip-js");
+  if ('undefined' != typeof isStudentPage && isStudentPage) {
+    const zulip = require('zulip-js');
 
     // const isStudent = localStorage.getItem("is_student");
     // const studentEmail = localStorage.getItem("student_email");
     // const apiKey = localStorage.getItem("key");
 
-    const pollyImg = document.getElementById("polly-img").value;
-    const clientImg = document.getElementById("client-img").value;
-    const supervisorImg = document.getElementById("supervisor-img").value;
+    const stuEnterRoomMsg = {
+      to: streamName,
+      type: 'stream',
+      topic: 'chat',
+      content: 'Student has entered the Online Chatroom',
+    };
+
+    const stuLeaveRoomMsg = {
+      to: streamName,
+      type: 'stream',
+      topic: 'chat',
+      content: 'Student left the chatroom',
+    };
+
+    const pollyImg = document.getElementById('polly-img').value;
+    const clientImg = document.getElementById('client-img').value;
+    const supervisorImg = document.getElementById('supervisor-img').value;
 
     botui.message.add({
       human: false,
       photo: pollyImg,
-      content: "Welcome to integrated counselling service! Nice to meet you.",
+      content: 'Welcome to integrated counselling service! Nice to meet you.',
     });
 
-
     // Listen 'Enter' key press
-    $(document).on("keyup", "#message-text", (event) => {
+    $(document).on('keyup', '#message-text', (event) => {
       if (event.keyCode === 13) {
         event.preventDefault();
         event.target.blur();
-        document.getElementById("send-message-btn").click();
+        document.getElementById('send-message-btn').click();
       }
     });
 
@@ -38,9 +51,9 @@
     // render student message when there is a event received
     const renderStudentMessage = async (event) => {
       switch (event.type) {
-        case "typing":
+        case 'typing':
           if (event.sender.email !== studentEmail) {
-            if (event.op === "start") {
+            if (event.op === 'start') {
               index = await botui.message.add({
                 loading: true,
                 human: false,
@@ -55,14 +68,11 @@
             }
           }
           break;
-        case "message":
+        case 'message':
           if (event.message.sender_email !== studentEmail) {
-            if (event.message.type === "stream") {
+            if (event.message.type === 'stream') {
               // append the message
-              const photo =
-                event.message.sender_email === staffEmail
-                  ? pollyImg
-                  : supervisorImg;
+              const photo = event.message.sender_email === staffEmail ? pollyImg : supervisorImg;
 
               await botui.message.add({
                 loading: false,
@@ -83,21 +93,20 @@
         //     });
         //   }
         //   break;
-        case "subscription":
-          if (event.op === "remove") {
+        case 'subscription':
+          if (event.op === 'remove') {
             await botui.message.add({
               loading: false,
               human: false,
               photo: pollyImg,
-              content: "Thank you for using our service. Goodbye.",
+              content: 'Thank you for using our service. Goodbye.',
             });
 
             // staffEmail = "";
-            document.getElementById("send-message-div").style.visibility =
-              "hidden";
+            document.getElementById('send-message-div').style.visibility = 'hidden';
           }
         default:
-          console.log("event default", event);
+          console.log('event default', event);
       }
     };
 
@@ -109,14 +118,14 @@
     const client = await zulip(config);
 
     const handleEvent = async (event) => {
-      console.log("Got Event:", event);
+      console.log('Got Event:', event);
       renderStudentMessage(event);
     };
 
     // send message
     $(document)
-      .on("click", "#send-message-btn", async () => {
-        const text = document.getElementById("message-text");
+      .on('click', '#send-message-btn', async () => {
+        const text = document.getElementById('message-text');
         if (!text.value) {
           text.focus();
           return;
@@ -129,64 +138,56 @@
 
         const params = {
           to: streamName,
-          type: "stream",
-          topic: "chat",
+          type: 'stream',
+          topic: 'chat',
           content: text.value,
         };
         await client.messages.send(params);
 
-        text.value = "";
+        text.value = '';
       })
-      .on("focus", "#message-text", async () => {
+      .on('focus', '#message-text', async () => {
         await client.typing.send({
-          type: "stream",
+          type: 'stream',
           to: [stream_id],
-          op: "start",
-          topic: "chat",
+          op: 'start',
+          topic: 'chat',
         });
       })
-      .on("blur", "#message-text", async () => {
+      .on('blur', '#message-text', async () => {
         await client.typing.send({
-          type: "stream",
+          type: 'stream',
           to: [stream_id],
-          op: "stop",
-          topic: "chat",
+          op: 'stop',
+          topic: 'chat',
         });
       })
-      .on("click", ".icon-leave", async function() {
-        if (confirm("Are you sure you want to quit?")) {
+      .on('click', '.icon-leave', async function() {
+        if (confirm('Are you sure you want to quit?')) {
+          await client.messages.send(stuLeaveRoomMsg);
           await $.ajax({
-            url: "/main/user/logout/student/",
-            method: "GET",
+            url: '/main/user/logout/student/',
+            method: 'GET',
           });
 
-          if (
-            navigator.userAgent.indexOf("Firefox") != -1 ||
-            navigator.userAgent.indexOf("Chrome") != -1
-          ) {
-            window.location.href = "about:blank";
+          if (navigator.userAgent.indexOf('Firefox') != -1 || navigator.userAgent.indexOf('Chrome') != -1) {
+            window.location.href = 'about:blank';
             window.close();
           } else {
             window.opener = null;
-            window.open("", "_self");
+            window.open('', '_self');
             window.close();
           }
         }
       })
-      .on("click", ".icon-home", function() {
+      .on('click', '.icon-home', function() {
         location.reload();
       });
-    const stuEnterRoomMsg = {
-      to: streamName,
-      type: "stream",
-      topic: "chat",
-      content: 'Student has entered the Online Chatroom',
-    };
     await client.messages.send(stuEnterRoomMsg);
     try {
-      await client.callOnEachEvent(handleEvent, ["streams"]);
+      await client.callOnEachEvent(handleEvent, ['streams']);
     } catch (error) {
-      console.log("error", error.message);
+      console.log('error', error.message);
     }
   }
 })();

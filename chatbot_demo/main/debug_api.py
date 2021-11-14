@@ -318,6 +318,10 @@ def endchat(request):
     staff_netid = request.POST.get('staff_netid')
     is_no_show = request.POST.get('is_no_show')
     now = timezone.localtime()
+    if is_no_show:
+        from main.email_service import email_service
+        email_service.send('notification_student', student_netid)
+
     try:
         with transaction.atomic():
             staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
