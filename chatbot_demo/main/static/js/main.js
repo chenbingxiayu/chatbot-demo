@@ -150,7 +150,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(emergency_support);
+                    .then(community_helpline);
                 }
               });
           });
@@ -226,7 +226,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(emergency_support);
+                    .then(community_helpline);
                 }
               });
           });
@@ -1073,8 +1073,8 @@
           return botui.action.button({
             addMessage: false,
             action: [
-              { text: 'No, thank you! I will stop here', value: false },
               { text: 'I still need other services', value: true },
+              { text: 'No, thank you! I will stop here', value: false },
             ],
           });
         })
@@ -1085,7 +1085,7 @@
               photo: client,
               content: res.text,
             })
-            .then(function(res) {
+            .then(function() {
               if (res.value == false) {
                 return botui.message
                   .bot({
@@ -2044,7 +2044,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(emergency_support_tc);
+                    .then(community_helpline_tc);
                 }
               });
           });
@@ -2117,7 +2117,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(emergency_support_tc);
+                    .then(community_helpline_tc);
                 }
               });
           });
@@ -2984,8 +2984,8 @@
           return botui.action.button({
             addMessage: false,
             action: [
-              { text: '不需要了，謝謝。', value: false },
               { text: '我仍需要其他服務。', value: true },
+              { text: '不需要了，謝謝。', value: false },
             ],
           });
         })
@@ -2996,7 +2996,7 @@
               photo: client,
               content: res.text,
             })
-            .then(function(res) {
+            .then(function() {
               if (res.value == false) {
                 return botui.message
                   .bot({
@@ -3868,7 +3868,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(emergency_support_sc);
+                    .then(community_helpline_sc);
                 }
               });
           });
@@ -3941,7 +3941,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(emergency_support_sc);
+                    .then(community_helpline_sc);
                 }
               });
           });
@@ -4774,8 +4774,8 @@
           return botui.action.button({
             addMessage: false,
             action: [
-              { text: '不需要了，谢谢。', value: false },
               { text: '我仍需要其他服务。', value: true },
+              { text: '不需要了，谢谢。', value: false },
             ],
           });
         })
@@ -4786,7 +4786,7 @@
               photo: client,
               content: res.text,
             })
-            .then(function(res) {
+            .then(function() {
               if (res.value == false) {
                 return botui.message
                   .bot({
