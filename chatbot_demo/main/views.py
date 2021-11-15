@@ -101,10 +101,10 @@ def login_sso(request):
         request.method = 'POST'
         request.POST = request.GET.copy()
         jwt_obj = {
-            'aud': 'http://10.13.46.22/main/user/login-sso/callback/',
-            'polyuUserType': os.environ['POLYU_USER_TYPE'],
-            'cn': os.environ['CN'],
-            'sub': os.environ['SUB']
+            'aud': os.getenv('SSO_AUD'),
+            'polyuUserType': os.getenv('POLYU_USER_TYPE'),
+            'cn': os.getenv('CN'),
+            'sub': os.getenv('SUB')
         }
         request.POST['data'] = sso_auth.encode(jwt_obj)
         return login_sso_callback(request)
