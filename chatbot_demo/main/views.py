@@ -96,7 +96,7 @@ def login_all(request):
 
 @csrf_exempt
 def login_sso(request):
-    if os.environ['ENV'] == 'dev':
+    if os.getenv('ENV') == 'dev':
         request.path = '/main/user/login-sso/callback/'
         request.method = 'POST'
         request.POST = request.GET.copy()
