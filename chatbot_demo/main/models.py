@@ -439,6 +439,20 @@ class ChatBotSession(models.Model):
     first_option = models.CharField(max_length=128, choices=RecommendOptions.choices, null=True)
     feedback_rating = models.IntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
 
+    statis_overview_row_name_map = {
+        'No. of access': 'total_access_count',
+        'No. of office hour access': 'access_office_hr_count',
+        'No. of PolyU student': 'polyu_student_count',
+        'No. of non-student': 'non_polyu_student_count',
+        'No. of green': 'score_green_count',
+        'No. of yellow': 'score_yellow_count',
+        'No. of red': 'score_red_count',
+        'No. of access to POSS': 'poss_access_count',
+        'No. of access to Mental Health 101': 'mh101_access_count',
+        'No. of access to Online Chat Service': 'online_chat_access_count',
+        'No. of successful chat with counsellor': 'successful_chat_count'
+    }
+
     @classmethod
     def get_high_risk_student(cls):
         five_days_ago = timezone.localdate() - timedelta(days=5)

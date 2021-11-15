@@ -4,6 +4,7 @@ import csv
 import io
 import json
 import logging
+import os
 from datetime import datetime, timedelta
 
 import requests
@@ -95,7 +96,19 @@ def login_all(request):
 
 @csrf_exempt
 def login_sso(request):
-    # redirect to rapid connect server
+    if os.environ['ENV'] == 'dev':
+        request.path = '/main/user/login-sso/callback/'
+        request.method = 'POST'
+        request.POST = request.GET.copy()
+        jwt_obj = {
+            'aud': 'http://10.13.46.22/main/user/login-sso/callback/',
+            'polyuUserType': os.environ['POLYU_USER_TYPE'],
+            'cn': os.environ['CN'],
+            'sub': os.environ['SUB']
+        }
+        request.POST['data'] = sso_auth.encode(jwt_obj)
+        return login_sso_callback(request)
+        # redirect to rapid connect server
     response = redirect(sso_auth.destination)
     return response
 
@@ -494,11 +507,12 @@ def supervisor_join(request):
 def appointstaff(request):
     from main.email_service import email_service
 
-    email_service.send('appointment_request', '12345678A', {
+    template_data = {
         'appointment_date': '2020-06-25',
         'appointment_time': '09:00',
         'requester_name': 'Chris Wong'
-    })
+    }
+    email_service.send('appointment_request', '12345678A', template_data)
 
     return JsonResponse({'status': 'success'}, status=200)
 
@@ -597,19 +611,7 @@ def export_statistics(request):
     ws.write(1, 0, 'To')
     ws.write(1, 1, to_date)
 
-    row_name = {
-        'No. of access': 'total_access_count',
-        'No. of office hour access': 'access_office_hr_count',
-        'No. of PolyU student': 'polyu_student_count',
-        'No. of non-student': 'non_polyu_student_count',
-        'No. of green': 'score_green_count',
-        'No. of yellow': 'score_yellow_count',
-        'No. of red': 'score_red_count',
-        'No. of access to POSS': 'poss_access_count',
-        'No. of access to Mental Health 101': 'mh101_access_count',
-        'No. of access to Online Chat Service': 'online_chat_access_count',
-        'No. of successful chat with counsellor': 'successful_chat_count'
-    }
+    row_name = ChatBotSession.statis_overview_row_name_map
 
     for row_idx, (key, val) in enumerate(row_name.items(), 2):
         ws.write(row_idx, 0, key)

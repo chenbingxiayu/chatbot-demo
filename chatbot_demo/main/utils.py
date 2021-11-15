@@ -1,5 +1,8 @@
 import uuid
 from datetime import datetime, date
+from io import BytesIO
+from typing import Dict
+from zipfile import ZipFile
 
 import pendulum
 from django.conf import settings
@@ -27,3 +30,12 @@ def uuid2str(obj: uuid.UUID) -> str:
 
 def str2uuid(string: str) -> uuid.UUID:
     return uuid.UUID(string)
+
+
+def write_zip_files(files: Dict[str, BytesIO]):
+    out = BytesIO()
+    with ZipFile(out, 'w') as f:
+        for filename, data in files.items():
+            f.writestr(filename, data.getvalue())
+    out.seek(0)
+    return out
