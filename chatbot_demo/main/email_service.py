@@ -139,7 +139,9 @@ Student Affairs Office"""
     def send(self, template_name: str, destination: str, template_data: Dict = None):
         logger.info("Composing email.")
         template = self.email_templates[template_name]
-        combined_template_data = {**default_template_data[template_name], **template_data}
+        if template_data is None:
+            template_data = dict()
+        combined_template_data = {**default_template_data.get(template_name, {}), **template_data}
         message = template.render(combined_template_data)
         msg = self.compose(destination, template.subject, message)
 

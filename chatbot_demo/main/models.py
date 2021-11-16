@@ -20,7 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from main.email_service import email_service
 from main.exceptions import UnauthorizedException
-from main.utils import utc_time, tz_offset, day_start
+from main.utils import hk_time, utc_time, tz_offset, day_start, get_duration
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
@@ -51,6 +51,105 @@ def delete_student_user(student_netid: str):
         student_user.delete()
     except User.DoesNotExist:
         logger.warning('student_user not exist.')
+
+
+def write_chatbot_stat(data: List[ChatBotSession]) -> io.BytesIO:
+    logger.info('Composing chatbot stat file...')
+    output = io.BytesIO()
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet('ChatBOT statistics')
+
+    col_list = ChatBotSession.chatbot_stat_col_name_list
+    for idx, col_name in enumerate(col_list):
+        ws.write(0, idx, col_name)
+
+    for row_idx, row in enumerate(data, 1):
+        end_time = row.end_time.astimezone(hk_time).strftime('%H:%M') if row.end_time else ''
+        ws.write(row_idx, 0, row.start_time.astimezone(hk_time).strftime('%d/%m/%Y'))
+        ws.write(row_idx, 1, row.start_time.astimezone(hk_time).strftime('%H:%M'))
+        ws.write(row_idx, 2, end_time)
+        ws.write(row_idx, 3, 'Y' if row.is_ployu_student else 'N')
+        ws.write(row_idx, 4, row.student_netid)
+        ws.write(row_idx, 5, row.get_language_display())
+        ws.write(row_idx, 6, 'Y' if row.q1_academic else 'N')
+        ws.write(row_idx, 7, 'Y' if row.q1_interpersonal_relationship else 'N')
+        ws.write(row_idx, 8, 'Y' if row.q1_career else 'N')
+        ws.write(row_idx, 9, 'Y' if row.q1_family else 'N')
+        ws.write(row_idx, 10, 'Y' if row.q1_mental_health else 'N')
+        ws.write(row_idx, 11, 'Y' if row.q1_others else 'N')
+        ws.write(row_idx, 12, 'Y' if row.q2 else 'N')
+        ws.write(row_idx, 13, row.get_q3_display())
+        ws.write(row_idx, 14, row.get_q4_display())
+        ws.write(row_idx, 15, 'Y' if row.q5 else 'N')
+        ws.write(row_idx, 16, 'Y' if row.q6_1 else 'N')
+        ws.write(row_idx, 17, 'Y' if row.q6_2 else 'N')
+        ws.write(row_idx, 18, row.score)
+        ws.write(row_idx, 19, row.first_option)
+        ws.write(row_idx, 20, row.feedback_rating)
+
+    wb.close()
+    output.seek(0)
+    return output
+
+
+def write_online_chat_stat(data: List[StudentChatHistory]) -> io.BytesIO:
+    logger.info('Composing online chat stat file...')
+    output = io.BytesIO()
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet('Online Chat')
+
+    col_list = StudentChatHistory.chat_hist_col_name_list
+    for idx, col_name in enumerate(col_list):
+        ws.write(0, idx, col_name)
+
+    for row_idx, row in enumerate(data, 1):
+        start_time = row.chat_start_time.astimezone(hk_time).strftime('%H:%M') if row.chat_start_time else ''
+        end_time = row.chat_end_time.astimezone(hk_time).strftime('%H:%M') if row.chat_end_time else ''
+        request_time = row.chat_request_time.astimezone(hk_time).strftime('%H:%M') if row.chat_request_time else ''
+        chat_duration = None
+        if row.chat_request_time and row.chat_start_time:
+            chat_duration = get_duration(row.chat_start_time - row.chat_request_time)
+
+        staff_netid = None
+        if row.assigned_counsellor and row.assigned_counsellor.staff_netid:
+            staff_netid = row.assigned_counsellor.staff_netid
+
+        ws.write(row_idx, 0, row.student_netid)
+        ws.write(row_idx, 1, row.chat_request_time.astimezone(hk_time).strftime('%d/%m/%Y'))
+        ws.write(row_idx, 2, 'Y' if row.q1 else 'N')
+        ws.write(row_idx, 3, 'Y' if row.q2 else 'N')
+        ws.write(row_idx, 4, request_time)
+        ws.write(row_idx, 5, chat_duration)
+        ws.write(row_idx, 6, start_time)
+        ws.write(row_idx, 7, end_time)
+        ws.write(row_idx, 8, chat_duration)
+        ws.write(row_idx, 9, staff_netid)
+        ws.write(row_idx, 10, 'Y' if row.is_supervisor_join else 'N')
+        ws.write(row_idx, 11, 'Y' if row.is_no_show else 'N')
+
+    wb.close()
+    output.seek(0)
+    return output
+
+
+def write_overall_stat(data, from_date, to_date) -> io.BytesIO:
+    logger.info('Composing overall stat file...')
+    output = io.BytesIO()
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet('Statistics Overview')
+
+    ws.write(0, 0, 'Date')
+    ws.write(1, 0, f"{from_date.strftime('%Y/%m/%d')} - {to_date.strftime('%Y/%m/%d')}")
+
+    col_name = ChatBotSession.statis_overview_col_name_map
+
+    for col_idx, (key, val) in enumerate(col_name.items(), 1):
+        ws.write(0, col_idx, key)
+        ws.write(1, col_idx, data[val])
+
+    wb.close()
+    output.seek(0)
+    return output
 
 
 class UserManager(BaseUserManager):
@@ -317,6 +416,21 @@ class StudentChatHistory(models.Model):
     relationship = models.CharField(max_length=32, null=True)
     emergency_contact_number = models.CharField(max_length=32, null=True)
 
+    chat_hist_col_name_list = [
+        'Student ID',
+        'Date',
+        'Q1 (received counselling service)',
+        'Q2 (mental health history)',
+        'Request Time',
+        'Waiting Duration',
+        'Chat Start Time',
+        'Chat End Time',
+        'Chat Duration',
+        'Counsellor',
+        'Supervisor join',
+        'No show'
+    ]
+
     def __str__(self):
         return f"ChatHistory({self.student_netid})"
 
@@ -439,9 +553,34 @@ class ChatBotSession(models.Model):
     first_option = models.CharField(max_length=128, choices=RecommendOptions.choices, null=True)
     feedback_rating = models.IntegerField(null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
 
-    statis_overview_row_name_map = {
+    chatbot_stat_col_name_list = [
+        'Date',
+        'Start Time',
+        'End Time',
+        'PolyU Student',
+        'Student ID',
+        'Language',
+        'Q1 (academic)',
+        'Q1 (Interpersonal Relationship)',
+        'Q1 (Career)',
+        'Q1 (Family)',
+        'Q1 (Mental Health)',
+        'Q1 (Others)',
+        'Q2',
+        'Q3',
+        'Q4',
+        'Q5',
+        'Q6.1',
+        'Q6.2',
+        'Score',
+        '1st option after recommendation',
+        'Feedback rating'
+    ]
+
+    statis_overview_col_name_map = {
         'No. of access': 'total_access_count',
         'No. of office hour access': 'access_office_hr_count',
+        'No. of non-office hour access': 'non_office_hr_access_count',
         'No. of PolyU student': 'polyu_student_count',
         'No. of non-student': 'non_polyu_student_count',
         'No. of green': 'score_green_count',
@@ -490,6 +629,7 @@ class ChatBotSession(models.Model):
              (SELECT count(*) FROM session_table
                 WHERE (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_close_weekday_hour} AND weekday(start_time) IN (0, 1, 2, 3, 4))
                 OR (HOUR(start_time) >= {service_begin_hour} AND HOUR(start_time) <= {service_clsoe_sat_hour} AND weekday(start_time)=5)) AS access_office_hr_count,
+             (select total_access_count - access_office_hr_count) AS non_office_hr_access_count, 
              (SELECT count(*) FROM session_table WHERE is_ployu_student=TRUE ) AS polyu_student_count,
              (SELECT count(*) FROM session_table WHERE is_ployu_student=FALSE ) AS non_polyu_student_count,
              (SELECT count(*) FROM session_table WHERE score<=6 ) AS score_green_count,
@@ -507,7 +647,7 @@ class ChatBotSession(models.Model):
         return res
 
     @classmethod
-    def get_red_route(cls, start_dt: datetime) -> Dict:
+    def get_red_route(cls, start_dt: datetime, end_dt: datetime) -> Dict:
         query = f"""
             SELECT
                 `{cls._meta.db_table}`.`student_netid`,
@@ -519,6 +659,7 @@ class ChatBotSession(models.Model):
                 `{DB_NAME}`.`{cls._meta.db_table}`
             WHERE
                 `{cls._meta.db_table}`.`start_time` > '{start_dt.astimezone(utc_time).replace(tzinfo=None)}'
+                AND `{cls._meta.db_table}`.`start_time` < '{end_dt.astimezone(utc_time).replace(tzinfo=None)}'
                 AND `{cls._meta.db_table}`.`score` >= 11
             ORDER BY `{cls._meta.db_table}`.`start_time` ASC
         """
@@ -530,9 +671,7 @@ class ChatBotSession(models.Model):
         return res
 
     @classmethod
-    def get_red_route_to_excel(cls, start_dt: datetime) -> io.BytesIO:
-        data = cls.get_red_route(start_dt)
-
+    def from_red_route_to_excel(cls, data: Dict) -> io.BytesIO:
         output = io.BytesIO()
         wb = xlsxwriter.Workbook(output)
         ws = wb.add_worksheet('Red Route')

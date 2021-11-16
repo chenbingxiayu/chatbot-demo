@@ -336,7 +336,7 @@
       assignRow.find('td:first').html(createRoomEl(student_id, status))
     })
 
-    function fileDownload(blob_data, filename) {
+    function downloadFile(blob_data, filename) {
       const url = window.URL.createObjectURL(blob_data);
       const link = document.createElement('a');
       link.href = url;
@@ -388,7 +388,7 @@
             headers: { 'X-CSRFToken': getCookie('csrftoken')},
             responseType: 'blob'
         }).then((res) => {
-          fileDownload(res.data, 'statistics_overview.xlsx')
+          downloadFile(res.data, 'statistics.zip')
         })
     });
 
@@ -427,7 +427,7 @@
             headers: { 'X-CSRFToken': getCookie('csrftoken')},
             responseType: 'blob'
         }).then((res) => {
-            fileDownload(res.data, 'red_route.xlsx')
+            downloadFile(res.data, 'red_route.xlsx')
         })
     });
 
