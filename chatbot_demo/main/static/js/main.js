@@ -8,6 +8,7 @@
     select_language();
     let surveyData = {};
     const hasSubmitFirstOption = false;
+    studQuitMsg = '';
 
     function select_language() {
       return botui.message
@@ -1518,7 +1519,7 @@
                           return botui.message.bot({
                             delay: 1000,
                             photo: polly,
-                            content: 'Proceeding to Online Chat Service',
+                            content: 'I’m now directing you to the online chatroom.',
                           });
                         })
                         .then(async function() {
@@ -1528,60 +1529,45 @@
                           if (isAssigned) {
                             return Promise.resolve('assigned');
                           } else {
-                            await botui.message.add({
-                              delay: 1000,
-                              photo: polly,
-                              content: 'I’m now directing you to the online chatroom.',
-                            });
-
                             return Promise.resolve('waiting');
                           }
                         })
                         .then(async function(status) {
                           let currentStatus = status;
-                          if (currentStatus == 'waiting') {
-                            let count = 1;
-                            while (true) {
-                              // request after 5 sec
-                              await new Promise((resolve) => setTimeout(resolve, 5000));
-
-                              const stu = await getStatusByStudentNetId(student_netid);
-
-                              if (stu.student_chat_status === 'waiting') {
-                                // send waiting message every 3mins
-                                if (count % 37 === 0) {
-                                  const queueList = await getQueueStatus(student_netid);
-
-                                  const waitingNo = queueList.findIndex((student) => student.fields.student_netid == student_netid);
-                                  await waitSubsribe(student_netid, waitingNo, 'en');
-                                }
-                                count++;
-                              } else {
-                                // assign or end
-                                currentStatus = stu.student_chat_status;
-                                break;
-                              }
+                          let count = 1;
+                          while (currentStatus == 'waiting' || currentStatus == 'assigned') {
+                            console.log('currentStatus', currentStatus);
+                            // request after 5 sec
+                            await new Promise((resolve) => setTimeout(resolve, 5000));
+                            if (studQuitMsg) {
+                              const errorMsg = studQuitMsg;
+                              studQuitMsg = '';
+                              throw new Error(errorMsg);
                             }
+                            const stu = await getStatusByStudentNetId(student_netid);
+                            currentStatus = stu.student_chat_status.toLocaleLowerCase();
+                            if (currentStatus !== 'waiting' && currentStatus !== 'assigned') {
+                              // chatting or end
+                              break;
+                            }
+                            // send waiting message every 3mins
+                            if (count % 36 === 0) {
+                              await waitSubsribe(student_netid, 'en');
+                            }
+                            count++;
                           }
 
-                          if (currentStatus.toLocaleLowerCase() === 'end') {
-                            throw new Error('Thank you for using our service, you may make an appointment with our counsellor via POSS or call 2766 6800 if needed.');
+                          if (currentStatus === 'end') {
+                            const errorMsg = onlineChatLanguageJson['en'].QUIT_QUEUE_MESSAGE;
+                            throw new Error(errorMsg);
                           }
 
-                          if (currentStatus.toLocaleLowerCase() === 'assigned') {
-                            while (true) {
-                              const stu = await getStatusByStudentNetId(student_netid);
-                              if (stu.student_chat_status === 'chatting') {
-                                await botui.message.add({
-                                  delay: 1000,
-                                  photo: polly,
-                                  content: `You have been assigned to a counsellor, please click the <a target="_blank" href="/main/chat/student/">link</a> to enter the chat room.`,
-                                });
-                                break;
-                              }
-                              // request after 5 sec
-                              await new Promise((resolve) => setTimeout(resolve, 5000));
-                            }
+                          if (currentStatus === 'chatting') {
+                            await botui.message.add({
+                              delay: 1000,
+                              photo: polly,
+                              content: onlineChatLanguageJson['en'].CHAT_LINK_MESSAGE,
+                            });
                           }
                         })
                         .catch(function(e) {
@@ -1631,16 +1617,16 @@
                               content: '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
                             });
                           }
+                        })
+                        .then(function() {
+                          botui.message.bot({
+                            loading: true,
+                            photo: polly,
+                            delay: 1500,
+                            content: 'Thank you for using our service.',
+                          });
                         });
                     }
-                  })
-                  .then(function() {
-                    botui.message.bot({
-                      loading: true,
-                      photo: polly,
-                      delay: 1500,
-                      content: 'Thank you for using our service.',
-                    });
                   })
                   .then(end);
               }
@@ -3424,17 +3410,10 @@
                           });
                         })
                         .then(function() {
-                          return botui.message.bot({
-                            delay: 1000,
-                            photo: polly,
-                            content: '繼續在線聊天服務', //? Proceeding to Online Chat Service
-                          });
-                        })
-                        .then(function() {
                           return botui.message.add({
                             delay: 1000,
                             photo: polly,
-                            content: '請稍等，我正在找輔導員與您聊天。', //? Please wait, I am now finding a counsellor to chat with you.
+                            content: '請稍候片刻，我現正轉駁你至線上聊天室。',
                           });
                         })
                         .then(async function() {
@@ -3444,60 +3423,45 @@
                           if (isAssigned) {
                             return Promise.resolve('assigned');
                           } else {
-                            await botui.message.add({
-                              delay: 1000,
-                              photo: polly,
-                              content: '請稍等，我正在找輔導員與您聊天。',
-                            });
-
                             return Promise.resolve('waiting');
                           }
                         })
                         .then(async function(status) {
                           let currentStatus = status;
-                          if (currentStatus == 'waiting') {
-                            let count = 1;
-                            while (true) {
-                              // request after 5 sec
-                              await new Promise((resolve) => setTimeout(resolve, 5000));
-
-                              const stu = await getStatusByStudentNetId(student_netid);
-
-                              if (stu.student_chat_status === 'waiting') {
-                                // send waiting message every 3mins
-                                if (count % 37 === 0) {
-                                  const queueList = await getQueueStatus(student_netid);
-
-                                  const waitingNo = queueList.findIndex((student) => student.fields.student_netid == student_netid);
-                                  await waitSubsribe(student_netid, waitingNo, 'zh-hant');
-                                }
-                                count++;
-                              } else {
-                                // assign or end
-                                currentStatus = stu.student_chat_status;
-                                break;
-                              }
+                          let count = 1;
+                          while (currentStatus == 'waiting' || currentStatus == 'assigned') {
+                            console.log('currentStatus', currentStatus);
+                            // request after 5 sec
+                            await new Promise((resolve) => setTimeout(resolve, 5000));
+                            if (studQuitMsg) {
+                              const errorMsg = studQuitMsg;
+                              studQuitMsg = '';
+                              throw new Error(errorMsg);
                             }
+                            const stu = await getStatusByStudentNetId(student_netid);
+                            currentStatus = stu.student_chat_status.toLocaleLowerCase();
+                            if (currentStatus !== 'waiting' && currentStatus !== 'assigned') {
+                              // chatting or end
+                              break;
+                            }
+                            // send waiting message every 3mins
+                            if (count % 36 === 0) {
+                              await waitSubsribe(student_netid, 'zh-hant');
+                            }
+                            count++;
                           }
 
-                          if (currentStatus.toLocaleLowerCase() === 'end') {
-                            throw new Error('謝謝使用我們的服務，你可以通過POSS或者打電話 2766 6800 預約我們的服務。');
+                          if (currentStatus === 'end') {
+                            const errorMsg = onlineChatLanguageJson['zh-hant'].QUIT_QUEUE_MESSAGE;
+                            throw new Error(errorMsg);
                           }
 
-                          if (currentStatus.toLocaleLowerCase() === 'assigned') {
-                            while (true) {
-                              const stu = await getStatusByStudentNetId(student_netid);
-                              if (stu.student_chat_status === 'chatting') {
-                                await botui.message.add({
-                                  delay: 1000,
-                                  photo: polly,
-                                  content: `你已經分配到一個輔導員，請點擊 <a target="_blank" href="/main/chat/student/">連結</a> 進入聊天室.`,
-                                });
-                                break;
-                              }
-                              // request after 5 sec
-                              await new Promise((resolve) => setTimeout(resolve, 5000));
-                            }
+                          if (currentStatus === 'chatting') {
+                            await botui.message.add({
+                              delay: 1000,
+                              photo: polly,
+                              content: onlineChatLanguageJson['zh-hant'].CHAT_LINK_MESSAGE,
+                            });
                           }
                         })
                         .catch(function(e) {
@@ -3555,16 +3519,16 @@
                               content: '1. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
                             });
                           }
+                        })
+                        .then(function() {
+                          botui.message.bot({
+                            loading: true,
+                            photo: polly,
+                            delay: 1500,
+                            content: '多謝你使用我們的服務。',
+                          });
                         });
                     }
-                  })
-                  .then(function() {
-                    botui.message.bot({
-                      loading: true,
-                      photo: polly,
-                      delay: 1500,
-                      content: '多謝你使用我們的服務。',
-                    });
                   })
                   .then(end_tc);
               }
@@ -5214,17 +5178,10 @@
                           });
                         })
                         .then(function() {
-                          return botui.message.bot({
-                            delay: 1000,
-                            photo: polly,
-                            content: '继续在线聊天服务', //? Proceeding to Online Chat Service
-                          });
-                        })
-                        .then(function() {
                           return botui.message.add({
                             delay: 1000,
                             photo: polly,
-                            content: '请稍等，我正在找辅导员与您聊天。', //? Please wait, I am now finding a counsellor to chat with you.
+                            content: '请稍候片刻，我现正转驳你至线上聊天室。', //? Please wait, I am now finding a counsellor to chat with you.
                           });
                         })
                         .then(async function() {
@@ -5234,61 +5191,45 @@
                           if (isAssigned) {
                             return Promise.resolve('assigned');
                           } else {
-                            await botui.message.add({
-                              delay: 1000,
-                              photo: polly,
-                              content: '请稍等，我正在找辅导员与您聊天。',
-                            });
-
                             return Promise.resolve('waiting');
                           }
                         })
                         .then(async function(status) {
                           let currentStatus = status;
-                          if (currentStatus == 'waiting') {
-                            let count = 1;
-                            while (true) {
-                              // request after 5 sec
-
-                              await new Promise((resolve) => setTimeout(resolve, 5000));
-
-                              const stu = await getStatusByStudentNetId(student_netid);
-
-                              if (stu.student_chat_status === 'waiting') {
-                                // send waiting message every 3mins
-                                if (count % 37 === 0) {
-                                  const queueList = await getQueueStatus(student_netid);
-
-                                  const waitingNo = queueList.findIndex((student) => student.fields.student_netid == student_netid);
-                                  await waitSubsribe(student_netid, waitingNo, 'zh-hans');
-                                }
-                                count++;
-                              } else {
-                                // assign or end
-                                currentStatus = stu.student_chat_status;
-                                break;
-                              }
+                          let count = 1;
+                          while (currentStatus == 'waiting' || currentStatus == 'assigned') {
+                            console.log('currentStatus', currentStatus);
+                            // request after 5 sec
+                            await new Promise((resolve) => setTimeout(resolve, 5000));
+                            if (studQuitMsg) {
+                              const errorMsg = studQuitMsg;
+                              studQuitMsg = '';
+                              throw new Error(errorMsg);
                             }
+                            const stu = await getStatusByStudentNetId(student_netid);
+                            currentStatus = stu.student_chat_status.toLocaleLowerCase();
+                            if (currentStatus !== 'waiting' && currentStatus !== 'assigned') {
+                              // chatting or end
+                              break;
+                            }
+                            // send waiting message every 3mins
+                            if (count % 36 === 0) {
+                              await waitSubsribe(student_netid, 'zh-hans');
+                            }
+                            count++;
                           }
 
-                          if (currentStatus.toLocaleLowerCase() === 'end') {
-                            throw new Error('谢谢使用我们的服务，你可以通过POSS或者打电话 2766 6800 预约我们的服务。');
+                          if (currentStatus === 'end') {
+                            const errorMsg = onlineChatLanguageJson['zh-hans'].QUIT_QUEUE_MESSAGE;
+                            throw new Error(errorMsg);
                           }
 
-                          if (currentStatus.toLocaleLowerCase() === 'assigned') {
-                            while (true) {
-                              const stu = await getStatusByStudentNetId(student_netid);
-                              if (stu.student_chat_status === 'chatting') {
-                                await botui.message.add({
-                                  delay: 1000,
-                                  photo: polly,
-                                  content: `你已经分配到一个辅导员，请点击 <a target="_blank" href="/main/chat/student/">连结</a> 进入聊天室。`,
-                                });
-                                break;
-                              }
-                              // request after 5 sec
-                              await new Promise((resolve) => setTimeout(resolve, 5000));
-                            }
+                          if (currentStatus === 'chatting') {
+                            await botui.message.add({
+                              delay: 1000,
+                              photo: polly,
+                              content: onlineChatLanguageJson['zh-hans'].CHAT_LINK_MESSAGE,
+                            });
                           }
                         })
                         .catch(function(e) {
@@ -5346,16 +5287,16 @@
                               content: '1. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
                             });
                           }
+                        })
+                        .then(function() {
+                          botui.message.bot({
+                            loading: true,
+                            photo: polly,
+                            delay: 1500,
+                            content: '多谢你使用我们的服务。',
+                          });
                         });
                     }
-                  })
-                  .then(function() {
-                    botui.message.bot({
-                      loading: true,
-                      photo: polly,
-                      delay: 1500,
-                      content: '多谢你使用我们的服务。',
-                    });
                   })
                   .then(end_sc);
               }
@@ -5629,81 +5570,46 @@
       });
     };
 
-    const waitSubsribeLanguageJson = {
+    const onlineChatLanguageJson = {
       en: {
-        WAIT: 'Wait',
         QUIT: 'Quit',
-        NO_COUNSELLOR_AVAIABLE_MASSAGE: 'Sorry, there is no counsellor available right now, do you want to wait until our counsellor available, or you may contact us directly at 27666800.',
-        QUIT_QUEUE_MESSAGE: 'Thank you for using our service, you may make an appointment with our counsellor via POSS or call 2766 6800 if needed.',
-        WAITING_MESSAGE: 'Your waiting no. is {{CURRENT_WAITTING_NUMBER}}, I will redirect you to our counsellor as soon as possible.',
-        WAITING_MESSAGE_NEW: `Hang on a moment!  While awaiting, you may browse our resourceful library 'Mental Health Educational Material/Resources' to explore more tips for boosting your mental wellness. You may quit anytime by clicking 'Quit' below. </br>For enquiries of other services, please dial (852)27666800.`,
         QUIT_QUEUE_MESSAGE: 'Thank you for using our service, you may contact us at (852)27666800 if needed.',
+        WAITING_MESSAGE: `Hang on a moment!  While awaiting, you may browse our resourceful library 'Mental Health Educational Material/Resources' to explore more tips for boosting your mental wellness. You may quit anytime by clicking 'Quit' below. For enquiries of other services, please dial (852)27666800.`,
+        CHAT_LINK_MESSAGE: `You have been assigned to a counsellor, please click the <a target="_blank" href="/main/chat/student/">link</a> to enter the chat room.`,
       },
       'zh-hant': {
-        WAIT: '等待',
         QUIT: '退出',
-        NO_COUNSELLOR_AVAIABLE_MASSAGE: '抱歉，當前沒有空閒的輔導員，你想繼續等待直到有輔導員有空嗎，或者你可以直接聯繫我們通過電話 27666800.',
-        QUIT_QUEUE_MESSAGE: '謝謝使用我們的服務，如果需要的話，你可以預約我們的輔導員通過POSS 或者撥打 2766 6800.',
-        WAITING_MESSAGE: '你當前的等排隊號碼是 {{CURRENT_WAITTING_NUMBER}}, 我會儘快幫你分配給我們的輔導員.',
-        WAITING_MESSAGE_NEW: `請耐心等候，網上聊天員很快會跟你聯繫。等候期間，歡迎你瀏覽「心理健康教育資訊/資源」發掘更多提升心靈健康的小貼士。</br>你亦可以隨時按「退出」取消服務。</br>如有查詢，請你致電(852)27666800。`,
+        QUIT_QUEUE_MESSAGE: '多謝你使用網上聊天室服務，如有需要，請你致電(852)27666800予我們聯絡。',
+        WAITING_MESSAGE: `請耐心等候，網上聊天員很快會跟你聯繫。等候期間，歡迎你瀏覽「心理健康教育資訊/資源」發掘更多提升心靈健康的小貼士。</br>你亦可以隨時按「退出」取消服務。</br>如有查詢，請你致電(852)27666800。`,
+        CHAT_LINK_MESSAGE: `你已經分配到一個輔導員，請點擊 <a target="_blank" href="/main/chat/student/">連結</a> 進入聊天室.`,
       },
       'zh-hans': {
-        WAIT: '等待',
         QUIT: '退出',
-        NO_COUNSELLOR_AVAIABLE_MASSAGE: '抱歉，当前没有空闲的辅导员，你想继续等待直到有辅导员有空吗，或者你可以直接联系我们通过电话 27666800.',
-        QUIT_QUEUE_MESSAGE: '谢谢使用我们的服务，如果需要的话，你可以预约我们的辅导员通过POSS 或者拨打 2766 6800.',
-        WAITING_MESSAGE: '你当前的等排队号码是 {{CURRENT_WAITTING_NUMBER}}, 我会尽快帮你分配给我们的辅导员.',
-        WAITING_MESSAGE_NEW: `请耐心等候，网上聊天员很快会跟你联繫。等候期间，欢迎你浏览「心理健康教育资讯/资源」发掘更多提升心灵健康的小贴士。你亦可以随时按「退出」取消服务。</br>如有查询，请你致电(852)27666800。`,
+        QUIT_QUEUE_MESSAGE: '多谢你使用网上聊天室服务，如有需要，请你致电(852)27666800予我们联络。',
+        WAITING_MESSAGE: `请耐心等候，网上聊天员很快会跟你联繫。等候期间，欢迎你浏览「心理健康教育资讯/资源」发掘更多提升心灵健康的小贴士。你亦可以随时按「退出」取消服务。</br>如有查询，请你致电(852)27666800。`,
+        CHAT_LINK_MESSAGE: `你已经分配到一个辅导员，请点击 <a target="_blank" href="/main/chat/student/">连结</a> 进入聊天室。`,
       },
     };
 
-    const waitSubsribe = async (student_netid, waitingNo, langCode) => {
-      // console.log('waitSubsribe', waitSubsribe);
-      // await botui.message.add({
-      //   delay: 1000,
-      //   photo: polly,
-      //   content: waitSubsribeLanguageJson[langCode]['WAITING_MESSAGE_NEW'],
-      // });
-
-      // console.log('added');
-
-      // const actionResult = await botui.action.button({
-      //   addMessage: false,
-      //   action: [{ text: waitSubsribeLanguageJson[langCode]['QUIT'], value: false }],
-      // });
-
-      // if (!actionResult.value) {
-      //   await quitQueue(student_netid);
-      //   throw new Error(waitSubsribeLanguageJson[langCode]['QUIT_QUEUE_MESSAGE']);
-      // }
-
+    const waitSubsribe = async (student_netid, langCode) => {
       await botui.message.add({
         delay: 1000,
         photo: polly,
-        content: waitSubsribeLanguageJson[langCode]['NO_COUNSELLOR_AVAIABLE_MASSAGE'],
+        content: onlineChatLanguageJson[langCode]['WAITING_MESSAGE'],
       });
 
-      const actionResult = await botui.action.button({
-        addMessage: false,
-        action: [
-          { text: waitSubsribeLanguageJson[langCode]['WAIT'], value: true },
-          { text: waitSubsribeLanguageJson[langCode]['QUIT'], value: false },
-        ],
-      });
-
-      quit;
-      if (!actionResult.value) {
-        await quitQueue(student_netid);
-        throw new Error(waitSubsribeLanguageJson[langCode]['QUIT_QUEUE_MESSAGE']);
-      } else {
-        // wait
-        const currentWaitingNumber = waitingNo + 1;
-        await botui.message.add({
-          delay: 1000,
-          photo: polly,
-          content: waitSubsribeLanguageJson[langCode]['WAITING_MESSAGE'].replace('{{CURRENT_WAITTING_NUMBER}}', currentWaitingNumber),
+      botui.action
+        .button({
+          addMessage: false,
+          action: [{ text: onlineChatLanguageJson[langCode]['QUIT'], value: false }],
+        })
+        .then(async function(res) {
+          // quit;
+          if (!res.value) {
+            await quitQueue(student_netid);
+            studQuitMsg = onlineChatLanguageJson[langCode]['QUIT_QUEUE_MESSAGE'];
+          }
         });
-      }
     };
 
     const getQ1SurveyData = (result) => {
