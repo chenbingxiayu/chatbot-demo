@@ -9,7 +9,9 @@ from django.conf import settings
 logger = logging.getLogger('django')
 class ZulipClient:
     def __init__(self, config_file):
+        logger.info(f"start client")
         self.client = zulip.Client(config_file=config_file)
+        logger.info(f"end client")
         self.admin_email = settings.ZULIP['ZULIP_ADMIN_EMAIL']
         self.domain_url = settings.ZULIP['ZULIP_DOMAIN_URL']
         # self.ssl_path = settings.ZULIP['ZULIP_SSL_PATH']
