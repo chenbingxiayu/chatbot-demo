@@ -151,7 +151,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(community_helpline);
+                    .then(emergency_support);
                 }
               });
           });
@@ -227,7 +227,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(community_helpline);
+                    .then(emergency_support);
                 }
               });
           });
@@ -572,7 +572,7 @@
                     loading: true,
                     delay: 2000,
                     photo: polly,
-                    content: 'It is crucial to find some positive coping strategies in dealing with the unsettled sadness/worry or tension',
+                    content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
                   })
                   .then(function() {
                     return botui.message
@@ -682,6 +682,7 @@
     }
 
     function low() {
+      service_list = true;
       return botui.message
         .bot({
           loading: true,
@@ -753,6 +754,7 @@
               })
               .then(function(res) {
                 if (res.value == 1) {
+                  service_list = true;
                   return botui.message
                     .human({
                       delay: 500,
@@ -836,6 +838,7 @@
               })
               .then(function(res) {
                 if (res.value == 1) {
+                  service_list = true;
                   return botui.message
                     .human({
                       delay: 500,
@@ -867,7 +870,7 @@
                     .human({
                       delay: 500,
                       photo: client,
-                      content: res.text,
+                      content: `${res.text}`,
                     })
                     .then(contact_with_counsellors);
                 }
@@ -924,7 +927,7 @@
               addMessage: false,
               action: [
                 { text: 'Immediate Contact with SAO Counsellors', value: 4 },
-                { text: 'Make Appointment with SAO Counsellors', value: 3 },
+                { text: 'Making Appointment with SAO Counsellors', value: 3 },
                 { text: 'Community Helpline', value: 6 },
               ],
             });
@@ -1057,7 +1060,7 @@
               '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">Career</a><br/>' +
               '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">Family</a><br/>' +
               '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">Mental Health</a><br/>' +
-              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS Psychological Workshops and Groups</a><br>' +
+              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">Psychological Workshops and Groups (SAO)</a><br>' +
               '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">Others</a><br/>' +
               '<br><br>*In case of emergency, please call 999 or go to the nearest emergency  / A&E service.',
           });
@@ -1074,8 +1077,8 @@
           return botui.action.button({
             addMessage: false,
             action: [
-              { text: 'I still need other services', value: true },
-              { text: 'No, thank you! I will stop here', value: false },
+              { text: 'No, thank you!', value: false },
+              { text: 'I still need other services.', value: true },
             ],
           });
         })
@@ -2030,7 +2033,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(community_helpline_tc);
+                    .then(emergency_support_tc);
                 }
               });
           });
@@ -2103,7 +2106,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(community_helpline_tc);
+                    .then(emergency_support_tc);
                 }
               });
           });
@@ -2588,6 +2591,7 @@
     }
 
     function low_tc() {
+      service_list = true;
       return botui.message
         .bot({
           loading: true,
@@ -2655,6 +2659,7 @@
               })
               .then(function(res) {
                 if (res.value == 1) {
+                  service_list = true;
                   return botui.message
                     .human({
                       delay: 500,
@@ -2734,6 +2739,7 @@
               })
               .then(function(res) {
                 if (res.value == 1) {
+                  service_list = true;
                   return botui.message
                     .human({
                       delay: 500,
@@ -2953,7 +2959,7 @@
               '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">工作</a><br/>' +
               '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">家庭</a><br/>' +
               '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">精神健康</a><br/>' +
-              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS心理健康小組及工作坊</a><br>' +
+              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">心理健康小組及工作坊 (SAO)</a><br>' +
               '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">其他</a><br/>' +
               '<br><br>*如你正身處緊急情況, 請致電999或到鄰近的急症室求助。', //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
           });
@@ -2970,8 +2976,8 @@
           return botui.action.button({
             addMessage: false,
             action: [
-              { text: '我仍需要其他服務。', value: true },
               { text: '不需要了，謝謝。', value: false },
+              { text: '我仍需要其他服務。', value: true },
             ],
           });
         })
@@ -3832,7 +3838,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(community_helpline_sc);
+                    .then(emergency_support_sc);
                 }
               });
           });
@@ -3905,7 +3911,7 @@
                       photo: client,
                       content: res.text,
                     })
-                    .then(community_helpline_sc);
+                    .then(emergency_support_sc);
                 }
               });
           });
@@ -4356,6 +4362,7 @@
     }
 
     function low_sc() {
+      service_list = true;
       return botui.message
         .bot({
           loading: true,
@@ -4721,7 +4728,7 @@
               '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">工作</a><br/>' +
               '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">家庭</a><br/>' +
               '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">精神健康</a><br/>' +
-              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">CWS心理健康小组及工作坊</a><br>' +
+              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">心理健康小组及工作坊 (SAO)</a><br>' +
               '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">其他</a><br/>' +
               '<br><br>*如你正身处紧急情况, 请致电999或到邻近的急症室求助。', //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
           });
@@ -4738,8 +4745,8 @@
           return botui.action.button({
             addMessage: false,
             action: [
-              { text: '我仍需要其他服务。', value: true },
               { text: '不需要了，谢谢。', value: false },
+              { text: '我仍需要其他服务。', value: true },
             ],
           });
         })
