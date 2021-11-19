@@ -60,31 +60,38 @@ def student(request):
 @login_required
 def counsellor(request):
     try:
+        logger.info(f"request: {request}")
         staff_netid = request.user.netid
+        logger.info(f"staff_netid: {staff_netid}")
         student_status = StudentChatStatus.objects.filter(
             assigned_counsellor__staff_netid=staff_netid,
             student_chat_status=StudentChatStatus.ChatStatus.CHATTING,
         ).first()
+        logger.info(f"student_statis: {student_status}")
         student_netid = student_status.student_netid.upper()
+        logger.info(f"student_netid: {student_netid}")
         student_email = student_netid + email_suffix
         staff_email = staff_netid + email_suffix
         users = client.get_users()
+        logger.info(f"users: {users}")
 
         staff = next(
             (user for user in users['members'] if user['email'] == staff_email), None)
         if staff is None:
             client.create_user(staff_email, staff_netid)
+        logger.info(f"staff: {staff}")
 
         student = next(
             (user for user in users['members'] if user['email'] == student_email), None)
         if student is None:
             client.create_user(student_email, student_netid)
-
+        logger.info(f"student: {student}")
         # We will use `${staff_email}` to construct the stream name.
         stream_name = _construct_stream_name(
             staff_netid=staff_netid)
 
         stream_id = client.get_stream_id(stream_name)
+        logger.info(f"stream_id: {stream_id}")
 
         if stream_id is None:
             client.create_stream(stream_name=stream_name, user_ids=[
@@ -97,6 +104,7 @@ def counsellor(request):
                                     subscribers=[staff_email, student_email])
 
         key = client.fetch_user_api_key(staff_email, staff_email)
+        logger.info(f"key: {key}")
 
         student_personal_contact_number = student_status.personal_contact_number
         student_emergency_contact_name = student_status.emergency_contact_name
