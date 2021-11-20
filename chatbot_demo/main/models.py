@@ -625,7 +625,7 @@ class BusinessCalendar(models.Model):
                        (cls.lunch_break[1] < time_now < office_hr_end)
             elif today.isoweekday() == 6:  # Sat
                 return cls.office_hr_begin < time_now < cls.office_hr_end_sat
-        return False
+        return True
 
     @classmethod
     def get_prev_working_day(cls) -> datetime:
