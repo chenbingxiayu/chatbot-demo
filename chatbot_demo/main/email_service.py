@@ -24,7 +24,8 @@ default_template_data = {
     'new_assignment': {
         'chatroom_url': chatroom_url
     },
-    'appointment_request': {}
+    'appointment_request': {},
+    'notification_student':{}
 }
 
 context = ssl.create_default_context()
