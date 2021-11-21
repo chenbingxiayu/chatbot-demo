@@ -1519,7 +1519,7 @@
                           });
                         })
                         .then(function() {
-                          return botui.message.bot({
+                          botui.message.bot({
                             delay: 1000,
                             photo: polly,
                             content: 'I’m now directing you to the online chatroom.',
@@ -1528,7 +1528,6 @@
                         .then(async function() {
                           const responseMessage = await addToQueue(student_netid, onlineChatSurveyData);
                           const isAssigned = responseMessage.indexOf('Student is assigned to a staff') > -1;
-
                           if (isAssigned) {
                             return Promise.resolve('assigned');
                           } else {
@@ -1537,27 +1536,43 @@
                         })
                         .then(async function(status) {
                           let currentStatus = status;
-                          let count = 1;
-                          while (currentStatus == 'waiting' || currentStatus == 'assigned') {
-                            console.log('currentStatus', currentStatus);
-                            // request after 5 sec
-                            await new Promise((resolve) => setTimeout(resolve, 5000));
+                          // student need to waiting on both 'waiting' and 'assigned' status
+                          let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                          let timer = null;
+
+                          if (isWaitingStatus) {
+                            let count = 1;
+                            // request every 5 sec
+                            timer = setInterval(async () => {
+                              const stu = await getStatusByStudentNetId(student_netid);
+                              currentStatus = stu.student_chat_status.toLocaleLowerCase();
+                              isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                              // send waiting message every 3mins
+                              if (count % 36 === 0) {
+                                await waitSubsribe(student_netid, 'en');
+                              }
+                              count++;
+                            }, 5000);
+                          }
+
+                          while (timer) {
+                            // check current status after 1sec
+                            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+                            // stop to query status and pop waiting msg
+                            if (!isWaitingStatus || studQuitMsg) {
+                              clearInterval(timer);
+                            }
+                            // student quit
                             if (studQuitMsg) {
                               const errorMsg = studQuitMsg;
                               studQuitMsg = '';
                               throw new Error(errorMsg);
                             }
-                            const stu = await getStatusByStudentNetId(student_netid);
-                            currentStatus = stu.student_chat_status.toLocaleLowerCase();
-                            if (currentStatus !== 'waiting' && currentStatus !== 'assigned') {
-                              // chatting or end
+                            // student status changed
+                            if (!isWaitingStatus) {
                               break;
                             }
-                            // send waiting message every 3mins
-                            if (count % 36 === 0) {
-                              await waitSubsribe(student_netid, 'en');
-                            }
-                            count++;
                           }
 
                           if (currentStatus === 'end') {
@@ -3434,27 +3449,43 @@
                         })
                         .then(async function(status) {
                           let currentStatus = status;
-                          let count = 1;
-                          while (currentStatus == 'waiting' || currentStatus == 'assigned') {
-                            console.log('currentStatus', currentStatus);
-                            // request after 5 sec
-                            await new Promise((resolve) => setTimeout(resolve, 5000));
+                          // student need to waiting on both 'waiting' and 'assigned' status
+                          let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                          let timer = null;
+
+                          if (isWaitingStatus) {
+                            let count = 1;
+                            // request every 5 sec
+                            timer = setInterval(async () => {
+                              const stu = await getStatusByStudentNetId(student_netid);
+                              currentStatus = stu.student_chat_status.toLocaleLowerCase();
+                              isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                              // send waiting message every 3mins
+                              if (count % 36 === 0) {
+                                await waitSubsribe(student_netid, 'zh-hant');
+                              }
+                              count++;
+                            }, 5000);
+                          }
+
+                          while (timer) {
+                            // check current status after 1sec
+                            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+                            // stop to query status and pop waiting msg
+                            if (!isWaitingStatus || studQuitMsg) {
+                              clearInterval(timer);
+                            }
+                            // student quit
                             if (studQuitMsg) {
                               const errorMsg = studQuitMsg;
                               studQuitMsg = '';
                               throw new Error(errorMsg);
                             }
-                            const stu = await getStatusByStudentNetId(student_netid);
-                            currentStatus = stu.student_chat_status.toLocaleLowerCase();
-                            if (currentStatus !== 'waiting' && currentStatus !== 'assigned') {
-                              // chatting or end
+                            // student status changed
+                            if (!isWaitingStatus) {
                               break;
                             }
-                            // send waiting message every 3mins
-                            if (count % 36 === 0) {
-                              await waitSubsribe(student_netid, 'zh-hant');
-                            }
-                            count++;
                           }
 
                           if (currentStatus === 'end') {
@@ -5203,27 +5234,43 @@
                         })
                         .then(async function(status) {
                           let currentStatus = status;
-                          let count = 1;
-                          while (currentStatus == 'waiting' || currentStatus == 'assigned') {
-                            console.log('currentStatus', currentStatus);
-                            // request after 5 sec
-                            await new Promise((resolve) => setTimeout(resolve, 5000));
+                          // student need to waiting on both 'waiting' and 'assigned' status
+                          let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                          let timer = null;
+
+                          if (isWaitingStatus) {
+                            let count = 1;
+                            // request every 5 sec
+                            timer = setInterval(async () => {
+                              const stu = await getStatusByStudentNetId(student_netid);
+                              currentStatus = stu.student_chat_status.toLocaleLowerCase();
+                              isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                              // send waiting message every 3mins
+                              if (count % 36 === 0) {
+                                await waitSubsribe(student_netid, 'zh-hans');
+                              }
+                              count++;
+                            }, 5000);
+                          }
+
+                          while (timer) {
+                            // check current status after 1sec
+                            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+                            // stop to query status and pop waiting msg
+                            if (!isWaitingStatus || studQuitMsg) {
+                              clearInterval(timer);
+                            }
+                            // student quit
                             if (studQuitMsg) {
                               const errorMsg = studQuitMsg;
                               studQuitMsg = '';
                               throw new Error(errorMsg);
                             }
-                            const stu = await getStatusByStudentNetId(student_netid);
-                            currentStatus = stu.student_chat_status.toLocaleLowerCase();
-                            if (currentStatus !== 'waiting' && currentStatus !== 'assigned') {
-                              // chatting or end
+                            // student status changed
+                            if (!isWaitingStatus) {
                               break;
                             }
-                            // send waiting message every 3mins
-                            if (count % 36 === 0) {
-                              await waitSubsribe(student_netid, 'zh-hans');
-                            }
-                            count++;
                           }
 
                           if (currentStatus === 'end') {
