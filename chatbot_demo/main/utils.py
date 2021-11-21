@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from io import BytesIO
 from typing import Dict
 from zipfile import ZipFile
@@ -32,7 +32,16 @@ def str2uuid(string: str) -> uuid.UUID:
     return uuid.UUID(string)
 
 
+def get_duration(t: timedelta) -> str:
+    return f"{t.total_seconds() // 60}:{t.seconds}"
+
+
 def write_zip_files(files: Dict[str, BytesIO]):
+    """
+
+    :param files: key: filename, value: file
+    :return:
+    """
     out = BytesIO()
     with ZipFile(out, 'w') as f:
         for filename, data in files.items():

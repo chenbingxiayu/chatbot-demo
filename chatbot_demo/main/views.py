@@ -8,7 +8,6 @@ import os
 from datetime import datetime, timedelta
 
 import requests
-import xlsxwriter
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
@@ -30,10 +29,11 @@ from main.models import (
     StudentChatStatus,
     StudentChatHistory,
     ChatBotSession,
-    SELECTABLE_STATUS, BusinessCalendar, delete_student_user
+    SELECTABLE_STATUS, BusinessCalendar, delete_student_user, write_overall_stat, write_chatbot_stat,
+    write_online_chat_stat
 )
 from main.signals import update_queue
-from main.utils import day_start, uuid2str, str2uuid
+from main.utils import day_start, uuid2str, str2uuid, write_zip_files
 
 logger = logging.getLogger('django')
 response_json = {'status': 'success'}
@@ -597,31 +597,35 @@ def export_statistics(request):
     f = datetime.strptime(from_date, '%Y-%m-%d')
     t = datetime.strptime(to_date, '%Y-%m-%d')
 
-    res = {
+    logger.info('Query from corresponding tables.')
+    chatbot_stat_data = ChatBotSession.objects \
+        .filter(start_time__range=[f, t]) \
+        .order_by('start_time') \
+        .all()
+
+    online_chat_stat_data = StudentChatHistory.objects \
+        .filter(chat_request_time__range=[f, t]) \
+        .order_by('chat_request_time') \
+        .all()
+
+    overall_stat = {
         **ChatBotSession.statis_overview(f, t),
         **StudentChatHistory.statis_overview(f, t)
     }
 
-    output = io.BytesIO()
-    wb = xlsxwriter.Workbook(output)
-    ws = wb.add_worksheet('Statistics Overview')
+    chatbot_stat_file = write_chatbot_stat(list(chatbot_stat_data))
+    online_chat_stat_file = write_online_chat_stat(list(online_chat_stat_data))
+    overall_stat_file = write_overall_stat(overall_stat, f, t)
 
-    ws.write(0, 0, 'From')
-    ws.write(0, 1, from_date)
-    ws.write(1, 0, 'To')
-    ws.write(1, 1, to_date)
-
-    row_name = ChatBotSession.statis_overview_row_name_map
-
-    for row_idx, (key, val) in enumerate(row_name.items(), 2):
-        ws.write(row_idx, 0, key)
-        ws.write(row_idx, 1, res[val])
-
-    wb.close()
-    output.seek(0)
+    logger.info('Zip all files.')
+    output = write_zip_files({
+        'chatbot_statistics.xlsx': chatbot_stat_file,
+        'online_chat_statistics.xlsx': online_chat_stat_file,
+        'overall_statistics.xlsx': overall_stat_file
+    })
     response = HttpResponse(output,
-                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="statistics_overview.xlsx"'
+                            content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="statistics.zip"'
 
     return response
 
@@ -632,8 +636,9 @@ def get_red_route(request):
     data = json.loads(request.body)
     before_date = data.get('beforeDate')
     from_date = datetime.strptime(before_date, '%Y-%m-%d') - timedelta(days=7)
+    to_date = datetime.strptime(before_date, '%Y-%m-%d')
 
-    res = ChatBotSession.get_red_route(from_date)
+    res = ChatBotSession.get_red_route(from_date, to_date)
 
     return JsonResponse(res, safe=False, status=200)
 
@@ -644,10 +649,12 @@ def export_red_route(request):
     data = json.loads(request.body)
     before_date = data.get('beforeDate')
     if before_date is None:
-        d = timezone.localtime()
+        to_date = timezone.localtime()
     else:
-        d = datetime.strptime(before_date, '%Y-%m-%d')
-    output = ChatBotSession.get_red_route_to_excel(d - timedelta(days=7))
+        to_date = datetime.strptime(before_date, '%Y-%m-%d')
+    from_date = to_date - timedelta(days=7)
+    data = ChatBotSession.get_red_route(from_date, to_date)
+    output = ChatBotSession.from_red_route_to_excel(data)
 
     response = HttpResponse(output,
                             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
