@@ -13,10 +13,13 @@ class ZulipClient:
         self.client = zulip.Client(config_file=config_file)
         logger.info(f"end client")
         self.admin_email = settings.ZULIP['ZULIP_ADMIN_EMAIL']
+        logger.info(self.admin_email)
         self.domain_url = settings.ZULIP['ZULIP_DOMAIN_URL']
+        logger.info(self.domain_url)
         # self.ssl_path = settings.ZULIP['ZULIP_SSL_PATH']
 
     def get_users(self):
+        logger.info(zulip.__file__)
         users = self.client.get_users()
 
         if users['result'] == 'error':
@@ -57,6 +60,9 @@ class ZulipClient:
         return stream_name
 
     def fetch_user_api_key(self, username: str, password: str):
+        logger.info(self.admin_email)
+        logger.info(self.domain_url)
+
         payload = {
             "username": username,
             "password": password,
@@ -68,9 +74,12 @@ class ZulipClient:
                                  data=payload)
                                 #  data=payload, verify=self.ssl_path)
         result = response.json()
+        logger.info(response)
+        logger.info("result")
+        logger.info(result)
         if response.status_code != 200:
             raise Exception("Cannot get {username}'s api key: {error}".format(
-                username=username, error=result.msg))
+                username=username, error=result['msg']))
 
         return result['api_key']
 
@@ -89,6 +98,7 @@ class ZulipClient:
             invite_only=True,
             authorization_errors_fatal=False,
         )
+        logger.info(response)
 
         if response['result'] == 'error':
             error_msg = response['msg']

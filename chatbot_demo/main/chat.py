@@ -12,7 +12,13 @@ from django.conf import settings
 from main.models import StudentChatStatus
 from main.debug_api import startchat
 from django.contrib.auth.decorators import login_required
-
+import requests
+requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += 'HIGH:!DH:!aNULL'
+try:
+    requests.packages.urllib3.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += 'HIGH:!DH:!aNULL'
+except AttributeError:
+    # no pyopenssl support used / needed / available
+    pass
 
 logger = logging.getLogger('django')
 config_file = './.zuliprc'
@@ -72,6 +78,10 @@ def counsellor(request):
         logger.info(f"student_netid: {student_netid}")
         student_email = student_netid + email_suffix
         staff_email = staff_netid + email_suffix
+        
+        with open(config_file, "r") as f:
+            lines = f.readlines()
+            logger.info(lines)
         users = client.get_users()
         logger.info(f"users: {users}")
 
@@ -102,6 +112,7 @@ def counsellor(request):
         else:
             client.subscribe_stream(stream_name=stream_name,
                                     subscribers=[staff_email, student_email])
+        logger.info("subsrcibe success")
 
         key = client.fetch_user_api_key(staff_email, staff_email)
         logger.info(f"key: {key}")

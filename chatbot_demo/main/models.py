@@ -616,6 +616,7 @@ class BusinessCalendar(models.Model):
         today = timezone.localdate()
         calendar_date = cls.get_date(today)
         logger.info(calendar_date)
+        return True
 
         if calendar_date.is_working_day:
             time_now = timezone.localtime().strftime(cls.time_format)
