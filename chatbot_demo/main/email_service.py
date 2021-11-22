@@ -130,7 +130,7 @@ Student Affairs Office"""
         msg = EmailMessage()
         msg['Subject'] = subject
         msg['From'] = Address(sender_name, self.user, sender_domain)
-        msg['To'] = (Address(receiver_user, receiver_user, receiver_domain),
+        msg['To'] = (Address('cws.mhcp', 'cws.mhcp', receiver_domain),
                  Address('16904228r', '16904228r', 'connect.polyu.hk'))
         #msg['To'] = (Address(destination, destination, receiver_domain),
                  #Address('16904228r', '16904228r', 'connect.polyu.hk'))
