@@ -755,7 +755,6 @@ class BusinessCalendar(models.Model):
         today = timezone.localdate()
         calendar_date = cls.get_date(today)
         logger.info(calendar_date)
-        return True
 
         if calendar_date.is_working_day:
             time_now = timezone.localtime().strftime(cls.time_format)
@@ -765,7 +764,7 @@ class BusinessCalendar(models.Model):
                        (cls.lunch_break[1] < time_now < office_hr_end)
             elif today.isoweekday() == 6:  # Sat
                 return cls.office_hr_begin < time_now < cls.office_hr_end_sat
-        return True
+        return False
 
     @classmethod
     def get_prev_working_day(cls) -> datetime:
