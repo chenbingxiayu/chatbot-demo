@@ -310,7 +310,8 @@ class StaffStatus(models.Model):
 
         # send email asynchronously
         template_data = {'student_netid': student_netid}
-        t = threading.Thread(target=email_service.send, args=('new_assignment', self.staff_netid, template_data))
+        #t = threading.Thread(target=email_service.send, args=('new_assignment', self.staff_netid, template_data))
+        t = threading.Thread(target=email_service.send, args=('new_assignment', 'cws.mhcp', template_data))
         t.start()
 
 
