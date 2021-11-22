@@ -148,6 +148,16 @@
             }
             console.log('Successfully delete the history');
             alert('You have successfully end the conversation.');
+            if (navigator.userAgent.indexOf('Firefox') != -1 || navigator.userAgent.indexOf('Chrome') != -1) {
+              window.location.href = 'about:blank';
+              console.log('before close');
+              window.close();
+              console.log('after close');
+            } else {
+              window.opener = null;
+              window.open('', '_self');
+              window.close();
+            }
           } catch (error) {
             console.log(error);
             alert('Ops, Something wrong happened.');
