@@ -29,7 +29,7 @@ default_template_data = {
 }
 
 context = ssl.create_default_context()
-
+EMAIL_DEBUG = True
 class EmailTemplate:
     def __init__(self, subject: str, body: str):
         self._subject = subject
@@ -129,7 +129,7 @@ Student Affairs Office"""
         msg = EmailMessage()
         msg['Subject'] = subject
         msg['From'] = Address(sender_name, self.user, sender_domain)
-        if DEBUG:
+        if EMAIL_DEBUG:
             msg['To'] = (Address(receiver_user, receiver_user, receiver_domain),
                      Address('16904228r', '16904228r', 'connect.polyu.hk'))
         else:
