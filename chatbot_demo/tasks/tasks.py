@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from asgiref.sync import sync_to_async
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.db import transaction
@@ -22,7 +21,6 @@ def reassign_counsellor():
     """
     logger.info("Run re-assignment task")
     now = timezone.localtime()
-    role_ranking = ROLE_RANKING + [None]
 
     students = StudentChatStatus.objects \
         .filter(student_chat_status=StudentChatStatus.ChatStatus.ASSIGNED,
@@ -37,14 +35,19 @@ def reassign_counsellor():
             try:
                 assigned_staff = student.assigned_counsellor
                 role = assigned_staff.staff_role
-                escalated_role = role_ranking[role_ranking.index(role) + 1] if role in role_ranking else None
-                if escalated_role:
-                    staff = StaffStatus.get_random_staff_by_role(escalated_role)
-                    if staff:
-                        staff.assign_to(student)
-                        logger.info(f"{staff} assigned to {student}")
-                        success = True
-                        successful_count += 1
+                if role in ROLE_RANKING:
+                    next_role_idx = (ROLE_RANKING.index(role) + 1) % len(ROLE_RANKING)
+                    escalated_role = ROLE_RANKING[next_role_idx]
+                # for abnormal cases
+                else:
+                    escalated_role = StaffStatus.Role.ONLINETRIAGE
+
+                staff = StaffStatus.get_random_staff_by_role(escalated_role)
+                if staff:
+                    staff.assign_to(student)
+                    logger.info(f"{staff} assigned to {student}")
+                    success = True
+                    successful_count += 1
             except TransactionManagementError as e:
                 logger.warning(e)
 
