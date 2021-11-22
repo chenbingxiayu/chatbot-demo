@@ -316,7 +316,7 @@ def endchat(request):
     """
     student_netid = request.POST.get('student_netid')
     staff_netid = request.POST.get('staff_netid')
-    is_no_show = request.POST.get('is_no_show')
+    is_no_show = int(request.POST.get('is_no_show'))
     now = timezone.localtime()
     if is_no_show:
         from main.email_service import email_service
