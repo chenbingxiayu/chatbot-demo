@@ -30,7 +30,7 @@
             <th scope="row" class="seq-no"></th>
             <td>{{ history.student_netid }}</td>
             <td>{{ history.chat_request_time|time:'H:i:s' }}</td>
-            <td class="chat-status">End</td>
+            <td>{{ history.get_student_chat_status_display|default_if_none:"" }}</td>
             <td>{{ history.chat_request_time|duration:now }}</td>
           </tr>
           {% endfor %}

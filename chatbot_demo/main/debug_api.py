@@ -108,7 +108,7 @@ def deletestud(request):
         try:
             student = StudentChatStatus.objects \
                 .get(student_netid=student_netid)
-            StudentChatHistory.append_end_chat(student, now, is_no_show)
+            StudentChatHistory.append_end_chat(student, now, is_no_show, endchat=True)
             student.delete()
         except Exception as e:
             logger.warning(e)
