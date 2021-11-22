@@ -8,7 +8,7 @@ from email.message import EmailMessage
 from string import Formatter
 from typing import Dict, List
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 smtp_server = os.getenv("SMTP_SERVER", "smtp.office365.com")
 smtp_port = os.getenv("SMTP_PORT", 587)
