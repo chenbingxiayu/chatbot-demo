@@ -724,6 +724,8 @@ class BusinessCalendar(models.Model):
             if row[4] not in ('Saturday', 'public holiday'):
                 cleaned_time = datetime.strptime(row[1], cls.time_format).strftime(cls.time_format)
         except ValueError:
+            logger.info(row_idx)
+            logger.info(row)
             raise ValueError(f'Value format invalid in row {row_idx}.')
 
         return cleaned_date, cleaned_time
