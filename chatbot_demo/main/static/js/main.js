@@ -278,7 +278,7 @@
           content: 'Hi, ' + name + '. To know you better, please answer a few questions below. So I can provide you with the right support.<br/><br/> It is not supposed to treat it as a formal psychological or diagnostic assessment.',
         })
         .then(function() {
-          botui.message
+          return botui.message
             .bot({
               loading: true,
               delay: 1500,
@@ -314,7 +314,7 @@
         .then(function(res) {
           if (res.text == '') {
             alert('You have to select at least one item!');
-            q1_ans();
+            return q1_ans();
           } else {
             const q1SurveyData = getQ1SurveyData(res.value);
             surveyData = { ...surveyData, ...q1SurveyData };
@@ -400,7 +400,7 @@
     }
 
     function q3() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 1500,
@@ -454,7 +454,7 @@
     }
 
     function q4() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 2000,
@@ -498,7 +498,7 @@
     }
 
     function q5_q6() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 2500,
@@ -522,146 +522,149 @@
                 '</font></b><br/>';
               score += res.value;
               console.log(score);
-              botui.message.human({
-                photo: client,
-                delay: 500,
-                content: res.text,
-              });
-              if (res.value == 0) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 2000,
-                    photo: polly,
-                    content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
-                  })
-                  .then(function() {
+              return botui.message
+                .human({
+                  photo: client,
+                  delay: 500,
+                  content: res.text,
+                })
+                .then(function() {
+                  if (res.value == 0) {
                     return botui.message
                       .bot({
                         loading: true,
-                        delay: 1500,
+                        delay: 2000,
                         photo: polly,
-                        content: 'Q6. Do you feel effective when using these coping strategies?',
+                        content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
                       })
                       .then(function() {
-                        return botui.action
-                          .button({
-                            addMessage: false,
-                            action: [
-                              { text: 'Yes', value: 0 },
-                              { text: 'No', value: 1 },
-                            ],
+                        return botui.message
+                          .bot({
+                            loading: true,
+                            delay: 1500,
+                            photo: polly,
+                            content: 'Q6. Do you feel effective when using these coping strategies?',
                           })
-                          .then(function(res) {
-                            surveyData['q6_1'] = res.value === 0;
-                            surveyData['q6_2'] = 'null';
-                            answers[6] = 'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
-                            score += res.value;
-                            console.log(score);
-                            botui.message.human({
-                              photo: client,
-                              delay: 500,
-                              content: res.text,
-                            });
+                          .then(function() {
+                            return botui.action
+                              .button({
+                                addMessage: false,
+                                action: [
+                                  { text: 'Yes', value: 0 },
+                                  { text: 'No', value: 1 },
+                                ],
+                              })
+                              .then(function(res) {
+                                surveyData['q6_1'] = res.value === 0;
+                                surveyData['q6_2'] = 'null';
+                                answers[6] = 'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                score += res.value;
+                                console.log(score);
+                                return botui.message.human({
+                                  photo: client,
+                                  delay: 500,
+                                  content: res.text,
+                                });
+                              });
                           });
                       });
-                  });
-              } else {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 2000,
-                    photo: polly,
-                    content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
-                  })
-                  .then(function() {
+                  } else {
                     return botui.message
                       .bot({
                         loading: true,
-                        delay: 1500,
+                        delay: 2000,
                         photo: polly,
-                        content: 'Q6. Are you able to manage your sadness, worry or tension at this moment?',
+                        content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
                       })
                       .then(function() {
-                        return botui.action
-                          .button({
-                            addMessage: false,
-                            action: [
-                              { text: 'Yes', value: 0 },
-                              { text: 'No', value: 1 },
-                            ],
+                        return botui.message
+                          .bot({
+                            loading: true,
+                            delay: 1500,
+                            photo: polly,
+                            content: 'Q6. Are you able to manage your sadness, worry or tension at this moment?',
                           })
-                          .then(function(res) {
-                            surveyData['q6_1'] = 'null';
-                            surveyData['q6_2'] = res.value === 0;
-                            answers[6] = 'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
-                            score += res.value;
-                            console.log(score);
-                            return botui.message.human({
-                              photo: client,
-                              delay: 500,
-                              content: res.text,
-                            });
+                          .then(function() {
+                            return botui.action
+                              .button({
+                                addMessage: false,
+                                action: [
+                                  { text: 'Yes', value: 0 },
+                                  { text: 'No', value: 1 },
+                                ],
+                              })
+                              .then(function(res) {
+                                surveyData['q6_1'] = 'null';
+                                surveyData['q6_2'] = res.value === 0;
+                                answers[6] = 'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                score += res.value;
+                                console.log(score);
+                                return botui.message.human({
+                                  photo: client,
+                                  delay: 500,
+                                  content: res.text,
+                                });
+                              });
                           });
                       });
-                  });
-              }
+                  }
+                });
             });
         })
         .then(dispatch); //.then(confirm_answer);
     }
 
-    function confirm_answer() {
-      return botui.message
-        .bot({
-          loading: true,
-          photo: polly,
-          delay: 2000,
-          content: 'Kindly confirm your answer:',
-        })
-        .then(function() {
-          var temp = '';
-          for (var i = 1; i <= 6; i++) {
-            temp += '<br/>' + answers[i];
-          }
-          return botui.message.bot({
-            loading: true,
-            delay: 2000,
-            photo: polly,
-            content: temp,
-          });
-        })
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            action: [
-              { text: 'Cancel (Redirect to Q1)', value: false },
-              { text: 'Confirm', value: true },
-            ],
-          });
-        })
-        .then(function(res) {
-          if (res.value == false) {
-            score = 0;
-            answers = {};
-            return botui.message
-              .human({
-                photo: client,
-                delay: 500,
-                content: res.text,
-              })
-              .then(questions);
-          } else {
-            return botui.message
-              .human({
-                photo: client,
-                delay: 500,
-                content: res.text,
-              })
-              .then(dispatch);
-          }
-        });
-    }
+    // function confirm_answer() {
+    //   return botui.message
+    //     .bot({
+    //       loading: true,
+    //       photo: polly,
+    //       delay: 2000,
+    //       content: 'Kindly confirm your answer:',
+    //     })
+    //     .then(function() {
+    //       var temp = '';
+    //       for (var i = 1; i <= 6; i++) {
+    //         temp += '<br/>' + answers[i];
+    //       }
+    //       return botui.message.bot({
+    //         loading: true,
+    //         delay: 2000,
+    //         photo: polly,
+    //         content: temp,
+    //       });
+    //     })
+    //     .then(function() {
+    //       return botui.action.button({
+    //         addMessage: false,
+    //         action: [
+    //           { text: 'Cancel (Redirect to Q1)', value: false },
+    //           { text: 'Confirm', value: true },
+    //         ],
+    //       });
+    //     })
+    //     .then(function(res) {
+    //       if (res.value == false) {
+    //         score = 0;
+    //         answers = {};
+    //         return botui.message
+    //           .human({
+    //             photo: client,
+    //             delay: 500,
+    //             content: res.text,
+    //           })
+    //           .then(questions);
+    //       } else {
+    //         return botui.message
+    //           .human({
+    //             photo: client,
+    //             delay: 500,
+    //             content: res.text,
+    //           })
+    //           .then(dispatch);
+    //       }
+    //     });
+    // }
 
     async function dispatch() {
       finish_assessment = true;
@@ -673,11 +676,11 @@
       }
 
       if (score <= 6) {
-        low();
+        return low();
       } else if (score <= 10) {
-        medium();
+        return medium();
       } else {
-        high();
+        return high();
       }
     }
 
@@ -716,7 +719,7 @@
     }
 
     function medium() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 1000,
@@ -1204,7 +1207,7 @@
       pop_msg = '';
 
       if (pop_msg != '') {
-        botui.message
+        return botui.message
           .bot({
             loading: true,
             delay: 1500,
@@ -1216,71 +1219,72 @@
       }
 
       //----
-      botui.message
-        .bot({
-          loading: true,
-          photo: polly,
-          delay: 2000,
-          content:
-            '<p>Please accept the Terms and Conditions of using the Online Chat service:</p><br/>' +
-            '<p>(The Terms and Conditions are only available in English.)</p>\n' +
-            '<br/>\n' +
-            '<p>Initiated by the SAO Counselling & Wellness Section (CWS), Online Chat Service (the Service) is available to all registered students of The Hong Kong Polytechnic University (PolyU) aged 18 or above.</p>\n',
-        })
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            photo: client,
-            action: [
-              {
-                text: 'Read more',
-              },
-            ],
-          });
-        })
-        .then(function() {
-          return botui.message.bot({
+      return (
+        botui.message
+          .bot({
             loading: true,
             photo: polly,
             delay: 2000,
             content:
+              '<p>Please accept the Terms and Conditions of using the Online Chat service:</p><br/>' +
+              '<p>(The Terms and Conditions are only available in English.)</p>\n' +
               '<br/>\n' +
-              '<p>The Service intends to render remote support through the secured online communication.  However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected.  If possible, staff of CWS may contact the user for the service follow-up whenever necessary.  </p>\n' +
-              '<br/>\n' +
-              '<p>The staff of CWS will follow its protocol in providing the Service.  By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
-          });
-        })
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            photo: client,
-            action: [
-              {
-                text: 'Read more',
-              },
-            ],
-          });
-        })
-        .then(function() {
-          return botui.message.bot({
-            loading: true,
-            photo: polly,
-            delay: 2000,
-            content:
-              '<br/>\n' +
-              '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user of the Service or others from harm including disclosing the personal particulars of the user to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police.   To the extent practicable, counsellor of CWS will discuss with the user prior taking such actions.</p>\n' +
-              '<br/>\n' +
-              '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
-              '<br/>\n' +
-              '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
-              '<br/>\n' +
-              '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
-              '<br/>\n' +
-              '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
-          });
-        })
-        //----
-        /*
+              '<p>Initiated by the SAO Counselling & Wellness Section (CWS), Online Chat Service (the Service) is available to all registered students of The Hong Kong Polytechnic University (PolyU) aged 18 or above.</p>\n',
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content:
+                '<br/>\n' +
+                '<p>The Service intends to render remote support through the secured online communication.  However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected.  If possible, staff of CWS may contact the user for the service follow-up whenever necessary.  </p>\n' +
+                '<br/>\n' +
+                '<p>The staff of CWS will follow its protocol in providing the Service.  By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
+            });
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content:
+                '<br/>\n' +
+                '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user of the Service or others from harm including disclosing the personal particulars of the user to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police.   To the extent practicable, counsellor of CWS will discuss with the user prior taking such actions.</p>\n' +
+                '<br/>\n' +
+                '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                '<br/>\n' +
+                '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
+                '<br/>\n' +
+                '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
+                '<br/>\n' +
+                '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
+            });
+          })
+          //----
+          /*
     botui.message
       .bot({
         loading: true,
@@ -1293,43 +1297,44 @@
           "2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>" +
           "3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>",
       })*/
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            action: [
-              { text: 'No, I will stop here', value: false },
-              { text: 'Got it', value: true },
-            ],
-          });
-        })
-        .then(function(res) {
-          if (res.value == false) {
-            return botui.message
-              .human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              })
-              .then(function() {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 1500,
-                    photo: polly,
-                    content: 'You are always welcome to contact us at (852)27666800 for enquires.',
-                  })
-                  .then(further_help);
-              });
-          } else {
-            return botui.message
-              .human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              })
-              .then(questions_before_OCS);
-          }
-        });
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              action: [
+                { text: 'No, I will stop here', value: false },
+                { text: 'Got it', value: true },
+              ],
+            });
+          })
+          .then(function(res) {
+            if (res.value == false) {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(function() {
+                  return botui.message
+                    .bot({
+                      loading: true,
+                      delay: 1500,
+                      photo: polly,
+                      content: 'You are always welcome to contact us at (852)27666800 for enquires.',
+                    })
+                    .then(further_help);
+                });
+            } else {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(questions_before_OCS);
+            }
+          })
+      );
     }
 
     async function questions_before_OCS() {
@@ -1360,294 +1365,299 @@
               });
             })
             .then(function(res) {
-              botui.message.human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              });
-
-              if (res.value == true) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 3000,
-                    photo: polly,
-                    content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone (852)27666800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.',
-                  })
-                  .then(function() {
-                    return botui.message.bot({
-                      loading: true,
-                      delay: 1500,
-                      photo: polly,
-                      content: 'You are always welcome to read our online cls-help materials here.',
-                    });
-                  })
-                  .then(function() {
-                    return botui.action.button({
-                      addMessage: false,
-                      action: [
-                        {
-                          text: 'Mental Health Educational Material/Resources',
-                          value: true,
-                        },
-                        { text: 'No, thank you!', value: false },
-                      ],
-                    });
-                  })
-                  .then(function(res) {
-                    if (res.value == false) {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(further_help);
-                    } else {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(mental_health_101);
-                    }
-                  });
-              } else {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    photo: polly,
-                    delay: 3000,
-                    content:
-                      'Q2.Do you have a history of any of the following:<br/><br/>' +
-                      '- Having thoughts of hurting yourself or others, or engaging in cls-harming or violent behaviors<br/><br/>' +
-                      '- Being admitted to a psychiatric ward, or hospitalized due to a psychiatric condition<br/><br/>' +
-                      '- Being diagnosed of mental health problem or illness by psychologists, psychiatrists or doctors, e.g. Major Depressive Disorder, Anxiety Disorder, Schizophrenia, and any Personality Disorders etc <br/><br/>' +
-                      '- Being prescribed with medications for treating a mental health related condition',
-                  })
-                  .then(function() {
-                    return botui.action.button({
-                      addMessage: false,
-                      action: [
-                        { text: 'Yes', value: true },
-                        { text: 'No', value: false },
-                      ],
-                    });
-                  })
-                  .then(function(res) {
-                    if (res.value == false) {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(function() {
-                          return botui.message.bot({
-                            delay: 1000,
-                            photo: polly,
-                            content: 'Please fill in the following information prior starting a conversation with SAO counsellor',
-                          });
-                        })
-                        .then(function() {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: 'Personal Contact Number:',
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(function() {
+                  if (res.value == true) {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        delay: 3000,
+                        photo: polly,
+                        content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone (852)27666800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.',
+                      })
+                      .then(function() {
+                        return botui.message.bot({
+                          loading: true,
+                          delay: 1500,
+                          photo: polly,
+                          content: 'You are always welcome to read our online cls-help materials here.',
+                        });
+                      })
+                      .then(function() {
+                        return botui.action.button({
+                          addMessage: false,
+                          action: [
+                            {
+                              text: 'Mental Health Educational Material/Resources',
+                              value: true,
                             },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['personal_contact_number'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: 'Personal contact number is ' + res.value,
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: 'Emergency Contact Name',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['emergency_contact_name'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: 'Emergency contact name is ' + res.value,
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: 'Relationship',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['relationship'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: 'Relationship is ' + res.value,
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: 'Emergency Contact Number',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['emergency_contact_number'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: 'Emergency contact number is ' + res.value,
-                          });
-                        })
-                        .then(function() {
-                          botui.message.bot({
-                            delay: 1000,
-                            photo: polly,
-                            content: 'I’m now directing you to the online chatroom.',
-                          });
-                        })
-                        .then(async function() {
-                          const responseMessage = await addToQueue(student_netid, onlineChatSurveyData);
-                          const isAssigned = responseMessage.indexOf('Student is assigned to a staff') > -1;
-                          if (isAssigned) {
-                            return Promise.resolve('assigned');
-                          } else {
-                            return Promise.resolve('waiting');
-                          }
-                        })
-                        .then(async function(status) {
-                          let currentStatus = status;
-                          // student need to waiting on both 'waiting' and 'assigned' status
-                          let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
-                          let timer = null;
-
-                          if (isWaitingStatus) {
-                            let count = 1;
-                            // request every 5 sec
-                            timer = setInterval(async () => {
-                              const stu = await getStatusByStudentNetId(student_netid);
-                              currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
-                              isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
-                              // send waiting message every 3mins
-                              if (count % 36 === 0) {
-                                await waitSubsribe(student_netid, 'en');
+                            { text: 'No, thank you!', value: false },
+                          ],
+                        });
+                      })
+                      .then(function(res) {
+                        if (res.value == false) {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(further_help);
+                        } else {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(mental_health_101);
+                        }
+                      });
+                  } else {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 3000,
+                        content:
+                          'Q2.Do you have a history of any of the following:<br/><br/>' +
+                          '- Having thoughts of hurting yourself or others, or engaging in self-harming or violent behaviors<br/><br/>' +
+                          '- Being admitted to a psychiatric ward, or hospitalized due to a psychiatric condition<br/><br/>' +
+                          '- Being diagnosed of mental health problem or illness by psychologists, psychiatrists or doctors, e.g. Major Depressive Disorder, Anxiety Disorder, Schizophrenia, and any Personality Disorders etc <br/><br/>' +
+                          '- Being prescribed with medications for treating a mental health related condition',
+                      })
+                      .then(function() {
+                        return botui.action.button({
+                          addMessage: false,
+                          action: [
+                            { text: 'Yes', value: true },
+                            { text: 'No', value: false },
+                          ],
+                        });
+                      })
+                      .then(function(res) {
+                        if (res.value == false) {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                delay: 1000,
+                                photo: polly,
+                                content: 'Please fill in the following information prior starting a conversation with SAO counsellor',
+                              });
+                            })
+                            .then(function() {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: 'Personal Contact Number:',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['personal_contact_number'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: 'Personal contact number is ' + res.value,
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: 'Emergency Contact Name',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['emergency_contact_name'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: 'Emergency contact name is ' + res.value,
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: 'Relationship',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['relationship'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: 'Relationship is ' + res.value,
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: 'Emergency Contact Number',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['emergency_contact_number'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: 'Emergency contact number is ' + res.value,
+                              });
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                delay: 1000,
+                                photo: polly,
+                                content: 'I’m now directing you to the online chatroom.',
+                              });
+                            })
+                            .then(async function() {
+                              const responseMessage = await addToQueue(student_netid, onlineChatSurveyData);
+                              const isAssigned = responseMessage.indexOf('Student is assigned to a staff') > -1;
+                              if (isAssigned) {
+                                return Promise.resolve('assigned');
+                              } else {
+                                return Promise.resolve('waiting');
                               }
-                              count++;
-                            }, 5000);
-                          }
+                            })
+                            .then(async function(status) {
+                              let currentStatus = status;
+                              // student need to waiting on both 'waiting' and 'assigned' status
+                              let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                              let timer = null;
 
-                          while (timer) {
-                            // check current status after 1sec
-                            await new Promise((resolve) => setTimeout(resolve, 1000));
+                              if (isWaitingStatus) {
+                                let count = 1;
+                                // request every 5 sec
+                                timer = setInterval(async () => {
+                                  const stu = await getStatusByStudentNetId(student_netid);
+                                  currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
+                                  isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                                  // send waiting message every 3mins
+                                  if (count % 36 === 0) {
+                                    await waitSubsribe(student_netid, 'en');
+                                  }
+                                  count++;
+                                }, 5000);
+                              }
 
-                            // stop to query status and pop waiting msg
-                            if (!isWaitingStatus || studQuitMsg) {
-                              clearInterval(timer);
-                            }
-                            // student quit
-                            if (studQuitMsg) {
-                              const errorMsg = studQuitMsg;
-                              studQuitMsg = '';
-                              throw new Error(errorMsg);
-                            }
-                            // student status changed
-                            if (!isWaitingStatus) {
-                              break;
-                            }
-                          }
+                              while (timer) {
+                                // check current status after 1sec
+                                await new Promise((resolve) => setTimeout(resolve, 1000));
+                                console.log('isWaitingStatus', isWaitingStatus);
+                                // stop to query status and pop waiting msg
+                                if (!isWaitingStatus || studQuitMsg) {
+                                  await new Promise((resolve) => setTimeout(resolve, 5000));
+                                  clearInterval(timer);
+                                  await botui.action.hide();
+                                }
+                                // student quit
+                                if (studQuitMsg) {
+                                  const errorMsg = studQuitMsg;
+                                  studQuitMsg = '';
+                                  throw new Error(errorMsg);
+                                }
+                                // student status changed
+                                if (!isWaitingStatus) {
+                                  break;
+                                }
+                              }
 
-                          if (currentStatus === 'end') {
-                            const errorMsg = onlineChatLanguageJson['en'].QUIT_QUEUE_MESSAGE;
-                            throw new Error(errorMsg);
-                          }
+                              if (currentStatus === 'end') {
+                                const errorMsg = onlineChatLanguageJson['en'].QUIT_QUEUE_MESSAGE;
+                                throw new Error(errorMsg);
+                              }
 
-                          if (currentStatus === 'chatting') {
-                            await botui.message.add({
-                              delay: 1000,
-                              photo: polly,
-                              content: onlineChatLanguageJson['en'].CHAT_LINK_MESSAGE,
+                              if (currentStatus === 'chatting') {
+                                return botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content: onlineChatLanguageJson['en'].CHAT_LINK_MESSAGE,
+                                });
+                              }
+                            })
+                            .catch(function(e) {
+                              console.log('catch e', e);
+                              return botui.message.add({
+                                delay: 1000,
+                                photo: polly,
+                                content: e.message || 'Unknown Error',
+                              });
                             });
-                          }
-                        })
-                        .catch(function(e) {
-                          return botui.message.add({
-                            delay: 1000,
-                            photo: polly,
-                            content: e.message,
-                          });
-                        });
-                      // .then(function () {
-                      //   return botui.message.add({
-                      //     delay: 1000,
-                      //     photo: polly,
-                      //     content:
-                      //       '[Demo only] For counsellor, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">link</a> to enter the chat room.',
-                      //   });
-                      // });
-                    } else {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(function() {
-                          return botui.message.bot({
-                            loading: true,
-                            delay: 2000,
-                            photo: polly,
-                            content: 'To provide comprehensive support to you, you are highly advised to make a face to face appointment with SAO counsellor.',
-                          });
-                        })
-                        .then(function() {
-                          if (office_hour == true) {
-                            return botui.message.bot({
-                              loading: true,
-                              delay: 1000,
-                              photo: polly,
-                              content:
-                                '1. Call (852)27666800<br/>2. Walk in QT308(Entrance at Core T) during office hours<br/>3. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+                          // .then(function () {
+                          //   return botui.message.add({
+                          //     delay: 1000,
+                          //     photo: polly,
+                          //     content:
+                          //       '[Demo only] For counsellor, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">link</a> to enter the chat room.',
+                          //   });
+                          // });
+                        } else {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                loading: true,
+                                delay: 2000,
+                                photo: polly,
+                                content: 'To provide comprehensive support to you, you are highly advised to make a face to face appointment with SAO counsellor.',
+                              });
+                            })
+                            .then(function() {
+                              if (office_hour == true) {
+                                return botui.message.bot({
+                                  loading: true,
+                                  delay: 1000,
+                                  photo: polly,
+                                  content:
+                                    '1. Call (852)27666800<br/>2. Walk in QT308(Entrance at Core T) during office hours<br/>3. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+                                });
+                              } else {
+                                return botui.message.bot({
+                                  loading: true,
+                                  delay: 2000,
+                                  photo: polly,
+                                  content: '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+                                });
+                              }
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                loading: true,
+                                photo: polly,
+                                delay: 1500,
+                                content: 'Thank you for using our service.',
+                              });
                             });
-                          } else {
-                            return botui.message.bot({
-                              loading: true,
-                              delay: 2000,
-                              photo: polly,
-                              content: '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
-                            });
-                          }
-                        })
-                        .then(function() {
-                          botui.message.bot({
-                            loading: true,
-                            photo: polly,
-                            delay: 1500,
-                            content: 'Thank you for using our service.',
-                          });
-                        });
-                    }
-                  })
-                  .then(end);
-              }
+                        }
+                      })
+                      .then(end);
+                  }
+                });
             });
         });
     }
@@ -1658,12 +1668,12 @@
           loading: true,
           photo: polly,
           delay: 1500,
-          content: '<font color=black>In case of emergency, please Call 999 or go to the nearest emergency  / A&E service.</font>',
+          content: '<font color=black>In case of emergency, please call 999 or go to the nearest emergency  / A&E service.</font>',
         })
         .then(async function() {
           const office_hour = await isSAOWorkingHours(new Date());
           if (office_hour) {
-            contact_with_counsellors();
+            return contact_with_counsellors();
           } else {
             return botui.message
               .bot({
@@ -1754,14 +1764,13 @@
             .then(function(res) {
               if (res.value == true) {
                 if (service_list == true || finish_assessment == false) {
-                  botui.message
+                  return botui.message
                     .human({
                       delay: 500,
                       photo: client,
                       content: res.text,
                     })
                     .then(init_choices);
-                  return;
                 }
 
                 if (score <= 10) {
@@ -1805,11 +1814,11 @@
     }
 
     function end() {
-      rating();
+      return rating();
     }
 
     function rating() {
-      botui.message
+      return botui.message
         .add({
           type: 'html',
           delay: 1000,
@@ -1842,7 +1851,8 @@
             '</div>',
         })
         .then(function() {
-          botui.action
+          console.log('submit button');
+          return botui.action
             .button({
               addMessage: false,
               photo: client,
@@ -1858,7 +1868,7 @@
               // fix the stars
 
               $('.far').removeClass('available');
-              botui.message.bot({
+              return botui.message.bot({
                 loading: true,
                 delay: 1000,
                 photo: polly,
@@ -2199,7 +2209,7 @@
     }
 
     function questions_tc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           photo: polly,
@@ -2207,7 +2217,7 @@
           content: '你好﹗' + name + '，請回答以下問題，我會總結所得出的答案，提出切合你所需的服務建議。<br/><br/> 以下提問並不能視之為取代專業臨床的心理評估和診斷',
         })
         .then(function() {
-          botui.message
+          return botui.message
             .bot({
               loading: true,
               delay: 1500,
@@ -2243,7 +2253,7 @@
         .then(function(res) {
           if (res.text == '') {
             alert('您必須至少選擇一項！');
-            q1_ans_tc();
+            return q1_ans_tc();
           } else {
             const q1SurveyData = getQ1SurveyData(res.value);
             surveyData = { ...surveyData, ...q1SurveyData };
@@ -2268,7 +2278,7 @@
     }
 
     function q2_tc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 1500,
@@ -2328,7 +2338,7 @@
     }
 
     function q3_tc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 1500,
@@ -2382,7 +2392,7 @@
     }
 
     function q4_tc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 2000,
@@ -2426,7 +2436,7 @@
     }
 
     function q5_q6_tc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 2500,
@@ -2447,146 +2457,149 @@
               answers[5] = 'Q5. 你曾否採用一些積極的應對方法 (例如: 運動、呼吸練習、聽音樂等）去面對/紓緩這些情緒嗎?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
               score += res.value;
               console.log(score);
-              botui.message.human({
-                photo: client,
-                delay: 500,
-                content: res.text,
-              });
-              if (res.value == 0) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 2000,
-                    photo: polly,
-                    content: '我們能發掘一些積極的應對方法去紓緩上述的情緒是非常重要的啊!',
-                  })
-                  .then(function() {
+              return botui.message
+                .human({
+                  photo: client,
+                  delay: 500,
+                  content: res.text,
+                })
+                .then(function() {
+                  if (res.value == 0) {
                     return botui.message
                       .bot({
                         loading: true,
-                        delay: 1500,
+                        delay: 2000,
                         photo: polly,
-                        content: 'Q6. 你認為這些應對方法能否有效紓緩你上述的情緒嗎?',
+                        content: '我們能發掘一些積極的應對方法去紓緩上述的情緒是非常重要的啊!',
                       })
                       .then(function() {
-                        return botui.action
-                          .button({
-                            addMessage: false,
-                            action: [
-                              { text: '能夠', value: 0 },
-                              { text: '不能夠', value: 1 },
-                            ],
+                        return botui.message
+                          .bot({
+                            loading: true,
+                            delay: 1500,
+                            photo: polly,
+                            content: 'Q6. 你認為這些應對方法能否有效紓緩你上述的情緒嗎?',
                           })
-                          .then(function(res) {
-                            surveyData['q6_1'] = res.value === 0;
-                            surveyData['q6_2'] = 'null';
-                            answers[6] = 'Q6. 你認為這些應對方法能否有效紓緩你上述的情緒嗎?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
-                            score += res.value;
-                            console.log(score);
-                            botui.message.human({
-                              photo: client,
-                              delay: 500,
-                              content: res.text,
-                            });
+                          .then(function() {
+                            return botui.action
+                              .button({
+                                addMessage: false,
+                                action: [
+                                  { text: '能夠', value: 0 },
+                                  { text: '不能夠', value: 1 },
+                                ],
+                              })
+                              .then(function(res) {
+                                surveyData['q6_1'] = res.value === 0;
+                                surveyData['q6_2'] = 'null';
+                                answers[6] = 'Q6. 你認為這些應對方法能否有效紓緩你上述的情緒嗎?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                score += res.value;
+                                console.log(score);
+                                return botui.message.human({
+                                  photo: client,
+                                  delay: 500,
+                                  content: res.text,
+                                });
+                              });
                           });
                       });
-                  });
-              } else {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 2000,
-                    photo: polly,
-                    content: '我們能發掘一些積極的應對方法去紓緩上述的情緒是非常重要的啊!',
-                  })
-                  .then(function() {
+                  } else {
                     return botui.message
                       .bot({
                         loading: true,
-                        delay: 1500,
+                        delay: 2000,
                         photo: polly,
-                        content: 'Q6. 此刻，你認為你有能力有效地紓緩上述情緒嗎？',
+                        content: '我們能發掘一些積極的應對方法去紓緩上述的情緒是非常重要的啊!',
                       })
                       .then(function() {
-                        return botui.action
-                          .button({
-                            addMessage: false,
-                            action: [
-                              { text: '能夠', value: 0 },
-                              { text: '不能夠', value: 1 },
-                            ],
+                        return botui.message
+                          .bot({
+                            loading: true,
+                            delay: 1500,
+                            photo: polly,
+                            content: 'Q6. 此刻，你認為你有能力有效地紓緩上述情緒嗎？',
                           })
-                          .then(function(res) {
-                            surveyData['q6_1'] = 'null';
-                            surveyData['q6_2'] = res.value === 0;
-                            answers[6] = 'Q6. 此刻，你認為你有能力有效地紓緩上述情緒嗎？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
-                            score += res.value;
-                            console.log(score);
-                            return botui.message.human({
-                              photo: client,
-                              delay: 500,
-                              content: res.text,
-                            });
+                          .then(function() {
+                            return botui.action
+                              .button({
+                                addMessage: false,
+                                action: [
+                                  { text: '能夠', value: 0 },
+                                  { text: '不能夠', value: 1 },
+                                ],
+                              })
+                              .then(function(res) {
+                                surveyData['q6_1'] = 'null';
+                                surveyData['q6_2'] = res.value === 0;
+                                answers[6] = 'Q6. 此刻，你認為你有能力有效地紓緩上述情緒嗎？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                score += res.value;
+                                console.log(score);
+                                return botui.message.human({
+                                  photo: client,
+                                  delay: 500,
+                                  content: res.text,
+                                });
+                              });
                           });
                       });
-                  });
-              }
+                  }
+                });
             });
         })
         .then(dispatch_tc); //.then(confirm_answer);
     }
 
-    function confirm_answer_tc() {
-      return botui.message
-        .bot({
-          loading: true,
-          photo: polly,
-          delay: 2000,
-          content: '請確認您的回答:',
-        })
-        .then(function() {
-          var temp = '';
-          for (var i = 1; i <= 6; i++) {
-            temp += '<br/>' + answers[i];
-          }
-          return botui.message.bot({
-            loading: true,
-            delay: 2000,
-            photo: polly,
-            content: temp,
-          });
-        })
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            action: [
-              { text: '取消（重定向到 Q1）', value: false },
-              { text: '確認', value: true },
-            ],
-          });
-        })
-        .then(function(res) {
-          if (res.value == false) {
-            score = 0;
-            answers = {};
-            return botui.message
-              .human({
-                photo: client,
-                delay: 500,
-                content: res.text,
-              })
-              .then(questions_tc);
-          } else {
-            return botui.message
-              .human({
-                photo: client,
-                delay: 500,
-                content: res.text,
-              })
-              .then(dispatch_tc);
-          }
-        });
-    }
+    // function confirm_answer_tc() {
+    //   return botui.message
+    //     .bot({
+    //       loading: true,
+    //       photo: polly,
+    //       delay: 2000,
+    //       content: '請確認您的回答:',
+    //     })
+    //     .then(function() {
+    //       var temp = '';
+    //       for (var i = 1; i <= 6; i++) {
+    //         temp += '<br/>' + answers[i];
+    //       }
+    //       return botui.message.bot({
+    //         loading: true,
+    //         delay: 2000,
+    //         photo: polly,
+    //         content: temp,
+    //       });
+    //     })
+    //     .then(function() {
+    //       return botui.action.button({
+    //         addMessage: false,
+    //         action: [
+    //           { text: '取消（重定向到 Q1）', value: false },
+    //           { text: '確認', value: true },
+    //         ],
+    //       });
+    //     })
+    //     .then(function(res) {
+    //       if (res.value == false) {
+    //         score = 0;
+    //         answers = {};
+    //         return botui.message
+    //           .human({
+    //             photo: client,
+    //             delay: 500,
+    //             content: res.text,
+    //           })
+    //           .then(questions_tc);
+    //       } else {
+    //         return botui.message
+    //           .human({
+    //             photo: client,
+    //             delay: 500,
+    //             content: res.text,
+    //           })
+    //           .then(dispatch_tc);
+    //       }
+    //     });
+    // }
 
     async function dispatch_tc() {
       finish_assessment = true;
@@ -2597,11 +2610,11 @@
       }
 
       if (score <= 6) {
-        low_tc();
+        return low_tc();
       } else if (score <= 10) {
-        medium_tc();
+        return medium_tc();
       } else {
-        high_tc();
+        return high_tc();
       }
     }
 
@@ -2640,7 +2653,7 @@
     }
 
     function medium_tc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 1000,
@@ -3111,7 +3124,7 @@
       }
 
       if (pop_msg != '') {
-        botui.message
+        return botui.message
           .bot({
             loading: true,
             delay: 1500,
@@ -3123,75 +3136,74 @@
       }
 
       //----
-      botui.message
-        .bot({
-          loading: true,
-          photo: polly,
-          delay: 2000,
-          content:
-            '<p>請閱讀以下服務條款及私隱政策:</p><br/>' + //? Please accept the Terms and Conditions of using the Online Chat service
-            '<p><b>My Polly Counselling Chatbot Service</b></p>\n' +
-            '<br/>\n' +
-            '<p>(The Terms and Conditions are only available in English.)</p>\n' +
-            '<br/>\n' +
-            '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n' +
-            '<br/>\n' +
-            '<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/face-to-face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n',
-        })
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            photo: client,
-            action: [
-              {
-                text: 'Read more',
-              },
-            ],
-          });
-        })
-        .then(function() {
-          return botui.message.bot({
+      return (
+        botui.message
+          .bot({
             loading: true,
             photo: polly,
             delay: 2000,
             content:
+              '<p>請閱讀以下服務條款及私隱政策:</p><br/>' + //? Please accept the Terms and Conditions of using the Online Chat service
+              '<p><b>My Polly Counselling Chatbot Service</b></p>\n' +
               '<br/>\n' +
-              "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+              '<p>(The Terms and Conditions are only available in English.)</p>\n' +
               '<br/>\n' +
-              '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
-          });
-        })
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            photo: client,
-            action: [
-              {
-                text: 'Read more',
-              },
-            ],
-          });
-        })
-        .then(function() {
-          return botui.message.bot({
-            loading: true,
-            photo: polly,
-            delay: 2000,
-            content:
-              '<br/>\n' +
-              '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
-              '<br/>\n' +
-              '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
-              '<br/>\n' +
-              '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
-              '<br/>\n' +
-              '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
-              '<br/>\n' +
-              '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
-          });
-        })
-        //----
-        /*
+              '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n',
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content:
+                '<br/>\n' +
+                "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+                '<br/>\n' +
+                '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
+            });
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content:
+                '<br/>\n' +
+                '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
+                '<br/>\n' +
+                '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                '<br/>\n' +
+                '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
+                '<br/>\n' +
+                '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
+                '<br/>\n' +
+                '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
+            });
+          })
+          //----
+          /*
     botui.message
       .bot({
         loading: true,
@@ -3204,43 +3216,44 @@
           "2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>" +
           "3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>",
       })*/
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            action: [
-              { text: '不需要了，謝謝。', value: false },
-              { text: '同意', value: true },
-            ],
-          });
-        })
-        .then(function(res) {
-          if (res.value == false) {
-            return botui.message
-              .human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              })
-              .then(function() {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 1500,
-                    photo: polly,
-                    content: '如有需要，歡迎你致電 (852)27666800 與學生事務處（SAO）輔導員聯絡。',
-                  })
-                  .then(further_help_tc);
-              });
-          } else {
-            return botui.message
-              .human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              })
-              .then(questions_before_OCS_tc);
-          }
-        });
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              action: [
+                { text: '不需要了，謝謝。', value: false },
+                { text: '同意', value: true },
+              ],
+            });
+          })
+          .then(function(res) {
+            if (res.value == false) {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(function() {
+                  return botui.message
+                    .bot({
+                      loading: true,
+                      delay: 1500,
+                      photo: polly,
+                      content: '如有需要，歡迎你致電 (852)27666800 與學生事務處（SAO）輔導員聯絡。',
+                    })
+                    .then(further_help_tc);
+                });
+            } else {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(questions_before_OCS_tc);
+            }
+          })
+      );
     }
 
     async function questions_before_OCS_tc() {
@@ -3271,304 +3284,308 @@
               });
             })
             .then(function(res) {
-              botui.message.human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              });
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(function() {
+                  if (res.value == true) {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        delay: 3000,
+                        photo: polly,
+                        content: '我們鼓勵你與正跟進你的SAO輔導員直接聯絡。你可以致電(852)27666800、透過電郵或網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>與你的輔導員預約面談時間。',
+                      })
+                      .then(function() {
+                        return botui.message.bot({
+                          loading: true,
+                          delay: 1500,
+                          photo: polly,
+                          content: '與此同時，歡迎瀏覽我們的心理健康教育資訊。',
+                        });
+                      })
+                      .then(function() {
+                        return botui.action.button({
+                          addMessage: false,
+                          action: [
+                            {
+                              text: '心理健康教育資訊/資源',
+                              value: true,
+                            },
+                            { text: '不需要了，謝謝。', value: false },
+                          ],
+                        });
+                      })
+                      .then(function(res) {
+                        if (res.value == false) {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(further_help_tc);
+                        } else {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(mental_health_101_tc);
+                        }
+                      });
+                  } else {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 3000,
+                        content:
+                          'Q2.請問你曾否經歷以下狀況:<br/><br/>' +
+                          '- 自我傷害及/或傷害他人及/或暴力的意念和行為；<br/>及/或<br/><br/>' +
+                          '- 因精神病患而入住醫院；<br/>及/或<br/><br/>' +
+                          '- 經心理學家及/或精神科醫生及/或家庭醫生確診一種或多於一種的精神病患，如: 抑鬱症/焦慮症/思覺失調/精神分裂症/人格障礙等<br/>及/或<br/><br/>' +
+                          '- 正在服用醫生處方的精神科藥物',
+                      })
+                      .then(function() {
+                        return botui.action.button({
+                          addMessage: false,
+                          action: [
+                            { text: '有', value: true },
+                            { text: '沒有', value: false },
+                          ],
+                        });
+                      })
+                      .then(function(res) {
+                        // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
+                        if (res.value == false) {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                delay: 1000,
+                                photo: polly,
+                                content: '在進入線上聊天前，請填寫以下資訊:',
+                              });
+                            })
+                            .then(function() {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: '你的電話',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['personal_contact_number'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: '你的電話是' + res.value, //? Personal contact number is
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: '緊急聯絡人的名字',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['emergency_contact_name'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: '緊急聯絡人的名字是' + res.value, //? Emergency contact name is
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: '與緊急聯絡人的關係',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['relationship'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: '與緊急聯絡人的關係是' + res.value, //? Relationship is
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: '緊急聯絡人的電話',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['emergency_contact_number'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: '緊急聯絡人的電話是' + res.value, //? Emergency contact number is
+                              });
+                            })
+                            .then(function() {
+                              return botui.message.add({
+                                delay: 1000,
+                                photo: polly,
+                                content: '請稍候片刻，我現正轉駁你至線上聊天室。',
+                              });
+                            })
+                            .then(async function() {
+                              const responseMessage = await addToQueue(student_netid, onlineChatSurveyData);
+                              const isAssigned = responseMessage.indexOf('Student is assigned to a staff') > -1;
 
-              if (res.value == true) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 3000,
-                    photo: polly,
-                    content: '我們鼓勵你與正跟進你的SAO輔導員直接聯絡。你可以致電(852)27666800、透過電郵或網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>與你的輔導員預約面談時間。',
-                  })
-                  .then(function() {
-                    return botui.message.bot({
-                      loading: true,
-                      delay: 1500,
-                      photo: polly,
-                      content: '與此同時，歡迎瀏覽我們的心理健康教育資訊。',
-                    });
-                  })
-                  .then(function() {
-                    return botui.action.button({
-                      addMessage: false,
-                      action: [
-                        {
-                          text: '心理健康教育資訊/資源',
-                          value: true,
-                        },
-                        { text: '不需要了，謝謝。', value: false },
-                      ],
-                    });
-                  })
-                  .then(function(res) {
-                    if (res.value == false) {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(further_help_tc);
-                    } else {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(mental_health_101_tc);
-                    }
-                  });
-              } else {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    photo: polly,
-                    delay: 3000,
-                    content:
-                      'Q2.請問你曾否經歷以下狀況:<br/><br/>' +
-                      '- 自我傷害及/或傷害他人及/或暴力的意念和行為；<br/>及/或<br/><br/>' +
-                      '- 因精神病患而入住醫院；<br/>及/或<br/><br/>' +
-                      '- 經心理學家及/或精神科醫生及/或家庭醫生確診一種或多於一種的精神病患，如: 抑鬱症/焦慮症/思覺失調/精神分裂症/人格障礙等<br/>及/或<br/><br/>' +
-                      '- 正在服用醫生處方的精神科藥物',
-                  })
-                  .then(function() {
-                    return botui.action.button({
-                      addMessage: false,
-                      action: [
-                        { text: '有', value: true },
-                        { text: '沒有', value: false },
-                      ],
-                    });
-                  })
-                  .then(function(res) {
-                    // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
-                    if (res.value == false) {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(function() {
-                          return botui.message.bot({
-                            delay: 1000,
-                            photo: polly,
-                            content: '在進入線上聊天前，請填寫以下資訊:',
-                          });
-                        })
-                        .then(function() {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: '你的電話',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['personal_contact_number'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: '你的電話是' + res.value, //? Personal contact number is
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: '緊急聯絡人的名字',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['emergency_contact_name'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: '緊急聯絡人的名字是' + res.value, //? Emergency contact name is
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: '與緊急聯絡人的關係',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['relationship'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: '與緊急聯絡人的關係是' + res.value, //? Relationship is
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: '緊急聯絡人的電話',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['emergency_contact_number'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: '緊急聯絡人的電話是' + res.value, //? Emergency contact number is
-                          });
-                        })
-                        .then(function() {
-                          return botui.message.add({
-                            delay: 1000,
-                            photo: polly,
-                            content: '請稍候片刻，我現正轉駁你至線上聊天室。',
-                          });
-                        })
-                        .then(async function() {
-                          const responseMessage = await addToQueue(student_netid, onlineChatSurveyData);
-                          const isAssigned = responseMessage.indexOf('Student is assigned to a staff') > -1;
-
-                          if (isAssigned) {
-                            return Promise.resolve('assigned');
-                          } else {
-                            return Promise.resolve('waiting');
-                          }
-                        })
-                        .then(async function(status) {
-                          let currentStatus = status;
-                          // student need to waiting on both 'waiting' and 'assigned' status
-                          let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
-                          let timer = null;
-
-                          if (isWaitingStatus) {
-                            let count = 1;
-                            // request every 5 sec
-                            timer = setInterval(async () => {
-                              const stu = await getStatusByStudentNetId(student_netid);
-                              currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
-                              isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
-                              // send waiting message every 3mins
-                              if (count % 36 === 0) {
-                                await waitSubsribe(student_netid, 'zh-hant');
+                              if (isAssigned) {
+                                return Promise.resolve('assigned');
+                              } else {
+                                return Promise.resolve('waiting');
                               }
-                              count++;
-                            }, 5000);
-                          }
+                            })
+                            .then(async function(status) {
+                              let currentStatus = status;
+                              // student need to waiting on both 'waiting' and 'assigned' status
+                              let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                              let timer = null;
 
-                          while (timer) {
-                            // check current status after 1sec
-                            await new Promise((resolve) => setTimeout(resolve, 1000));
+                              if (isWaitingStatus) {
+                                let count = 1;
+                                // request every 5 sec
+                                timer = setInterval(async () => {
+                                  const stu = await getStatusByStudentNetId(student_netid);
+                                  currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
+                                  isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                                  // send waiting message every 3mins
+                                  if (count % 36 === 0) {
+                                    await waitSubsribe(student_netid, 'zh-hant');
+                                  }
+                                  count++;
+                                }, 5000);
+                              }
 
-                            // stop to query status and pop waiting msg
-                            if (!isWaitingStatus || studQuitMsg) {
-                              clearInterval(timer);
-                            }
-                            // student quit
-                            if (studQuitMsg) {
-                              const errorMsg = studQuitMsg;
-                              studQuitMsg = '';
-                              throw new Error(errorMsg);
-                            }
-                            // student status changed
-                            if (!isWaitingStatus) {
-                              break;
-                            }
-                          }
+                              while (timer) {
+                                // check current status after 1sec
+                                await new Promise((resolve) => setTimeout(resolve, 1000));
 
-                          if (currentStatus === 'end') {
-                            const errorMsg = onlineChatLanguageJson['zh-hant'].QUIT_QUEUE_MESSAGE;
-                            throw new Error(errorMsg);
-                          }
+                                // stop to query status and pop waiting msg
+                                if (!isWaitingStatus || studQuitMsg) {
+                                  clearInterval(timer);
+                                  await botui.action.hide();
+                                }
+                                // student quit
+                                if (studQuitMsg) {
+                                  const errorMsg = studQuitMsg;
+                                  studQuitMsg = '';
+                                  throw new Error(errorMsg);
+                                }
+                                // student status changed
+                                if (!isWaitingStatus) {
+                                  break;
+                                }
+                              }
 
-                          if (currentStatus === 'chatting') {
-                            await botui.message.add({
-                              delay: 1000,
-                              photo: polly,
-                              content: onlineChatLanguageJson['zh-hant'].CHAT_LINK_MESSAGE,
+                              if (currentStatus === 'end') {
+                                const errorMsg = onlineChatLanguageJson['zh-hant'].QUIT_QUEUE_MESSAGE;
+                                throw new Error(errorMsg);
+                              }
+
+                              if (currentStatus === 'chatting') {
+                                return botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content: onlineChatLanguageJson['zh-hant'].CHAT_LINK_MESSAGE,
+                                });
+                              }
+                            })
+                            .catch(function(e) {
+                              console.log('catch e', e);
+                              return botui.message.add({
+                                delay: 1000,
+                                photo: polly,
+                                content: e.message || 'Unknown Error',
+                              });
                             });
-                          }
-                        })
-                        .catch(function(e) {
-                          return botui.message.add({
-                            delay: 1000,
-                            photo: polly,
-                            content: e.message,
-                          });
-                        });
-                      // .then(function() {
-                      //   return botui.message.add({
-                      //     delay: 3000,
-                      //     photo: polly,
-                      //     content:
-                      //       '學生請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For student, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">link</a> to enter the chat room.
-                      //   });
-                      // })
-                      // .then(function() {
-                      //   return botui.message.add({
-                      //     delay: 1000,
-                      //     photo: polly,
-                      //     content:
-                      //       '[Demo only] 輔導員請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For counsellor, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">link</a> to enter the chat room.
-                      //   });
-                      // });
-                    } else {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(function() {
-                          return botui.message.bot({
-                            loading: true,
-                            delay: 2000,
-                            photo: polly,
-                            content: '為了更全面地暸解你的需要，請預約輔導服務。',
-                          });
-                        })
-                        .then(function() {
-                          if (office_hour == true) {
-                            return botui.message.bot({
-                              loading: true,
-                              delay: 1000,
-                              photo: polly,
-                              content:
-                                '1. 在辦公時間內致電 (852)27666800 (星期一至五: 09.00 - 19.00, 星期六: 09.00 -12.00)<br/>2. 在辦公時間內前往 QT308 接待處作預約(入口在T棟)<br/>3. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
+                          // .then(function() {
+                          //   return botui.message.add({
+                          //     delay: 3000,
+                          //     photo: polly,
+                          //     content:
+                          //       '學生請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For student, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">link</a> to enter the chat room.
+                          //   });
+                          // })
+                          // .then(function() {
+                          //   return botui.message.add({
+                          //     delay: 1000,
+                          //     photo: polly,
+                          //     content:
+                          //       '[Demo only] 輔導員請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For counsellor, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">link</a> to enter the chat room.
+                          //   });
+                          // });
+                        } else {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                loading: true,
+                                delay: 2000,
+                                photo: polly,
+                                content: '為了更全面地暸解你的需要，請預約輔導服務。',
+                              });
+                            })
+                            .then(function() {
+                              if (office_hour == true) {
+                                return botui.message.bot({
+                                  loading: true,
+                                  delay: 1000,
+                                  photo: polly,
+                                  content:
+                                    '1. 在辦公時間內致電 (852)27666800 (星期一至五: 09.00 - 19.00, 星期六: 09.00 -12.00)<br/>2. 在辦公時間內前往 QT308 接待處作預約(入口在T棟)<br/>3. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
+                                });
+                              } else {
+                                return botui.message.bot({
+                                  loading: true,
+                                  delay: 2000,
+                                  photo: polly,
+                                  content: '1. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
+                                });
+                              }
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                loading: true,
+                                photo: polly,
+                                delay: 1500,
+                                content: '多謝你使用我們的服務。',
+                              });
                             });
-                          } else {
-                            return botui.message.bot({
-                              loading: true,
-                              delay: 2000,
-                              photo: polly,
-                              content: '1. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
-                            });
-                          }
-                        })
-                        .then(function() {
-                          botui.message.bot({
-                            loading: true,
-                            photo: polly,
-                            delay: 1500,
-                            content: '多謝你使用我們的服務。',
-                          });
-                        });
-                    }
-                  })
-                  .then(end_tc);
-              }
+                        }
+                      })
+                      .then(end_tc);
+                  }
+                });
             });
         });
     }
@@ -3648,7 +3665,7 @@
           photo: polly,
           delay: 3000,
           content:
-            '緊急求助電話號碼：(852)999<br/>社會福利署熱線：(852)23432255<br/>明愛向晴熱線：(852)18288<br/>生命熱線中心：(852)23820000<br/>撒瑪利亞會 － 24小時中文及多種語言防止自殺服務：(852)2896-0000<br/>賽馬會青少年情緒健康24小時網上支援平台「Open噏」：<a href="https://www.openup.hk" target ="_blank">www.openup.hk</a><br/>',
+            '緊急求助電話號碼：(852)999<br/>社會福利署熱線：(852)23432255<br/>明愛向晴熱線：(852)18288<br/>生命熱線中心：(852)23820000<br/>撒瑪利亞會 － 24小時中文及多種語言防止自殺服務：(852)28960000<br/>賽馬會青少年情緒健康24小時網上支援平台「Open噏」：<a href="https://www.openup.hk" target ="_blank">www.openup.hk</a><br/>',
         })
         .then(further_help_tc());
     }
@@ -3673,14 +3690,13 @@
             .then(function(res) {
               if (res.value == true) {
                 if (service_list == true || finish_assessment == false) {
-                  botui.message
+                  return botui.message
                     .human({
                       delay: 500,
                       photo: client,
                       content: res.text,
                     })
                     .then(init_choices_tc);
-                  return;
                 }
 
                 if (score <= 10) {
@@ -3709,7 +3725,7 @@
                   })
                   .then(function() {
                     if (service_list == true) {
-                      botui.message.bot({
+                      return botui.message.bot({
                         loading: true,
                         photo: polly,
                         delay: 1000,
@@ -3724,11 +3740,11 @@
     }
 
     function end_tc() {
-      rating_tc();
+      return rating_tc();
     }
 
     function rating_tc() {
-      botui.message
+      return botui.message
         .add({
           type: 'html',
           delay: 1000,
@@ -3761,7 +3777,7 @@
             '</div>',
         })
         .then(function() {
-          botui.action
+          return botui.action
             .button({
               addMessage: false,
               photo: client,
@@ -3778,7 +3794,7 @@
               // fix the stars
 
               $('.far').removeClass('available');
-              botui.message.bot({
+              return botui.message.bot({
                 loading: true,
                 delay: 1000,
                 photo: polly,
@@ -3985,7 +4001,7 @@
     }
 
     function questions_sc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           photo: polly,
@@ -3993,7 +4009,7 @@
           content: '你好﹗' + name + '，请回答以下问题，我会总结所得出的答案，提出切合你所需的服务建议。<br/><br/> 以下提问并不能视之为取代专业临床的心理评估和诊断',
         })
         .then(function() {
-          botui.message
+          return botui.message
             .bot({
               loading: true,
               delay: 1500,
@@ -4029,7 +4045,7 @@
         .then(function(res) {
           if (res.text == '') {
             alert('您必须至少选择一项！');
-            q1_ans_sc();
+            return q1_ans_sc();
           } else {
             const q1SurveyData = getQ1SurveyData(res.value);
             surveyData = { ...surveyData, ...q1SurveyData };
@@ -4054,7 +4070,7 @@
     }
 
     function q2_sc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 1500,
@@ -4114,7 +4130,7 @@
     }
 
     function q3_sc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 1500,
@@ -4168,7 +4184,7 @@
     }
 
     function q4_sc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 2000,
@@ -4212,7 +4228,7 @@
     }
 
     function q5_q6_sc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 2500,
@@ -4233,90 +4249,93 @@
               answers[5] = 'Q5. 你曾否采用一些积极的应对方法 (例如: 运动、呼吸练习、听音乐等）去面对/纾缓这些情绪吗?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
               score += res.value;
               console.log(score);
-              botui.message.human({
-                photo: client,
-                delay: 500,
-                content: res.text,
-              });
-              if (res.value == 0) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 2000,
-                    photo: polly,
-                    content: '我们能发掘一些积极的应对方法去纾缓上述的情绪是非常重要的啊!',
-                  })
-                  .then(function() {
+              return botui.message
+                .human({
+                  photo: client,
+                  delay: 500,
+                  content: res.text,
+                })
+                .then(function() {
+                  if (res.value == 0) {
                     return botui.message
                       .bot({
                         loading: true,
-                        delay: 1500,
+                        delay: 2000,
                         photo: polly,
-                        content: 'Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?',
+                        content: '我们能发掘一些积极的应对方法去纾缓上述的情绪是非常重要的啊!',
                       })
                       .then(function() {
-                        return botui.action
-                          .button({
-                            addMessage: false,
-                            action: [
-                              { text: '能够', value: 0 },
-                              { text: '不能够', value: 1 },
-                            ],
+                        return botui.message
+                          .bot({
+                            loading: true,
+                            delay: 1500,
+                            photo: polly,
+                            content: 'Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?',
                           })
-                          .then(function(res) {
-                            surveyData['q6_1'] = res.value === 0;
-                            surveyData['q6_2'] = 'null';
-                            answers[6] = 'Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
-                            score += res.value;
-                            console.log(score);
-                            botui.message.human({
-                              photo: client,
-                              delay: 500,
-                              content: res.text,
-                            });
+                          .then(function() {
+                            return botui.action
+                              .button({
+                                addMessage: false,
+                                action: [
+                                  { text: '能够', value: 0 },
+                                  { text: '不能够', value: 1 },
+                                ],
+                              })
+                              .then(function(res) {
+                                surveyData['q6_1'] = res.value === 0;
+                                surveyData['q6_2'] = 'null';
+                                answers[6] = 'Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                score += res.value;
+                                console.log(score);
+                                return botui.message.human({
+                                  photo: client,
+                                  delay: 500,
+                                  content: res.text,
+                                });
+                              });
                           });
                       });
-                  });
-              } else {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 2000,
-                    photo: polly,
-                    content: '我们能发掘一些积极的应对方法去纾缓上述的情绪是非常重要的啊!',
-                  })
-                  .then(function() {
+                  } else {
                     return botui.message
                       .bot({
                         loading: true,
-                        delay: 1500,
+                        delay: 2000,
                         photo: polly,
-                        content: 'Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？',
+                        content: '我们能发掘一些积极的应对方法去纾缓上述的情绪是非常重要的啊!',
                       })
                       .then(function() {
-                        return botui.action
-                          .button({
-                            addMessage: false,
-                            action: [
-                              { text: '能夠', value: 0 },
-                              { text: '不能夠', value: 1 },
-                            ],
+                        return botui.message
+                          .bot({
+                            loading: true,
+                            delay: 1500,
+                            photo: polly,
+                            content: 'Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？',
                           })
-                          .then(function(res) {
-                            surveyData['q6_1'] = 'null';
-                            surveyData['q6_2'] = res.value === 0;
-                            answers[6] = 'Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
-                            score += res.value;
-                            console.log(score);
-                            return botui.message.human({
-                              photo: client,
-                              delay: 500,
-                              content: res.text,
-                            });
+                          .then(function() {
+                            return botui.action
+                              .button({
+                                addMessage: false,
+                                action: [
+                                  { text: '能夠', value: 0 },
+                                  { text: '不能夠', value: 1 },
+                                ],
+                              })
+                              .then(function(res) {
+                                surveyData['q6_1'] = 'null';
+                                surveyData['q6_2'] = res.value === 0;
+                                answers[6] = 'Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                score += res.value;
+                                console.log(score);
+                                return botui.message.human({
+                                  photo: client,
+                                  delay: 500,
+                                  content: res.text,
+                                });
+                              });
                           });
                       });
-                  });
-              }
+                  }
+                });
             });
         })
         .then(dispatch_sc); //.then(confirm_answer);
@@ -4384,11 +4403,11 @@
       }
 
       if (score <= 6) {
-        low_sc();
+        return low_sc();
       } else if (score <= 10) {
-        medium_sc();
+        return medium_sc();
       } else {
-        high_sc();
+        return high_sc();
       }
     }
 
@@ -4427,7 +4446,7 @@
     }
 
     function medium_sc() {
-      botui.message
+      return botui.message
         .bot({
           loading: true,
           delay: 1000,
@@ -4461,6 +4480,7 @@
               })
               .then(function(res) {
                 if (res.value == 1) {
+                  service_list = true;
                   return botui.message
                     .human({
                       delay: 500,
@@ -4896,7 +4916,7 @@
       }
 
       if (pop_msg != '') {
-        botui.message
+        return botui.message
           .bot({
             loading: true,
             delay: 1500,
@@ -4908,75 +4928,74 @@
       }
 
       //----
-      botui.message
-        .bot({
-          loading: true,
-          photo: polly,
-          delay: 2000,
-          content:
-            '<p>请阅读以下服务条款及私隐政策：</p><br/>' + //? Please accept the Terms and Conditions of using the Online Chat service
-            '<p><b>My Polly Counselling Chatbot Service</b></p>\n' +
-            '<br/>\n' +
-            '<p>(The Terms and Conditions are only available in English.)</p>\n' +
-            '<br/>\n' +
-            '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n' +
-            '<br/>\n' +
-            '<p>This Chatbot serves the purpose of identifying students’ service need and the referral of psychological services, ie online chat/face-to-face counselling / online psychoeducation materials/ Non-office-hour counseling (non-crisis) / Community helplines. </p>\n',
-        })
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            photo: client,
-            action: [
-              {
-                text: 'Read more',
-              },
-            ],
-          });
-        })
-        .then(function() {
-          return botui.message.bot({
+      return (
+        botui.message
+          .bot({
             loading: true,
             photo: polly,
             delay: 2000,
             content:
+              '<p>请阅读以下服务条款及私隐政策：</p><br/>' + //? Please accept the Terms and Conditions of using the Online Chat service
+              '<p><b>My Polly Counselling Chatbot Service</b></p>\n' +
               '<br/>\n' +
-              "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+              '<p>(The Terms and Conditions are only available in English.)</p>\n' +
               '<br/>\n' +
-              '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
-          });
-        })
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            photo: client,
-            action: [
-              {
-                text: 'Read more',
-              },
-            ],
-          });
-        })
-        .then(function() {
-          return botui.message.bot({
-            loading: true,
-            photo: polly,
-            delay: 2000,
-            content:
-              '<br/>\n' +
-              '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
-              '<br/>\n' +
-              '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
-              '<br/>\n' +
-              '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
-              '<br/>\n' +
-              '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
-              '<br/>\n' +
-              '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
-          });
-        })
-        //----
-        /*
+              '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n',
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content:
+                '<br/>\n' +
+                "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+                '<br/>\n' +
+                '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
+            });
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content:
+                '<br/>\n' +
+                '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
+                '<br/>\n' +
+                '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                '<br/>\n' +
+                '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
+                '<br/>\n' +
+                '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
+                '<br/>\n' +
+                '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
+            });
+          })
+          //----
+          /*
     botui.message
       .bot({
         loading: true,
@@ -4989,43 +5008,44 @@
           "2. Online Chat is available to all registered students of PolyU aged 18 or above.<br/><br/>" +
           "3. Please do not make record of service in any form so as to protect the confidentiality of the service and service users. <br/><br/>",
       })*/
-        .then(function() {
-          return botui.action.button({
-            addMessage: false,
-            action: [
-              { text: '不需要了，谢谢。', value: false },
-              { text: '同意', value: true },
-            ],
-          });
-        })
-        .then(function(res) {
-          if (res.value == false) {
-            return botui.message
-              .human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              })
-              .then(function() {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 1500,
-                    photo: polly,
-                    content: '如有需要，欢迎你致电 (852)27666800 与学生事务处 (SAO) 辅导员联络。',
-                  })
-                  .then(further_help_sc);
-              });
-          } else {
-            return botui.message
-              .human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              })
-              .then(questions_before_OCS_sc);
-          }
-        });
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              action: [
+                { text: '不需要了，谢谢。', value: false },
+                { text: '同意', value: true },
+              ],
+            });
+          })
+          .then(function(res) {
+            if (res.value == false) {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(function() {
+                  return botui.message
+                    .bot({
+                      loading: true,
+                      delay: 1500,
+                      photo: polly,
+                      content: '如有需要，欢迎你致电 (852)27666800 与学生事务处 (SAO) 辅导员联络。',
+                    })
+                    .then(further_help_sc);
+                });
+            } else {
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(questions_before_OCS_sc);
+            }
+          })
+      );
     }
 
     async function questions_before_OCS_sc() {
@@ -5056,304 +5076,308 @@
               });
             })
             .then(function(res) {
-              botui.message.human({
-                delay: 500,
-                photo: client,
-                content: res.text,
-              });
+              return botui.message
+                .human({
+                  delay: 500,
+                  photo: client,
+                  content: res.text,
+                })
+                .then(function() {
+                  if (res.value == true) {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        delay: 3000,
+                        photo: polly,
+                        content: '我们鼓励你与正跟进你的SAO辅导员直接联络。你可以致电(852)27666800、透过电邮或网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a> 与你的辅导员预约面谈时间。',
+                      })
+                      .then(function() {
+                        return botui.message.bot({
+                          loading: true,
+                          delay: 1500,
+                          photo: polly,
+                          content: '与此同时，欢迎浏览我们的心理健康教育资讯。',
+                        });
+                      })
+                      .then(function() {
+                        return botui.action.button({
+                          addMessage: false,
+                          action: [
+                            {
+                              text: '心理健康教育资讯/资源',
+                              value: true,
+                            },
+                            { text: '不需要了，谢谢。', value: false },
+                          ],
+                        });
+                      })
+                      .then(function(res) {
+                        if (res.value == false) {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(further_help_sc);
+                        } else {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(mental_health_101_sc);
+                        }
+                      });
+                  } else {
+                    return botui.message
+                      .bot({
+                        loading: true,
+                        photo: polly,
+                        delay: 3000,
+                        content:
+                          'Q2.请问你曾否经历以下状况:<br/><br/>' +
+                          '- 自我伤害及/或伤害他人及/或暴力的意念和行为；<br/>及/或<br/><br/>' +
+                          '- 因精神病患而入住医院；<br/>及/或<br/><br/>' +
+                          '- 经心理学家及/或精神科医生及/或家庭医生确诊一种或多于一种的精神病患，如: 抑郁症 / 焦虑症 / 思觉失调/精神分裂症 /人格障碍等<br/>及/或<br/><br/>' +
+                          '- 正在服用医生处方的精神科药物',
+                      })
+                      .then(function() {
+                        return botui.action.button({
+                          addMessage: false,
+                          action: [
+                            { text: '有', value: true },
+                            { text: '沒有', value: false },
+                          ],
+                        });
+                      })
+                      .then(function(res) {
+                        // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
+                        if (res.value == false) {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                delay: 1000,
+                                photo: polly,
+                                content: '在进入线上聊天前，请填写以下资讯：',
+                              });
+                            })
+                            .then(function() {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: '你的电话',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['personal_contact_number'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: '你的电话是' + res.value, //? Personal contact number is
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: '紧急联络人的名字',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['emergency_contact_name'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: '紧急联络人的名字是' + res.value, //? Emergency contact name is
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: '与紧急联络人的关系',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['relationship'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: '与紧急联络人的关系是' + res.value, //? Relationship is
+                              });
+                            })
+                            .then(function(res) {
+                              return botui.action.text({
+                                addMessage: false,
+                                action: {
+                                  size: 30,
+                                  placeholder: '紧急联络人的电话',
+                                },
+                              });
+                            })
+                            .then(function(res) {
+                              onlineChatSurveyData['emergency_contact_number'] = res.value;
+                              return botui.message.add({
+                                human: true,
+                                photo: client,
+                                content: '紧急联络人的电话是' + res.value, //? Emergency contact number is
+                              });
+                            })
+                            .then(function() {
+                              return botui.message.add({
+                                delay: 1000,
+                                photo: polly,
+                                content: '请稍候片刻，我现正转驳你至线上聊天室。', //? Please wait, I am now finding a counsellor to chat with you.
+                              });
+                            })
+                            .then(async function() {
+                              const responseMessage = await addToQueue(student_netid, onlineChatSurveyData);
+                              const isAssigned = responseMessage.indexOf('Student is assigned to a staff') > -1;
 
-              if (res.value == true) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 3000,
-                    photo: polly,
-                    content: '我们鼓励你与正跟进你的SAO辅导员直接联络。你可以致电(852)27666800、透过电邮或网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a> 与你的辅导员预约面谈时间。',
-                  })
-                  .then(function() {
-                    return botui.message.bot({
-                      loading: true,
-                      delay: 1500,
-                      photo: polly,
-                      content: '与此同时，欢迎浏览我们的心理健康教育资讯。',
-                    });
-                  })
-                  .then(function() {
-                    return botui.action.button({
-                      addMessage: false,
-                      action: [
-                        {
-                          text: '心理健康教育资讯/资源',
-                          value: true,
-                        },
-                        { text: '不需要了，谢谢。', value: false },
-                      ],
-                    });
-                  })
-                  .then(function(res) {
-                    if (res.value == false) {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(further_help_sc);
-                    } else {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(mental_health_101_sc);
-                    }
-                  });
-              } else {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    photo: polly,
-                    delay: 3000,
-                    content:
-                      'Q2.请问你曾否经历以下状况:<br/><br/>' +
-                      '- 自我伤害及/或伤害他人及/或暴力的意念和行为；<br/>及/或<br/><br/>' +
-                      '- 因精神病患而入住医院；<br/>及/或<br/><br/>' +
-                      '- 经心理学家及/或精神科医生及/或家庭医生确诊一种或多于一种的精神病患，如: 抑郁症 / 焦虑症 / 思觉失调/精神分裂症 /人格障碍等<br/>及/或<br/><br/>' +
-                      '- 正在服用医生处方的精神科药物',
-                  })
-                  .then(function() {
-                    return botui.action.button({
-                      addMessage: false,
-                      action: [
-                        { text: '有', value: true },
-                        { text: '沒有', value: false },
-                      ],
-                    });
-                  })
-                  .then(function(res) {
-                    // const student_netid = "TEST_STUDENT_ID".toLocaleUpperCase();
-                    if (res.value == false) {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(function() {
-                          return botui.message.bot({
-                            delay: 1000,
-                            photo: polly,
-                            content: '在进入线上聊天前，请填写以下资讯：',
-                          });
-                        })
-                        .then(function() {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: '你的电话',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['personal_contact_number'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: '你的电话是' + res.value, //? Personal contact number is
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: '紧急联络人的名字',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['emergency_contact_name'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: '紧急联络人的名字是' + res.value, //? Emergency contact name is
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: '与紧急联络人的关系',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['relationship'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: '与紧急联络人的关系是' + res.value, //? Relationship is
-                          });
-                        })
-                        .then(function(res) {
-                          return botui.action.text({
-                            addMessage: false,
-                            action: {
-                              size: 30,
-                              placeholder: '紧急联络人的电话',
-                            },
-                          });
-                        })
-                        .then(function(res) {
-                          onlineChatSurveyData['emergency_contact_number'] = res.value;
-                          return botui.message.add({
-                            human: true,
-                            photo: client,
-                            content: '紧急联络人的电话是' + res.value, //? Emergency contact number is
-                          });
-                        })
-                        .then(function() {
-                          return botui.message.add({
-                            delay: 1000,
-                            photo: polly,
-                            content: '请稍候片刻，我现正转驳你至线上聊天室。', //? Please wait, I am now finding a counsellor to chat with you.
-                          });
-                        })
-                        .then(async function() {
-                          const responseMessage = await addToQueue(student_netid, onlineChatSurveyData);
-                          const isAssigned = responseMessage.indexOf('Student is assigned to a staff') > -1;
-
-                          if (isAssigned) {
-                            return Promise.resolve('assigned');
-                          } else {
-                            return Promise.resolve('waiting');
-                          }
-                        })
-                        .then(async function(status) {
-                          let currentStatus = status;
-                          // student need to waiting on both 'waiting' and 'assigned' status
-                          let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
-                          let timer = null;
-
-                          if (isWaitingStatus) {
-                            let count = 1;
-                            // request every 5 sec
-                            timer = setInterval(async () => {
-                              const stu = await getStatusByStudentNetId(student_netid);
-                              currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
-                              isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
-                              // send waiting message every 3mins
-                              if (count % 36 === 0) {
-                                await waitSubsribe(student_netid, 'zh-hans');
+                              if (isAssigned) {
+                                return Promise.resolve('assigned');
+                              } else {
+                                return Promise.resolve('waiting');
                               }
-                              count++;
-                            }, 5000);
-                          }
+                            })
+                            .then(async function(status) {
+                              let currentStatus = status;
+                              // student need to waiting on both 'waiting' and 'assigned' status
+                              let isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                              let timer = null;
 
-                          while (timer) {
-                            // check current status after 1sec
-                            await new Promise((resolve) => setTimeout(resolve, 1000));
+                              if (isWaitingStatus) {
+                                let count = 1;
+                                // request every 5 sec
+                                timer = setInterval(async () => {
+                                  const stu = await getStatusByStudentNetId(student_netid);
+                                  currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
+                                  isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
+                                  // send waiting message every 3mins
+                                  if (count % 36 === 0) {
+                                    await waitSubsribe(student_netid, 'zh-hans');
+                                  }
+                                  count++;
+                                }, 5000);
+                              }
 
-                            // stop to query status and pop waiting msg
-                            if (!isWaitingStatus || studQuitMsg) {
-                              clearInterval(timer);
-                            }
-                            // student quit
-                            if (studQuitMsg) {
-                              const errorMsg = studQuitMsg;
-                              studQuitMsg = '';
-                              throw new Error(errorMsg);
-                            }
-                            // student status changed
-                            if (!isWaitingStatus) {
-                              break;
-                            }
-                          }
+                              while (timer) {
+                                // check current status after 1sec
+                                await new Promise((resolve) => setTimeout(resolve, 1000));
 
-                          if (currentStatus === 'end') {
-                            const errorMsg = onlineChatLanguageJson['zh-hans'].QUIT_QUEUE_MESSAGE;
-                            throw new Error(errorMsg);
-                          }
+                                // stop to query status and pop waiting msg
+                                if (!isWaitingStatus || studQuitMsg) {
+                                  clearInterval(timer);
+                                  await botui.action.hide();
+                                }
+                                // student quit
+                                if (studQuitMsg) {
+                                  const errorMsg = studQuitMsg;
+                                  studQuitMsg = '';
+                                  throw new Error(errorMsg);
+                                }
+                                // student status changed
+                                if (!isWaitingStatus) {
+                                  break;
+                                }
+                              }
 
-                          if (currentStatus === 'chatting') {
-                            await botui.message.add({
-                              delay: 1000,
-                              photo: polly,
-                              content: onlineChatLanguageJson['zh-hans'].CHAT_LINK_MESSAGE,
+                              if (currentStatus === 'end') {
+                                const errorMsg = onlineChatLanguageJson['zh-hans'].QUIT_QUEUE_MESSAGE;
+                                throw new Error(errorMsg);
+                              }
+
+                              if (currentStatus === 'chatting') {
+                                return botui.message.add({
+                                  delay: 1000,
+                                  photo: polly,
+                                  content: onlineChatLanguageJson['zh-hans'].CHAT_LINK_MESSAGE,
+                                });
+                              }
+                            })
+                            .catch(function(e) {
+                              console.log('catch e', e);
+                              return botui.message.add({
+                                delay: 1000,
+                                photo: polly,
+                                content: e.message || 'Unknown Error',
+                              });
                             });
-                          }
-                        })
-                        .catch(function(e) {
-                          return botui.message.add({
-                            delay: 1000,
-                            photo: polly,
-                            content: e.message,
-                          });
-                        });
-                      // .then(function() {
-                      //   return botui.message.add({
-                      //     delay: 3000,
-                      //     photo: polly,
-                      //     content:
-                      //       '學生請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For student, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">link</a> to enter the chat room.
-                      //   });
-                      // })
-                      // .then(function() {
-                      //   return botui.message.add({
-                      //     delay: 1000,
-                      //     photo: polly,
-                      //     content:
-                      //       '[Demo only] 輔導員請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For counsellor, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">link</a> to enter the chat room.
-                      //   });
-                      // });
-                    } else {
-                      return botui.message
-                        .human({
-                          delay: 500,
-                          photo: client,
-                          content: res.text,
-                        })
-                        .then(function() {
-                          return botui.message.bot({
-                            loading: true,
-                            delay: 2000,
-                            photo: polly,
-                            content: '为了更全面的了解你的需要，请预约辅导服务。',
-                          });
-                        })
-                        .then(function() {
-                          if (office_hour == true) {
-                            return botui.message.bot({
-                              loading: true,
-                              delay: 1000,
-                              photo: polly,
-                              content:
-                                '1. 在办公时间内致电 (852)27666800 (星期一至五: 09.00 - 19.00, 星期六: 09.00 -12.00)<br/>2. 在办公时间內前往 QT308 接待处作预约(入口在T栋)<br/>3. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
+                          // .then(function() {
+                          //   return botui.message.add({
+                          //     delay: 3000,
+                          //     photo: polly,
+                          //     content:
+                          //       '學生請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For student, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/student?student_netid=21&staff_netid=10">link</a> to enter the chat room.
+                          //   });
+                          // })
+                          // .then(function() {
+                          //   return botui.message.add({
+                          //     delay: 1000,
+                          //     photo: polly,
+                          //     content:
+                          //       '[Demo only] 輔導員請點擊<a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">鏈接</a>進入聊天室。', //? For counsellor, please click the <a target="_blank" href="http://158.132.255.165:9988/chat/counsellor?student_netid=21&staff_netid=10">link</a> to enter the chat room.
+                          //   });
+                          // });
+                        } else {
+                          return botui.message
+                            .human({
+                              delay: 500,
+                              photo: client,
+                              content: res.text,
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                loading: true,
+                                delay: 2000,
+                                photo: polly,
+                                content: '为了更全面的了解你的需要，请预约辅导服务。',
+                              });
+                            })
+                            .then(function() {
+                              if (office_hour == true) {
+                                return botui.message.bot({
+                                  loading: true,
+                                  delay: 1000,
+                                  photo: polly,
+                                  content:
+                                    '1. 在办公时间内致电 (852)27666800 (星期一至五: 09.00 - 19.00, 星期六: 09.00 -12.00)<br/>2. 在办公时间內前往 QT308 接待处作预约(入口在T栋)<br/>3. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
+                                });
+                              } else {
+                                return botui.message.bot({
+                                  loading: true,
+                                  delay: 2000,
+                                  photo: polly,
+                                  content: '1. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
+                                });
+                              }
+                            })
+                            .then(function() {
+                              return botui.message.bot({
+                                loading: true,
+                                photo: polly,
+                                delay: 1500,
+                                content: '多谢你使用我们的服务。',
+                              });
                             });
-                          } else {
-                            return botui.message.bot({
-                              loading: true,
-                              delay: 2000,
-                              photo: polly,
-                              content: '1. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
-                            });
-                          }
-                        })
-                        .then(function() {
-                          botui.message.bot({
-                            loading: true,
-                            photo: polly,
-                            delay: 1500,
-                            content: '多谢你使用我们的服务。',
-                          });
-                        });
-                    }
-                  })
-                  .then(end_sc);
-              }
+                        }
+                      })
+                      .then(end_sc);
+                  }
+                });
             });
         });
     }
@@ -5433,7 +5457,7 @@
           photo: polly,
           delay: 3000,
           content:
-            '紧急求助电话号码：(852)999<br/>社会福利署热线：(852)23432255<br/>明爱向晴热线：(852)18288<br/>生命热线中心：(852)23820000<br/>撒玛利亚会 － 24小时中文及多种语言防止自杀服务：(852)2896-0000<br/>赛马会青少年情绪健康24小时网上支援平台「Open噏」：<a href="https://www.openup.hk" target ="_blank">www.openup.hk</a><br/>',
+            '紧急求助电话号码：(852)999<br/>社会福利署热线：(852)23432255<br/>明爱向晴热线：(852)18288<br/>生命热线中心：(852)23820000<br/>撒玛利亚会 － 24小时中文及多种语言防止自杀服务：(852)28960000<br/>赛马会青少年情绪健康24小时网上支援平台「Open噏」：<a href="https://www.openup.hk" target ="_blank">www.openup.hk</a><br/>',
         })
         .then(further_help_sc());
     }
@@ -5458,14 +5482,13 @@
             .then(function(res) {
               if (res.value == true) {
                 if (service_list == true || finish_assessment == false) {
-                  botui.message
+                  return botui.message
                     .human({
                       delay: 500,
                       photo: client,
                       content: res.text,
                     })
                     .then(init_choices_sc);
-                  return;
                 }
 
                 if (score <= 10) {
@@ -5494,7 +5517,7 @@
                   })
                   .then(function() {
                     if (service_list == true) {
-                      botui.message.bot({
+                      return botui.message.bot({
                         loading: true,
                         photo: polly,
                         delay: 1000,
@@ -5509,11 +5532,11 @@
     }
 
     function end_sc() {
-      rating_sc();
+      return rating_sc();
     }
 
     function rating_sc() {
-      botui.message
+      return botui.message
         .add({
           type: 'html',
           delay: 1000,
@@ -5546,7 +5569,7 @@
             '</div>',
         })
         .then(function() {
-          botui.action
+          return botui.action
             .button({
               addMessage: false,
               photo: client,
@@ -5562,7 +5585,7 @@
               // fix the stars
 
               $('.far').removeClass('available');
-              botui.message.bot({
+              return botui.message.bot({
                 loading: true,
                 delay: 1000,
                 photo: polly,
@@ -5592,16 +5615,16 @@
       }
     };
 
-    const getQueueStatus = async (student_netid) => {
-      return await $.ajax({
-        url: '/main/debug/getseq/',
-        headers: { 'X-CSRFToken': CSRF_TOKEN },
-        method: 'GET',
-        data: {
-          student_netid: student_netid,
-        },
-      });
-    };
+    // const getQueueStatus = async (student_netid) => {
+    //   return await $.ajax({
+    //     url: '/main/debug/getseq/',
+    //     headers: { 'X-CSRFToken': CSRF_TOKEN },
+    //     method: 'GET',
+    //     data: {
+    //       student_netid: student_netid,
+    //     },
+    //   });
+    // };
 
     const quitQueue = async (student_netid) => {
       return await $.ajax({
@@ -5660,7 +5683,7 @@
         .then(async function(res) {
           // quit;
           if (!res.value) {
-            await quitQueue(student_netid);
+            // await quitQueue(student_netid);
             studQuitMsg = onlineChatLanguageJson[langCode]['QUIT_QUEUE_MESSAGE'];
           }
         });
