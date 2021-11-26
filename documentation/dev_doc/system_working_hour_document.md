@@ -12,6 +12,9 @@
 
 <br/>
 
+Note: The online chatting's working hour has two slots while other services only have one slot.
+
+
 ## 2.	APIs for checking working hour
 
 <br/>
@@ -24,6 +27,8 @@ For checking the working hour of Online Chatting service
 
 First check if today is working day and then check the day of the week and time
 
+Note: We allow them to set the start time (chatting_office_hr_begin in the Table BusinessCalendar), and the start time can be later than the cls.lunch_break[1] (The working hour can start in the afternoon). 
+So we still need to modify the rules in is_working_hour method of class BusinessCalendar.
 
 Return: True/False
 
