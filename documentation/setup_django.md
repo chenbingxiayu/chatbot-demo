@@ -1,4 +1,4 @@
-1. Deploy Django server 
+1. Deploy Django server/backend
    
     Put `.env.docker` file with all your environment variables under the same directory with `docker-compose.yml`.
     Please don't push `.env.docker` file to this repo.
@@ -66,5 +66,5 @@
 6. Run All service
 
    ```shell
-   docker-compose up -d --build
+   docker-compose up -d --build django celery celery_beat
    ```
