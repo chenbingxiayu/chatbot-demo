@@ -1,12 +1,14 @@
 import logging
 from typing import List
-import zulip
-import requests
 
+import requests
 from django.conf import settings
 
+import zulip
 
 logger = logging.getLogger('django')
+
+
 class ZulipClient:
     def __init__(self, config_file):
         logger.info(f"start client")
@@ -72,7 +74,7 @@ class ZulipClient:
         # replace the url
         response = requests.post(self.domain_url + "/api/v1/fetch_api_key",
                                  data=payload)
-                                #  data=payload, verify=self.ssl_path)
+        #  data=payload, verify=self.ssl_path)
         result = response.json()
         logger.info(response)
         logger.info("result")
@@ -127,12 +129,11 @@ class ZulipClient:
         response = self.client.delete_stream(stream_id)
         return response
 
-
     def delete_stream_in_topic(self, stream_id, topic):
         response = self.client.call_endpoint(
             url=f'streams/{stream_id}/delete_topic',
             method='POST',
-            request= {
+            request={
                 'topic_name': topic,
                 'stream_id': stream_id,
             }

@@ -6,7 +6,7 @@ import logging
 import threading
 import uuid
 from datetime import datetime, timedelta
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 import xlsxwriter
 from channels.layers import get_channel_layer
@@ -17,10 +17,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, connection, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from marshmallow import ValidationError
 
 from main.email_service import email_service
-from main.exceptions import UnauthorizedException
+from main.exceptions import UnauthorizedException, BusinessCalendarValidationError, NotFound
 from main.utils import hk_time, utc_time, tz_offset, day_start, get_duration
+from main.validation import business_calendar_schema
 
 logger = logging.getLogger('django')
 channel_layer = get_channel_layer()
@@ -246,7 +248,7 @@ class StaffStatus(models.Model):
         db_table = 'staff-status'
 
     class Role(models.TextChoices):
-        ONLINETRIAGE = 'online_triage', _('Online Triage')
+        ONLINE_TRIAGE = 'online_triage', _('Online Triage')
         DO = 'do', _('DO')
         COUNSELLOR = 'counsellor', _('Counsellor')
         SUPERVISOR = 'supervisor', _('Supervisor')
@@ -288,7 +290,7 @@ class StaffStatus(models.Model):
         if original_assign_staff:  # when re-assigning counsellor
             if original_assign_staff.staff_chat_status == StaffStatus.ChatStatus.ASSIGNED:
                 original_assign_staff.staff_chat_status = StaffStatus.ChatStatus.AVAILABLE
-            original_assign_staff.save()
+            original_assign_staff.save()  # noqa
 
         student.assigned_counsellor = self
         student.student_chat_status = StudentChatStatus.ChatStatus.ASSIGNED
@@ -309,7 +311,7 @@ class StaffStatus(models.Model):
         #     })
 
         # send email asynchronously
-        template_data = {'student_netid': student_netid}
+        template_data = {'student_netid': student_netid}  # noqa
         t = threading.Thread(target=email_service.send, args=('new_assignment', self.staff_netid, template_data))
         t.start()
 
@@ -509,7 +511,7 @@ class ChatBotSession(models.Model):
     """
 
     class Meta:
-        db_table = 'chatbot-session'
+        db_table = 'chatbot-session'  # noqa
 
     class Language(models.TextChoices):
         en_us = 'en-us', _('English')
@@ -532,10 +534,10 @@ class ChatBotSession(models.Model):
         opt6 = 'community_helpline', _('Community Helpline')
 
     session_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    student_netid = models.CharField(max_length=32, null=True)
+    student_netid = models.CharField(max_length=32, null=True)  # noqa
     start_time = models.DateTimeField(default=timezone.localtime)
     end_time = models.DateTimeField(null=True)
-    is_ployu_student = models.BooleanField(default=False)
+    is_ployu_student = models.BooleanField(default=False)  # noqa
     language = models.CharField(max_length=16, choices=Language.choices, null=True)
     q1_academic = models.BooleanField(null=True)
     q1_interpersonal_relationship = models.BooleanField(null=True)
@@ -581,8 +583,8 @@ class ChatBotSession(models.Model):
         'No. of access': 'total_access_count',
         'No. of office hour access': 'access_office_hr_count',
         'No. of non-office hour access': 'non_office_hr_access_count',
-        'No. of PolyU student': 'polyu_student_count',
-        'No. of non-student': 'non_polyu_student_count',
+        'No. of PolyU student': 'polyu_student_count',  # noqa
+        'No. of non-student': 'non_polyu_student_count',  # noqa
         'No. of green': 'score_green_count',
         'No. of yellow': 'score_yellow_count',
         'No. of red': 'score_red_count',
@@ -647,7 +649,7 @@ class ChatBotSession(models.Model):
         return res
 
     @classmethod
-    def get_red_route(cls, start_dt: datetime, end_dt: datetime) -> Dict:
+    def get_red_route(cls, start_dt: datetime, end_dt: datetime) -> List[Dict]:
         query = f"""
             SELECT
                 `{cls._meta.db_table}`.`student_netid`,
@@ -682,7 +684,7 @@ class ChatBotSession(models.Model):
             ws.write(0, col_num, columns[col_num])
 
         for row_num, row in enumerate(data, 1):
-            ws.write(row_num, 0, row['student_netid'])
+            ws.write(row_num, 0, row['student_netid'])  # noqa
             ws.write(row_num, 1, row['date'].strftime("%Y/%m/%d"))
             ws.write(row_num, 2, row['start_time'].strftime('%H:%M'))
             end_time = row.get('end_time')
@@ -701,91 +703,102 @@ class BusinessCalendar(models.Model):
     class Meta:
         db_table = 'business-calendar'
 
-    date = models.CharField(primary_key=True, max_length=10)
+    date = models.CharField(primary_key=True, unique=True, max_length=10)
     is_working_day = models.BooleanField()
-    office_hr_end = models.CharField(null=True, max_length=5)
+    office_hr_begin = models.CharField(null=True, max_length=16)
+    office_hr_end = models.CharField(null=True, max_length=16)
+    chatting_office_hr_begin = models.CharField(null=True, max_length=16)
+    chatting_office_hr_end = models.CharField(null=True, max_length=16)
 
-    office_hr_begin = '09:00'
-    office_hr_end_sat = '12:00'
-    date_format_from_csv = '%d/%m/%Y'
-    date_format = '%Y-%m-%d'
-    time_format = '%H:%M'
-    lunch_break = ('12:00', '13:00')
+    field_names = [
+        'date',
+        'day',
+        'office_hr_begin',
+        'office_hr_end',
+        'chatting_office_hr_begin',
+        'chatting_office_hr_end'
+    ]
+
+    date_format_in_csv = '%d/%m/%Y'
+    date_format_in_db = '%Y-%m-%d'
+    time_format_in_db = '%H:%M:%S'
+    lunch_break = ('12:00:00', '14:00:00')
 
     def __str__(self):
         return f"{self.__class__.__name__}(date={self.date}, is_working_day={self.is_working_day}, " \
-               f"office_hr_end={self.office_hr_end})"
+               f"office_hr_end={self.office_hr_end}, chatting_office_hr_end={self.chatting_office_hr_end})"
 
     @classmethod
-    def _validate_input(cls, row_idx: int, row: List[str]) -> Tuple[str, str]:
-        cleaned_time = None
-        try:
-            cleaned_date = datetime.strptime(row[0], cls.date_format_from_csv).strftime(cls.date_format)
-            if row[4] not in ('Saturday', 'public holiday'):
-                cleaned_time = datetime.strptime(row[1], cls.time_format).strftime(cls.time_format)
-        except ValueError:
-            logger.info(row_idx)
-            logger.info(row)
-            raise ValueError(f'Value format invalid in row {row_idx}.')
-
-        return cleaned_date, cleaned_time
-
-    @classmethod
-    def update_items_from_csv(cls, calendar_dates: List[List[str]]):
+    def update_items_from_csv(cls, calendar_dates: List[Dict[str, str]]):
+        """No null value, can be empty string
         """
-        calendar_dates: .e.g [['Y-m-d', 'H:M'], ['Y-m-d', '']]
-        """
+        row_idx = row = None
         with transaction.atomic():
-            for row_idx, row in enumerate(calendar_dates):
-                cleaned_date, cleaned_office_hr_end = cls._validate_input(row_idx, row)
-                business_date = cls(date=cleaned_date,
-                                    is_working_day=row[4] != 'public holiday',
-                                    office_hr_end=cleaned_office_hr_end)
-                business_date.save()
+            try:
+                logger.info("Validating and putting into DB.")
+                for row_idx, row in enumerate(calendar_dates, 1):  # 1 here refers to row in csv file
+                    cleaned_date = business_calendar_schema.load(row)
+                    cls.objects.update_or_create(**cleaned_date)  # noqa
+            except ValidationError as e:
+                logger.error(e)
+                raise BusinessCalendarValidationError('Format invalid in row {row_idx}\n{row}',
+                                                      row_idx=row_idx,
+                                                      row=row)
 
     @classmethod
     def get_date(cls, date_: str):
         try:
-            calendar_date = cls.objects.get(date=date_)
-        except BusinessCalendar.DoesNotExist as e:
+            calendar_date = cls.objects.get(date=date_)  # noqa
+            logger.info(calendar_date)
+        except BusinessCalendar.DoesNotExist as e:  # noqa
             logger.warning(e)
-            raise ValueError(f'date: {date_} not found.')
+            raise NotFound(f'date: {date_} not found.')
         return calendar_date
 
     @classmethod
     def is_working_hour(cls) -> bool:
         today = timezone.localdate()
         calendar_date = cls.get_date(today)
-        logger.info(calendar_date)
 
-        if calendar_date.is_working_day:
-            time_now = timezone.localtime().strftime(cls.time_format)
-            office_hr_end = calendar_date.office_hr_end
-            if today.isoweekday() in (1, 2, 3, 4, 5):
-                return (cls.office_hr_begin < time_now < cls.lunch_break[0]) or \
-                       (cls.lunch_break[1] < time_now < office_hr_end)
-            elif today.isoweekday() == 6:  # Sat
-                return cls.office_hr_begin < time_now < cls.office_hr_end_sat
+        if calendar_date.office_hr_begin and calendar_date.office_hr_end:
+            time_now_str = timezone.localtime().strftime(cls.time_format_in_db)
+            if calendar_date.office_hr_begin <= time_now_str <= calendar_date.office_hr_end:
+                return True
+        return False
+
+    @classmethod
+    def is_lunch_time(cls, time_now: str) -> bool:
+        return cls.lunch_break[0] <= time_now <= cls.lunch_break[1]
+
+    @classmethod
+    def is_chatting_working_hour(cls):
+        today = timezone.localdate()
+        calendar_date = cls.get_date(today)
+
+        if calendar_date.chatting_office_hr_begin and calendar_date.chatting_office_hr_end:
+            time_now_str = timezone.localtime().strftime(cls.time_format_in_db)
+            if calendar_date.office_hr_begin <= time_now_str <= calendar_date.office_hr_end and \
+                    not cls.is_lunch_time(time_now_str):
+                return True
         return False
 
     @classmethod
     def get_prev_working_day(cls) -> datetime:
-
-        today = timezone.localdate().strftime(cls.date_format)
+        today = timezone.localdate().strftime(cls.date_format_in_db)
         prev_working_day = cls.objects \
             .filter(is_working_day=True, date__lt=today) \
             .order_by('-date') \
             .first()
 
         if prev_working_day:
-            prev_working_day = prev_working_day.strptime(cls.date_format)
+            prev_working_day = prev_working_day.strptime(cls.date_format_in_db)
         else:
             prev_working_day = timezone.localdate() - timedelta(days=1)
 
         return prev_working_day
 
 
-ROLE_RANKING = [StaffStatus.Role.ONLINETRIAGE,
+ROLE_RANKING = [StaffStatus.Role.ONLINE_TRIAGE,
                 StaffStatus.Role.DO,
                 StaffStatus.Role.COUNSELLOR]
 

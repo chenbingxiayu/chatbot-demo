@@ -70,7 +70,7 @@ class ScheduledTaskTestCase(TestCase):
                              .all()), 3)
         self.assertEqual(len(StaffStatus.objects
                              .filter(staff_chat_status=StaffStatus.ChatStatus.AVAILABLE,
-                                     staff_role=StaffStatus.Role.ONLINETRIAGE)
+                                     staff_role=StaffStatus.Role.ONLINE_TRIAGE)
                              .all()), 2)
         self.assertEqual(len(StaffStatus.objects
                              .filter(staff_chat_status=StaffStatus.ChatStatus.AVAILABLE,
@@ -106,7 +106,7 @@ class ScheduledTaskTestCase(TestCase):
                              .all()), 6)
         self.assertEqual(len(StaffStatus.objects
                              .filter(staff_chat_status=StaffStatus.ChatStatus.ASSIGNED,
-                                     staff_role=StaffStatus.Role.ONLINETRIAGE)
+                                     staff_role=StaffStatus.Role.ONLINE_TRIAGE)
                              .all()), 2)
         self.assertEqual(len(StaffStatus.objects
                              .filter(staff_chat_status=StaffStatus.ChatStatus.ASSIGNED,

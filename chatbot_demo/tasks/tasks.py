@@ -40,7 +40,7 @@ def reassign_counsellor():
                     escalated_role = ROLE_RANKING[next_role_idx]
                 # for abnormal cases
                 else:
-                    escalated_role = StaffStatus.Role.ONLINETRIAGE
+                    escalated_role = StaffStatus.Role.ONLINE_TRIAGE
 
                 staff = StaffStatus.get_random_staff_by_role(escalated_role)
                 if staff:

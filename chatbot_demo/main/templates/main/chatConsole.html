@@ -16,10 +16,6 @@
     .form-group label {
       font-weight: bold;
     }
-
-    #assigned {
-      background-color: #c9ecd0
-    }
   </style>
 </head>
 <body>
@@ -165,11 +161,11 @@
         <table class="table col-sm-6 table-bordered table-striped" id="redRouteTable">
           <thead>
             <tr>
-             <th scope="col">#</th>
-             <th scope="col">Student ID</th>
-             <th scope="col">Date</th>
-             <th scope="col">Start Time</th>
-             <th scope="col">End Time</th>
+              <th scope="col">#</th>
+              <th scope="col">Student ID</th>
+              <th scope="col">Date</th>
+              <th scope="col">Start Time</th>
+              <th scope="col">End Time</th>
             </tr>
           </thead>
           ${tableBody}
@@ -179,11 +175,11 @@
       let tableBody = (item, idx) => `
         <tbody>
           <tr>
-           <th scope="row">${idx}</th>
-           <td>${item.student_netid}</td>
-           <td>${item.date}</td>
-           <td>${item.start_time}</td>
-           <td>${item.end_time}</td>
+            <th scope="row">${idx}</th>
+            <td>${item.student_netid}</td>
+            <td>${item.date}</td>
+            <td>${item.start_time}</td>
+            <td>${item.end_time}</td>
           </tr>
         </tbody>
       `
@@ -257,7 +253,9 @@
       return  `<a href="javascript:void(0)" data-student-netid="${student_id}" data-staff-netid="${staff_netid}" data-status="${status}" class="start-chat-with-student">${student_id}</a>`
     }
 
-
+    /**
+     * Event handler for staff to change status
+     */
     $('#staff-status-select').on('change', (e) => {
       const status = e.target.value
       $.ajax({
@@ -274,6 +272,9 @@
       })
     })
 
+    /**
+     * Logout handler
+     */
     $('.logout-btn').on('click', () => {
       axios.get('/main/api/logout/').then((res) => {
         window.location.href = res.request.responseURL // redirect
@@ -331,7 +332,7 @@
     $('.chat-status').each((idx, el) => {
       const status = $(el).text().toLocaleLowerCase();
       if (status !== 'assigned' && status !== 'chatting') return
-      const assignRow = $(el).parent().attr('id', status)
+      const assignRow = $(el).parent().attr('id', status).addClass('table-success')
       const student_id = assignRow.find('td:first')[0].getAttribute('data-student-netid')
       assignRow.find('td:first').html(createRoomEl(student_id, status))
     })

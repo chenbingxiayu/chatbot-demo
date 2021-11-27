@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, date, timedelta
+from enum import Enum
 from io import BytesIO
 from typing import Dict
 from zipfile import ZipFile
@@ -48,3 +49,16 @@ def write_zip_files(files: Dict[str, BytesIO]):
             f.writestr(filename, data.getvalue())
     out.seek(0)
     return out
+
+
+class Weekday(str, Enum):
+    MON = 'Monday'
+    TUE = 'Tuesday'
+    WED = 'Wednesday'
+    THUR = 'Thursday'
+    FRI = 'Friday'
+    SAT = 'Saturday'
+    PUBLIC_HOLIDAY = 'public holiday'
+
+    def __str__(self):
+        return self.value
