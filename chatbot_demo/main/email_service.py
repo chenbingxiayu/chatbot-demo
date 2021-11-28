@@ -77,11 +77,9 @@ class EmailService:
                                         body="""Dear Counsellor
 
 We have received a request from a student for using our Online Chat Service just now.
-Please click the following link to start the chat with the student accordingly.
+Please click the link in the admin page to start the chat with the student accordingly.
 
-{chatroom_url}?student_netid={student_netid}
-
-All the best, 
+All the best,
 Counselling and Wellness Section
 Student Affairs Office"""
                                         ),
