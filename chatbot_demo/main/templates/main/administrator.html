@@ -27,8 +27,18 @@
             <td>{{ student.assigned_counsellor.staff_netid }}</td>
           </tr>
           {% endfor %}
-          {% for history in histories %}
+        <thead>
           <tr>
+            <th scope="col"></th>
+            <th scope="col">Student ID</th>
+            <th scope="col">Time (request time)</th>
+            <th scope="col">Last Status</th>
+            <th scope="col">Duration</th>
+            <th scope="col">Counsellor</th>
+          </tr>
+        </thead>
+          {% for history in histories %}
+          <tr class="table-secondary">
             <th scope="row" class="seq-no"></th>
             <td>{{ history.student_netid }}</td>
             <td>{{ history.chat_request_time|time:'H:i:s' }}</td>

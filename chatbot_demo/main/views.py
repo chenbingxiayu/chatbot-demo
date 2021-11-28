@@ -11,7 +11,6 @@ import requests
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
-from django.db.transaction import TransactionManagementError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -21,7 +20,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from main.auth import sso_auth
-from main.exceptions import UnauthorizedException
+from main.exceptions import UnauthorizedException, BusinessCalendarValidationError, NotFound
 from main.forms import StaffLoginForm
 from main.models import (
     User,
@@ -220,7 +219,7 @@ def chat_console(request):
         staff.save()
         staff.refresh_from_db()
 
-    if staff.staff_role in (StaffStatus.Role.ONLINETRIAGE,
+    if staff.staff_role in (StaffStatus.Role.ONLINE_TRIAGE,
                             StaffStatus.Role.DO,
                             StaffStatus.Role.COUNSELLOR):
         return redirect('counsellor')
@@ -393,7 +392,7 @@ def findstaff(request):
     :return:
     """
 
-    assignment_order = [StaffStatus.Role.ONLINETRIAGE,
+    assignment_order = [StaffStatus.Role.ONLINE_TRIAGE,
                         StaffStatus.Role.DO,
                         StaffStatus.Role.COUNSELLOR]
     try:
@@ -673,15 +672,21 @@ def update_calendar(request):
         response_json['message'] = msg
         return JsonResponse(response_json, status=400)
 
+    logger.info("Reading file...")
     decoded_file = file.read().decode('utf-8')
-    io_string = io.StringIO(decoded_file)
-    calendar_dates = [line for line in csv.reader(io_string, delimiter=',')]
+    reader = csv.DictReader(io.StringIO(decoded_file), delimiter=',')
+    calendar_dates = [line for line in reader]
 
     try:
+        if reader.fieldnames != BusinessCalendar.field_names:
+            raise BusinessCalendarValidationError(f"Field name invalid. Expecting {BusinessCalendar.field_names}, "
+                                                  f"but got {reader.fieldnames}")
+
         BusinessCalendar.update_items_from_csv(calendar_dates)
-    except (TransactionManagementError, Exception) as e:
+        logger.info("Successfully updated.")
+    except Exception as e:
         msg = str(e)
-        logger.warning(msg)
+        logger.error(msg)
         response_json['status'] = 'fail'
         response_json['message'] = msg
         return JsonResponse(response_json, status=500)
@@ -689,12 +694,12 @@ def update_calendar(request):
     return JsonResponse(response_json, status=200)
 
 
-@login_required
+# @login_required
 @require_http_methods(['GET'])
 def is_working_day(request, date: str):
     try:
         calendar_date = BusinessCalendar.get_date(date)
-    except ValueError as e:
+    except NotFound as e:
         msg = str(e)
         logger.warning(msg)
         response_json['status'] = 'fail'
@@ -704,12 +709,12 @@ def is_working_day(request, date: str):
     return JsonResponse({'is_working_day': calendar_date.is_working_day}, status=200)
 
 
-@login_required
+# @login_required
 @require_http_methods(['GET'])
 def is_working_hour(request):
     try:
         res = BusinessCalendar.is_working_hour()
-    except ValueError as e:
+    except NotFound as e:
         msg = str(e)
         logger.warning(msg)
         response_json['status'] = 'fail'
@@ -717,3 +722,18 @@ def is_working_hour(request):
         return JsonResponse(response_json, status=404)
 
     return JsonResponse({'is_working_hour': res}, status=200)
+
+
+# @login_required
+@require_http_methods(['GET'])
+def is_chatting_working_hour(request):
+    try:
+        res = BusinessCalendar.is_chatting_working_hour()
+    except NotFound as e:
+        msg = str(e)
+        logger.warning(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        return JsonResponse(response_json, status=404)
+
+    return JsonResponse({'is_chatting_working_hour': res}, status=200)

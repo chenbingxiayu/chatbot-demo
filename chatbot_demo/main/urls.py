@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/update_calendar/', views.update_calendar, name='update_calendar'),
     path('api/working_day/<str:date>/', views.is_working_day, name='working_day'),
     path('api/working_hour/', views.is_working_hour, name='working_hour'),
+    path('api/chatting_working_hour/', views.is_chatting_working_hour, name='chatting_working_hour'),
     path('user/login/', views.login_all, name='login'),
     path('user/login-sso/', views.login_sso, name='login_sso'),
     path('user/login-sso/callback/', views.login_sso_callback, name='login_sso_callback'),
