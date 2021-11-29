@@ -774,7 +774,7 @@ class BusinessCalendar(models.Model):
 
         if calendar_date.chatting_office_hr_begin and calendar_date.chatting_office_hr_end:
             time_now_str = timezone.localtime().strftime(cls.time_format_in_db)
-            if calendar_date.office_hr_begin <= time_now_str <= calendar_date.office_hr_end and \
+            if calendar_date.chatting_office_hr_begin <= time_now_str <= calendar_date.chatting_office_hr_end and \
                     not cls.is_lunch_time(time_now_str):
                 return True
         return False
