@@ -730,12 +730,12 @@
     }
 
     async function mid_recommendations() {
-      let office_hour = await isSAOWorkingHour(new Date());
-      const is_chatting_hour = await isChattingWorkingHours();
+      let office_hour = await isSAOWorkingHours(new Date());
+      const isChattingHour = await isChattingWorkingHours();
       let content = `We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with SAO counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Material/Resources<br/>3. ${
         office_hour ? 'Immediate Contact with SAO Counsellor' : 'Immediate Contact with PolyU-Line Counsellors: (852)81001583'
       }`;
-      if (is_chatting_hour) {
+      if (isChattingHour) {
         content = `${content}<br/>4. Online Chat Service<br/>5. Community Helpline`;
       } else {
         content = `${content}<br/>4. Community Helpline`;
@@ -765,7 +765,7 @@
                         value: 5,
                       },
                     ]),
-                ...(is_chatting_hour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
+                ...(isChattingHour ? [{ text: 'Online Chat Service(Live)', value: 2 }] : []),
                 { text: 'Community Helpline', value: 6 },
               ],
             })
@@ -830,8 +830,8 @@
     }
 
     // async function mid_recommendations() {
-    //   let office_hour = await isSAOWorkingHour(new Date());
-    //   const is_chatting_hour = await isChattingWorkingHours();
+    //   let office_hour = await isSAOWorkingHours(new Date());
+    //   const isChattingHour = await isChattingWorkingHours();
     //   if (office_hour) {
     //     return botui.message
     //       .bot({
@@ -852,7 +852,7 @@
     //                 value: 1,
     //               },
     //               { text: 'Immediate Contact with SAO Counsellors', value: 4 },
-    //               ...(is_chatting_hour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
+    //               ...(isChattingHour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
     //               { text: 'Community Helpline', value: 6 },
     //             ],
     //           })
@@ -937,7 +937,7 @@
     //                 text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583',
     //                 value: 5,
     //               },
-    //               ...(is_chatting_hour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
+    //               ...(isChattingHour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
     //               { text: 'Community Helpline', value: 6 },
     //             ],
     //           })
@@ -2784,7 +2784,7 @@
       const office_hour = await isSAOWorkingHours(new Date());
       const isChattingHour = await isChattingWorkingHours();
       let content = `我們建議你與學生事務處(SAO)的輔導員聯絡。<br/><br/>1. 預約輔導服務<br/><br/>除此之外，您還可以選擇以下服務：<br/><br/>2. 心理健康教育資訊/資源<br/>3. ${office_hour ? '立即與學生事務處 (SAO)輔導員聯絡' : '立即與PolyU-Line輔導員聯絡 : (852) 81001583'}`;
-      if (is_chatting_hour) {
+      if (isChattingHour) {
         content = `${content}<br/>4. 線上聊天<br/>5. 社區支援熱線`;
       } else {
         content = `${content}<br/>4. 社區支援熱線`;
@@ -4508,8 +4508,8 @@
     async function mid_recommendations_sc() {
       const office_hour = await isSAOWorkingHours(new Date());
       const isChattingHour = await isChattingWorkingHours();
-      let content = `我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. ${office_hour ? '立即与学生事务处 (SAO)辅导员联络<br/>' : '立即与PolyU-Line辅导员联络 : (852) 81001583'}`;
-      if (is_chatting_hour) {
+      let content = `我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. ${office_hour ? '立即与学生事务处 (SAO)辅导员联络' : '立即与PolyU-Line辅导员联络 : (852) 81001583'}`;
+      if (isChattingHour) {
         content = `${content}<br/>4. 线上聊天<br/>5. 社区支援热线`;
       } else {
         content = `${content}<br/>4. 社区支援热线`;
