@@ -2249,7 +2249,7 @@
         method: 'GET',
       })
         .done((res) => {
-          console.log('/working_hour/ response', response);
+          console.log('/working_hour/ response', res);
           isWorkingHr = res.is_working_hour;
         })
         .fail((err) => console.log(err.responseJSON));
@@ -2266,7 +2266,7 @@
         method: 'GET',
       })
         .done((res) => {
-          console.log('/chatting_working_hour/ response', response);
+          console.log('/chatting_working_hour/ response', res);
           isChattingWorkingHr = res.is_chatting_working_hour;
         })
         .fail((err) => console.log(err.responseJSON));
