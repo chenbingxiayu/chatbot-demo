@@ -71,7 +71,7 @@
     }
 
     async function init_choices() {
-      const office_hour = await isSAOWorkingHours(new Date());
+      const office_hour = await isChattingWorkingHours();
       if (office_hour) {
         return botui.message
           .bot({
@@ -730,175 +730,277 @@
     }
 
     async function mid_recommendations() {
-      let office_hour = await isSAOWorkingHours(new Date());
-      if (office_hour) {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content:
-              'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Material/Resources<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: 'Make Appointment with SAO Counsellors', value: 3 },
-                  {
-                    text: 'Mental Health Educational Material/Resources',
-                    value: 1,
-                  },
-                  { text: 'Immediate Contact with SAO Counsellors', value: 4 },
-                  { text: 'Online Chat Service(Live)', value: 2 },
-                  { text: 'Community Helpline', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = true;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(contact_with_counsellors);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(community_helpline);
-                }
-              });
-          });
+      let office_hour = await isSAOWorkingHour(new Date());
+      const is_chatting_hour = await isChattingWorkingHours();
+      let content = `We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with SAO counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Material/Resources<br/>3. ${
+        office_hour ? 'Immediate Contact with SAO Counsellor' : 'Immediate Contact with PolyU-Line Counsellors: (852)81001583'
+      }`;
+      if (is_chatting_hour) {
+        content = `${content}<br/>4. Online Chat Service<br/>5. Community Helpline`;
       } else {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content:
-              'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with SAO counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health 101<br/>3. Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/>4. Community Helpline',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: 'Make Appointment with SAO Counsellors', value: 3 },
-                  {
-                    text: 'Mental Health Educational Material/Resources',
-                    value: 1,
-                  },
-                  {
-                    text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583',
-                    value: 5,
-                  },
-                  { text: 'Community Helpline', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = true;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: `${res.text}`,
-                    })
-                    .then(contact_with_counsellors);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(community_helpline);
-                }
-              });
-          });
+        content = `${content}<br/>4. Community Helpline`;
       }
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content,
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: 'Make Appointment with SAO Counsellors', value: 3 },
+                {
+                  text: 'Mental Health Educational Material/Resources',
+                  value: 1,
+                },
+                ...(office_hour
+                  ? [{ text: 'Immediate Contact with SAO Counsellors', value: 4 }]
+                  : [
+                      {
+                        text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583',
+                        value: 5,
+                      },
+                    ]),
+                ...(is_chatting_hour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
+                { text: 'Community Helpline', value: 6 },
+              ],
+            })
+            .then(function(res) {
+              if (res.value == 1) {
+                service_list = true;
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(mental_health_101);
+              }
+              if (res.value == 2) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(T_and_C_of_OCS);
+              }
+              if (res.value == 3) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(make_appointment_with_counsellors);
+              }
+              if (res.value == 4) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(contact_with_counsellors);
+              }
+              if (res.value == 5) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(polyu_line);
+              }
+              if (res.value == 6) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(community_helpline);
+              }
+            });
+        });
     }
+
+    // async function mid_recommendations() {
+    //   let office_hour = await isSAOWorkingHour(new Date());
+    //   const is_chatting_hour = await isChattingWorkingHours();
+    //   if (office_hour) {
+    //     return botui.message
+    //       .bot({
+    //         loading: true,
+    //         delay: 1000,
+    //         photo: polly,
+    //         content:
+    //           'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Material/Resources<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline',
+    //       })
+    //       .then(function() {
+    //         return botui.action
+    //           .button({
+    //             addMessage: false,
+    //             action: [
+    //               { text: 'Make Appointment with SAO Counsellors', value: 3 },
+    //               {
+    //                 text: 'Mental Health Educational Material/Resources',
+    //                 value: 1,
+    //               },
+    //               { text: 'Immediate Contact with SAO Counsellors', value: 4 },
+    //               ...(is_chatting_hour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
+    //               { text: 'Community Helpline', value: 6 },
+    //             ],
+    //           })
+    //           .then(function(res) {
+    //             if (res.value == 1) {
+    //               service_list = true;
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(mental_health_101);
+    //             }
+    //             if (res.value == 2) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(T_and_C_of_OCS);
+    //             }
+    //             if (res.value == 3) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(make_appointment_with_counsellors);
+    //             }
+    //             if (res.value == 4) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(contact_with_counsellors);
+    //             }
+    //             if (res.value == 5) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(polyu_line);
+    //             }
+    //             if (res.value == 6) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(community_helpline);
+    //             }
+    //           });
+    //       });
+    //   } else {
+    //     return botui.message
+    //       .bot({
+    //         loading: true,
+    //         delay: 1000,
+    //         photo: polly,
+    //         content:
+    //           'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with SAO counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health 101<br/>3. Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/>4. Community Helpline',
+    //       })
+    //       .then(function() {
+    //         return botui.action
+    //           .button({
+    //             addMessage: false,
+    //             action: [
+    //               { text: 'Make Appointment with SAO Counsellors', value: 3 },
+    //               {
+    //                 text: 'Mental Health Educational Material/Resources',
+    //                 value: 1,
+    //               },
+    //               {
+    //                 text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583',
+    //                 value: 5,
+    //               },
+    //               ...(is_chatting_hour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
+    //               { text: 'Community Helpline', value: 6 },
+    //             ],
+    //           })
+    //           .then(function(res) {
+    //             if (res.value == 1) {
+    //               service_list = true;
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(mental_health_101);
+    //             }
+    //             if (res.value == 2) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(T_and_C_of_OCS);
+    //             }
+    //             if (res.value == 3) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(make_appointment_with_counsellors);
+    //             }
+    //             if (res.value == 4) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: `${res.text}`,
+    //                 })
+    //                 .then(contact_with_counsellors);
+    //             }
+    //             if (res.value == 5) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(polyu_line);
+    //             }
+    //             if (res.value == 6) {
+    //               return botui.message
+    //                 .human({
+    //                   delay: 500,
+    //                   photo: client,
+    //                   content: res.text,
+    //                 })
+    //                 .then(community_helpline);
+    //             }
+    //           });
+    //       });
+    //   }
+    // }
 
     function high() {
       score = 20;
@@ -1567,7 +1669,6 @@
                                 console.log('isWaitingStatus', isWaitingStatus);
                                 // stop to query status and pop waiting msg
                                 if (!isWaitingStatus || studQuitMsg) {
-                                  await new Promise((resolve) => setTimeout(resolve, 5000));
                                   clearInterval(timer);
                                   await botui.action.hide();
                                 }
@@ -1981,7 +2082,7 @@
     // Traditional chinese
 
     async function init_choices_tc() {
-      const office_hour = await isSAOWorkingHours(new Date());
+      const office_hour = await isChattingWorkingHours();
       if (office_hour) {
         return botui.message
           .bot({
@@ -2140,7 +2241,7 @@
 
     const isSAOWorkingHours = async (now) => {
       // TODO: always return true in dev
-      // return true;
+      // return false;
       let isWorkingHr = false;
       await $.ajax({
         url: '/main/api/working_hour/',
@@ -2152,6 +2253,22 @@
         })
         .fail((err) => console.log(err.responseJSON));
       return isWorkingHr;
+    };
+
+    const isChattingWorkingHours = async () => {
+      // TODO: always return true in dev
+      // return true;
+      let isChattingWorkingHr = false;
+      await $.ajax({
+        url: '/main/api/chatting_working_hour/',
+        headers: { 'X-CSRFToken': CSRF_TOKEN },
+        method: 'GET',
+      })
+        .done((res) => {
+          isChattingWorkingHr = res.is_chatting_working_hour;
+        })
+        .fail((err) => console.log(err.responseJSON));
+      return isChattingWorkingHr;
     };
 
     /*
@@ -2665,165 +2782,97 @@
 
     async function mid_recommendations_tc() {
       const office_hour = await isSAOWorkingHours(new Date());
-      if (office_hour) {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: '我們建議你與學生事務處(SAO)的輔導員聯絡。<br/><br/>1. 預約輔導服務<br/><br/>除此之外，您還可以選擇以下服務：<br/><br/>2. 心理健康教育資訊/資源<br/>3. 立即與學生事務處 (SAO)輔導員聯絡<br/>4. 線上聊天<br/>5. 社區支援熱線',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: '預約輔導服務', value: 3 },
-                  { text: '心理健康教育資訊/資源', value: 1 },
-                  { text: '立即與學生事務處 (SAO) 輔導員聯絡', value: 4 },
-                  { text: '線上聊天', value: 2 },
-                  { text: '社區支援熱線', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = true;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101_tc);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS_tc);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors_tc);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(contact_with_counsellors_tc);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line_tc);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(community_helpline_tc);
-                }
-              });
-          });
+      const isChattingHour = await isChattingWorkingHours();
+      let content = `我們建議你與學生事務處(SAO)的輔導員聯絡。<br/><br/>1. 預約輔導服務<br/><br/>除此之外，您還可以選擇以下服務：<br/><br/>2. 心理健康教育資訊/資源<br/>3. ${office_hour ? '立即與學生事務處 (SAO)輔導員聯絡' : '立即與PolyU-Line輔導員聯絡 : (852) 81001583'}`;
+      if (is_chatting_hour) {
+        content = `${content}<br/>4. 線上聊天<br/>5. 社區支援熱線`;
       } else {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: '我們建議你與學生事務處(SAO)的輔導員聯絡。<br/><br/>1. 預約輔導服務<br/><br/>除此之外，您還可以選擇以下服務：<br/><br/>2. 心理健康教育資訊/資源<br/>3. 立即與PolyU-Line輔導員聯絡 : (852) 81001583<br/>4. 社區支援熱線',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: '預約輔導服務', value: 3 },
-                  { text: '心理健康教育資訊/資源', value: 1 },
-                  {
-                    text: '立即與PolyU-Line輔導員聯絡 : (852) 8100 1583',
-                    value: 5,
-                  },
-                  { text: '社區支援熱線', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = true;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101_tc);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS_tc);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors_tc);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(contact_with_counsellors_tc);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line_tc);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(community_helpline_tc);
-                }
-              });
-          });
+        content = `${content}<br/>4. 社區支援熱線`;
       }
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content,
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: '預約輔導服務', value: 3 },
+                { text: '心理健康教育資訊/資源', value: 1 },
+                ...(office_hour
+                  ? [{ text: '立即與學生事務處 (SAO) 輔導員聯絡', value: 4 }]
+                  : [
+                      {
+                        text: '立即與PolyU-Line輔導員聯絡 : (852) 8100 1583',
+                        value: 5,
+                      },
+                    ]),
+                ...(isChattingHour ? [{ text: '線上聊天', value: 2 }] : []),
+                { text: '社區支援熱線', value: 6 },
+              ],
+            })
+            .then(function(res) {
+              if (res.value == 1) {
+                service_list = true;
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(mental_health_101_tc);
+              }
+              if (res.value == 2) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(T_and_C_of_OCS_tc);
+              }
+              if (res.value == 3) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(make_appointment_with_counsellors_tc);
+              }
+              if (res.value == 4) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(contact_with_counsellors_tc);
+              }
+              if (res.value == 5) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(polyu_line_tc);
+              }
+              if (res.value == 6) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(community_helpline_tc);
+              }
+            });
+        });
     }
 
     function high_tc() {
@@ -3808,7 +3857,7 @@
     // Simplified chinese
 
     async function init_choices_sc() {
-      const office_hour = await isSAOWorkingHours(new Date());
+      const office_hour = await isChattingWorkingHours();
       if (office_hour) {
         return botui.message
           .bot({
@@ -4458,164 +4507,97 @@
 
     async function mid_recommendations_sc() {
       const office_hour = await isSAOWorkingHours(new Date());
-      if (office_hour) {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: '我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. 立即与学生事务处 (SAO)辅导员联络<br/>4. 线上聊天<br/>5. 社区支援热线',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: '预约辅导服务', value: 3 },
-                  { text: '心理健康教育资讯/资源', value: 1 },
-                  { text: '立即与学生事务处 (SAO)辅导员联络 ', value: 4 },
-                  { text: '线上聊天', value: 2 },
-                  { text: '社区支援热线', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = true;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101_sc);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS_sc);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors_sc);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(contact_with_counsellors_sc);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line_sc);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(community_helpline_sc);
-                }
-              });
-          });
+      const isChattingHour = await isChattingWorkingHours();
+      let content = `我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. ${office_hour ? '立即与学生事务处 (SAO)辅导员联络<br/>' : '立即与PolyU-Line辅导员联络 : (852) 81001583'}`;
+      if (is_chatting_hour) {
+        content = `${content}<br/>4. 线上聊天<br/>5. 社区支援热线`;
       } else {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: '我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. 立即与PolyU-Line辅导员联络 : (852) 81001583 <br/>4. 社区支援热线',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: '预约辅导服务', value: 3 },
-                  { text: '心理健康教育资讯/资源', value: 1 },
-                  {
-                    text: '立即与PolyU-Line辅导员联络 : (852) 81001583',
-                    value: 5,
-                  },
-                  { text: '社区支援热线', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101_sc);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS_sc);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors_sc);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(contact_with_counsellors_sc);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line_sc);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(community_helpline_sc);
-                }
-              });
-          });
+        content = `${content}<br/>4. 社区支援热线`;
       }
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content,
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: '预约辅导服务', value: 3 },
+                { text: '心理健康教育资讯/资源', value: 1 },
+                ...(office_hour
+                  ? [{ text: '立即与学生事务处 (SAO)辅导员联络 ', value: 4 }]
+                  : [
+                      {
+                        text: '立即与PolyU-Line辅导员联络 : (852) 81001583',
+                        value: 5,
+                      },
+                    ]),
+                ...(isChattingHour ? [{ text: '线上聊天', value: 2 }] : []),
+                { text: '社区支援热线', value: 6 },
+              ],
+            })
+            .then(function(res) {
+              if (res.value == 1) {
+                service_list = true;
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(mental_health_101_sc);
+              }
+              if (res.value == 2) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(T_and_C_of_OCS_sc);
+              }
+              if (res.value == 3) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(make_appointment_with_counsellors_sc);
+              }
+              if (res.value == 4) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(contact_with_counsellors_sc);
+              }
+              if (res.value == 5) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(polyu_line_sc);
+              }
+              if (res.value == 6) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(community_helpline_sc);
+              }
+            });
+        });
     }
 
     function high_sc() {
@@ -5608,7 +5590,8 @@
           ...onlineChatSurveyData,
         },
       });
-      if (response.status == 'success') {
+      console.log('add to queue response', response);
+      if (response.status == 'success' || response.status_code == 201) {
         return Promise.resolve(response.message);
       } else {
         return Promise.reject(response.message);
