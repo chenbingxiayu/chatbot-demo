@@ -2241,7 +2241,7 @@
 
     const isSAOWorkingHours = async (now) => {
       // TODO: always return true in dev
-      // return false;
+      // return true;
       let isWorkingHr = false;
       await $.ajax({
         url: '/main/api/working_hour/',
@@ -2249,6 +2249,7 @@
         method: 'GET',
       })
         .done((res) => {
+          console.log('/working_hour/ response', response);
           isWorkingHr = res.is_working_hour;
         })
         .fail((err) => console.log(err.responseJSON));
@@ -2257,7 +2258,7 @@
 
     const isChattingWorkingHours = async () => {
       // TODO: always return true in dev
-      // return true;
+      // return false;
       let isChattingWorkingHr = false;
       await $.ajax({
         url: '/main/api/chatting_working_hour/',
@@ -2265,6 +2266,7 @@
         method: 'GET',
       })
         .done((res) => {
+          console.log('/chatting_working_hour/ response', response);
           isChattingWorkingHr = res.is_chatting_working_hour;
         })
         .fail((err) => console.log(err.responseJSON));
