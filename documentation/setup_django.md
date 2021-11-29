@@ -65,6 +65,7 @@ Run the SQL [enable_TDE.sql](https://github.com/chenbingxiayu/chatbot-demo/blob/
 Please create and activate virtual environment before running the following  
 ```shell
 cd chatbot_demo
+chmod +x manage_cli.sh
 ./manage_cli.sh createsuperuser
 
 # Run test if needed
@@ -112,5 +113,5 @@ docker-compose up -d --build django celery celery_beat
 # Deploy frontend and backend
 ./deploy.sh
 ```
-   
+
    

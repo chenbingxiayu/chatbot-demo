@@ -159,7 +159,10 @@ def login_sso_callback(request):
 def student_logout(request):
     # To prevent a staff been deleted by accident
     try:
-        is_stud = not request.user.get_groups()
+        if request.user.is_superuser:  # Prevent superuser admin been deleted
+            is_stud = False
+        else:
+            is_stud = not request.user.get_groups()
     except UnauthorizedException:
         is_stud = True
     student_netid = request.user.netid
