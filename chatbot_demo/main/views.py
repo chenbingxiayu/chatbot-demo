@@ -684,6 +684,12 @@ def update_calendar(request):
 
         BusinessCalendar.update_items_from_csv(calendar_dates)
         logger.info("Successfully updated.")
+    except BusinessCalendarValidationError as e:
+        msg = str(e)
+        logger.error(msg)
+        response_json['status'] = 'fail'
+        response_json['message'] = msg
+        return JsonResponse(response_json, status=400)
     except Exception as e:
         msg = str(e)
         logger.error(msg)
@@ -694,7 +700,7 @@ def update_calendar(request):
     return JsonResponse(response_json, status=200)
 
 
-# @login_required
+@login_required
 @require_http_methods(['GET'])
 def is_working_day(request, date: str):
     try:
@@ -709,7 +715,7 @@ def is_working_day(request, date: str):
     return JsonResponse({'is_working_day': calendar_date.is_working_day}, status=200)
 
 
-# @login_required
+@login_required
 @require_http_methods(['GET'])
 def is_working_hour(request):
     try:
@@ -724,7 +730,7 @@ def is_working_hour(request):
     return JsonResponse({'is_working_hour': res}, status=200)
 
 
-# @login_required
+@login_required
 @require_http_methods(['GET'])
 def is_chatting_working_hour(request):
     try:

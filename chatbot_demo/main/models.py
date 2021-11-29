@@ -732,18 +732,15 @@ class BusinessCalendar(models.Model):
     def update_items_from_csv(cls, calendar_dates: List[Dict[str, str]]):
         """No null value, can be empty string
         """
-        row_idx = row = None
-        with transaction.atomic():
+        logger.info("Validating and putting into DB.")
+        for row_idx, row in enumerate(calendar_dates, 1):  # 1 here refers to row in csv file
             try:
-                logger.info("Validating and putting into DB.")
-                for row_idx, row in enumerate(calendar_dates, 1):  # 1 here refers to row in csv file
-                    cleaned_date = business_calendar_schema.load(row)
-                    cls.objects.update_or_create(**cleaned_date)  # noqa
+                cleaned_date = business_calendar_schema.load(row)
+                cls(**cleaned_date).save()
+            # cls.objects.update_or_create(**cleaned_date)  # noqa
             except ValidationError as e:
-                logger.error(e)
-                raise BusinessCalendarValidationError('Format invalid in row {row_idx}\n{row}',
-                                                      row_idx=row_idx,
-                                                      row=row)
+                logger.error(f"{e}")
+                logger.error(f"Format invalid in row {row_idx}\n{row}")
 
     @classmethod
     def get_date(cls, date_: str):
