@@ -71,167 +71,106 @@
     }
 
     async function init_choices() {
-      const office_hour = await isChattingWorkingHours();
-      if (office_hour) {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: 'Please select the service below:',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: 'Counselling ChatBOT', value: 1 },
-                  {
-                    text: 'Mental Health Educational Material/Resources',
-                    value: 2,
-                  },
-                  { text: 'Online Chat (Live)', value: 4 },
-                  { text: 'Make Appointment with SAO Counsellors', value: 5 },
-                  { text: 'Immediate Contact with SAO Counsellors', value: 3 },
-                  { text: 'Emergency Support', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = false;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(get_name)
-                    .then(questions);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(contact_with_counsellors);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(emergency_support);
-                }
-              });
-          });
-      } else {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: 'Please select the service below:',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: 'Counselling ChatBOT', value: 1 },
-                  {
-                    text: 'Mental Health Educational Material/Resources',
-                    value: 2,
-                  },
-                  { text: 'Make Appointment with SAO Counsellors', value: 5 },
-                  {
-                    text: 'Immediate Contact with PolyU-Line Counsellors : (852)81001583',
-                    value: 3,
-                  },
-                  { text: 'Emergency Support', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = false;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(get_name)
-                    .then(questions);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(emergency_support);
-                }
-              });
-          });
-      }
+      const office_hour = await isSAOWorkingHours(new Date());
+      const isChattingHour = await isChattingWorkingHours();
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content: 'Please select the service below:',
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: 'Counselling ChatBOT', value: 1 },
+                {
+                  text: 'Mental Health Educational Material/Resources',
+                  value: 2,
+                },
+                ...(isChattingHour ? [{ text: 'Online Chat (Live)', value: 4 }] : []),
+                { text: 'Make Appointment with SAO Counsellors', value: 5 },
+                ...(office_hour
+                  ? [{ text: 'Immediate Contact with SAO Counsellors', value: 3 }]
+                  : [
+                      {
+                        text: 'Immediate Contact with PolyU-Line Counsellors : (852)81001583',
+                        value: 7,
+                      },
+                    ]),
+                { text: 'Emergency Support', value: 6 },
+              ],
+            })
+            .then(function(res) {
+              if (res.value == 1) {
+                service_list = false;
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(get_name)
+                  .then(questions);
+              }
+              if (res.value == 2) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(mental_health_101);
+              }
+              if (res.value == 3) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(contact_with_counsellors);
+              }
+              if (res.value == 4) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(T_and_C_of_OCS);
+              }
+              if (res.value == 5) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(make_appointment_with_counsellors);
+              }
+              if (res.value == 6) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(emergency_support);
+              }
+              if (res.value == 7) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(polyu_line);
+              }
+            });
+        });
     }
 
     function get_name() {
@@ -2082,161 +2021,103 @@
     // Traditional chinese
 
     async function init_choices_tc() {
-      const office_hour = await isChattingWorkingHours();
-      if (office_hour) {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: '請選擇以下服務:',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: '網上聊天機械人', value: 1 },
-                  { text: '心理健康教育資訊/資源', value: 2 },
-                  { text: '線上聊天', value: 4 },
-                  { text: '預約輔導服務', value: 5 },
-                  { text: '立即與學生事務處 (SAO)輔導員聯絡', value: 3 },
-                  { text: '緊急支援', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = false;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(get_name_tc)
-                    .then(questions_tc);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101_tc);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(contact_with_counsellors_tc);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS_tc);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors_tc);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(emergency_support_tc);
-                }
-              });
-          });
-      } else {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: '請選擇以下服務:',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: '網上聊天機械人', value: 1 },
-                  { text: '心理健康教育資訊/資源', value: 2 },
-                  { text: '預約輔導服務', value: 5 },
-                  {
-                    text: '立即與PolyU-Line輔導員聯絡 : (852)81001583',
-                    value: 3,
-                  },
-                  { text: '緊急支援', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = false;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(get_name_tc)
-                    .then(questions_tc);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101_tc);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line_tc);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors_tc);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(emergency_support_tc);
-                }
-              });
-          });
-      }
+      const office_hour = await isSAOWorkingHours(new Date());
+      const isChattingHour = await isChattingWorkingHours();
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content: '請選擇以下服務:',
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: '網上聊天機械人', value: 1 },
+                { text: '心理健康教育資訊/資源', value: 2 },
+                ...(isChattingHour ? [{ text: '線上聊天', value: 4 }] : []),
+                { text: '預約輔導服務', value: 5 },
+                ...(office_hour
+                  ? [{ text: '立即與學生事務處 (SAO)輔導員聯絡', value: 3 }]
+                  : [
+                      {
+                        text: '立即與PolyU-Line輔導員聯絡 : (852)81001583',
+                        value: 7,
+                      },
+                    ]),
+                { text: '緊急支援', value: 6 },
+              ],
+            })
+            .then(function(res) {
+              if (res.value == 1) {
+                service_list = false;
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(get_name_tc)
+                  .then(questions_tc);
+              }
+              if (res.value == 2) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(mental_health_101_tc);
+              }
+              if (res.value == 3) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(contact_with_counsellors_tc);
+              }
+              if (res.value == 4) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(T_and_C_of_OCS_tc);
+              }
+              if (res.value == 5) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(make_appointment_with_counsellors_tc);
+              }
+              if (res.value == 6) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(emergency_support_tc);
+              }
+              if (res.value == 7) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(polyu_line_tc);
+              }
+            });
+        });
     }
 
     const isSAOWorkingHours = async (now) => {
@@ -3859,161 +3740,103 @@
     // Simplified chinese
 
     async function init_choices_sc() {
-      const office_hour = await isChattingWorkingHours();
-      if (office_hour) {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: '请选择以下服务: ',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: '网上聊天机械人', value: 1 },
-                  { text: '心理健康教育资讯/资源', value: 2 },
-                  { text: '线上聊天', value: 4 },
-                  { text: '预约辅导服务', value: 5 },
-                  { text: '立即与学生事务处 (SAO)辅导员联络', value: 3 },
-                  { text: '紧急支援', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = false;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(get_name_sc)
-                    .then(questions_sc);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101_sc);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(contact_with_counsellors_sc);
-                }
-                if (res.value == 4) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(T_and_C_of_OCS_sc);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors_sc);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(emergency_support_sc);
-                }
-              });
-          });
-      } else {
-        return botui.message
-          .bot({
-            loading: true,
-            delay: 1000,
-            photo: polly,
-            content: '请选择以下服务:',
-          })
-          .then(function() {
-            return botui.action
-              .button({
-                addMessage: false,
-                action: [
-                  { text: '网上聊天机械人', value: 1 },
-                  { text: '心理健康教育资讯/资源', value: 2 },
-                  { text: '预约辅导服务', value: 5 },
-                  {
-                    text: '立即与PolyU-Line辅导员联络 : (852) 8100 1583',
-                    value: 3,
-                  },
-                  { text: '紧急支援', value: 6 },
-                ],
-              })
-              .then(function(res) {
-                if (res.value == 1) {
-                  service_list = false;
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(get_name_sc)
-                    .then(questions_sc);
-                }
-                if (res.value == 2) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(mental_health_101_sc);
-                }
-                if (res.value == 3) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(polyu_line_sc);
-                }
-                if (res.value == 5) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(make_appointment_with_counsellors_sc);
-                }
-                if (res.value == 6) {
-                  return botui.message
-                    .human({
-                      delay: 500,
-                      photo: client,
-                      content: res.text,
-                    })
-                    .then(emergency_support_sc);
-                }
-              });
-          });
-      }
+      const office_hour = await isSAOWorkingHours(new Date());
+      const isChattingHour = await isChattingWorkingHours();
+      return botui.message
+        .bot({
+          loading: true,
+          delay: 1000,
+          photo: polly,
+          content: '请选择以下服务: ',
+        })
+        .then(function() {
+          return botui.action
+            .button({
+              addMessage: false,
+              action: [
+                { text: '网上聊天机械人', value: 1 },
+                { text: '心理健康教育资讯/资源', value: 2 },
+                ...(isChattingHour ? [{ text: '线上聊天', value: 4 }] : []),
+                { text: '预约辅导服务', value: 5 },
+                ...(office_hour
+                  ? [{ text: '立即与学生事务处 (SAO)辅导员联络', value: 3 }]
+                  : [
+                      {
+                        text: '立即与PolyU-Line辅导员联络 : (852) 8100 1583',
+                        value: 7,
+                      },
+                    ]),
+                { text: '紧急支援', value: 6 },
+              ],
+            })
+            .then(function(res) {
+              if (res.value == 1) {
+                service_list = false;
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(get_name_sc)
+                  .then(questions_sc);
+              }
+              if (res.value == 2) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(mental_health_101_sc);
+              }
+              if (res.value == 3) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(contact_with_counsellors_sc);
+              }
+              if (res.value == 4) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(T_and_C_of_OCS_sc);
+              }
+              if (res.value == 5) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(make_appointment_with_counsellors_sc);
+              }
+              if (res.value == 6) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(emergency_support_sc);
+              }
+              if (res.value == 7) {
+                return botui.message
+                  .human({
+                    delay: 500,
+                    photo: client,
+                    content: res.text,
+                  })
+                  .then(polyu_line_sc);
+              }
+            });
+        });
     }
 
     function get_name_sc() {
