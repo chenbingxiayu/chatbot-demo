@@ -179,7 +179,8 @@
           photo: polly,
           loading: true,
           delay: 3000,
-          content: 'Hello! This is Polly. I\'m here to understand your service need and provide you with appropriate services.<br/><br/>You may know more about SAO services <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
+          content:
+            'Hello! This is Polly. I\'m here to understand your service need and provide you with appropriate services.<br/><br/>You may know more about SAO services <br/><a href="https://www.polyu.edu.hk/sao/" target ="_blank">HERE</a> ',
         })
         .then(function() {
           return botui.message.bot({
@@ -214,7 +215,10 @@
           loading: true,
           photo: polly,
           delay: 1500,
-          content: 'Hi, ' + name + '. To know you better, please answer a few questions below. So I can provide you with the right support.<br/><br/> It is not supposed to treat it as a formal psychological or diagnostic assessment.',
+          content:
+            'Hi, ' +
+            name +
+            '. To know you better, please answer a few questions below. So I can provide you with the right support.<br/><br/> It is not supposed to treat it as a formal psychological or diagnostic assessment.',
         })
         .then(function() {
           return botui.message
@@ -257,7 +261,10 @@
           } else {
             const q1SurveyData = getQ1SurveyData(res.value);
             surveyData = { ...surveyData, ...q1SurveyData };
-            answers[1] = 'Q1. What bring(s) you here to chat with us? (Can select more than one item)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+            answers[1] =
+              'Q1. What bring(s) you here to chat with us? (Can select more than one item)<br/><b><font color="#FF0000">' +
+              res.text +
+              '</font></b><br/>';
             return botui.message
               .human({
                 photo: client,
@@ -297,7 +304,10 @@
             })
             .then(function(res) {
               surveyData['q2'] = res.value === 1;
-              answers[2] = 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[2] =
+                'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               if (res.value == 0) {
                 return botui.message
                   .human({
@@ -330,7 +340,8 @@
                     loading: true,
                     delay: 1500,
                     photo: polly,
-                    content: 'Thanks for telling me. It is natural for us to experience these feelings in our daily life.',
+                    content:
+                      'Thanks for telling me. It is natural for us to experience these feelings in our daily life.',
                   });
                 });
             });
@@ -360,7 +371,10 @@
             })
             .then(function(res) {
               surveyData['q3'] = getFrequenceSurveyData(res.value);
-              answers[3] = 'Q3. How often do you feel sad, worried or tensed?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[3] =
+                'Q3. How often do you feel sad, worried or tensed?<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               score += res.value;
               console.log(score);
 
@@ -376,7 +390,8 @@
                       delay: 2500,
                       loading: true,
                       photo: polly,
-                      content: 'Awareness is the first step of change that helps to aid our self-understanding and steps of healing to take.',
+                      content:
+                        'Awareness is the first step of change that helps to aid our self-understanding and steps of healing to take.',
                     })
                     .then(function() {
                       return botui.message.bot({
@@ -414,7 +429,10 @@
             })
             .then(function(res) {
               surveyData['q4'] = getFrequenceSurveyData(res.value);
-              answers[4] = 'Q4. How often does your daily life being affected by the feelings mentioned above?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[4] =
+                'Q4. How often does your daily life being affected by the feelings mentioned above?<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               score += res.value;
               console.log(score);
               return botui.message
@@ -442,7 +460,8 @@
           loading: true,
           delay: 2500,
           photo: polly,
-          content: 'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)',
+          content:
+            'Q5. Have you been trying to cope with your feelings through positive ways? (e.g. practising physical exercise, deep breathing, listening to music, etc.)',
         })
         .then(function() {
           return botui.action
@@ -474,7 +493,8 @@
                         loading: true,
                         delay: 2000,
                         photo: polly,
-                        content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
+                        content:
+                          'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
                       })
                       .then(function() {
                         return botui.message
@@ -496,7 +516,10 @@
                               .then(function(res) {
                                 surveyData['q6_1'] = res.value === 0;
                                 surveyData['q6_2'] = 'null';
-                                answers[6] = 'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                answers[6] =
+                                  'Q6. Do you feel effective when using these coping strategies?<br/><b><font color="#FF0000">' +
+                                  res.text +
+                                  '</font></b><br/>';
                                 score += res.value;
                                 console.log(score);
                                 return botui.message.human({
@@ -513,7 +536,8 @@
                         loading: true,
                         delay: 2000,
                         photo: polly,
-                        content: 'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
+                        content:
+                          'It is crucial to adopt some positive coping strategies in dealing with the unsettled emotions.',
                       })
                       .then(function() {
                         return botui.message
@@ -535,7 +559,10 @@
                               .then(function(res) {
                                 surveyData['q6_1'] = 'null';
                                 surveyData['q6_2'] = res.value === 0;
-                                answers[6] = 'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                answers[6] =
+                                  'Q6. Are you able to manage your sadness, worry or tension at this moment?<br/><b><font color="#FF0000">' +
+                                  res.text +
+                                  '</font></b><br/>';
                                 score += res.value;
                                 console.log(score);
                                 return botui.message.human({
@@ -630,7 +657,8 @@
           loading: true,
           delay: 3000,
           photo: polly,
-          content: 'Your answers show that you rarely or seldom encounter the feeling mentioned above, and you can manage your life well.',
+          content:
+            'Your answers show that you rarely or seldom encounter the feeling mentioned above, and you can manage your life well.',
         })
         .then(function() {
           return botui.message.bot({
@@ -663,7 +691,8 @@
           loading: true,
           delay: 1000,
           photo: polly,
-          content: 'Your answers show that you experience the feeling mentioned above quite often, and <strong>you feel your daily life get affected sometimes.</strong>',
+          content:
+            'Your answers show that you experience the feeling mentioned above quite often, and <strong>you feel your daily life get affected sometimes.</strong>',
         })
         .then(mid_recommendations);
     }
@@ -672,7 +701,9 @@
       let office_hour = await isSAOWorkingHours(new Date());
       const isChattingHour = await isChattingWorkingHours();
       let content = `We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with SAO counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Material/Resources<br/>3. ${
-        office_hour ? 'Immediate Contact with SAO Counsellor' : 'Immediate Contact with PolyU-Line Counsellors: (852)81001583'
+        office_hour
+          ? 'Immediate Contact with SAO Counsellor'
+          : 'Immediate Contact with PolyU-Line Counsellors: (852)81001583'
       }`;
       if (isChattingHour) {
         content = `${content}<br/>4. Online Chat Service<br/>5. Community Helpline`;
@@ -948,7 +979,8 @@
           loading: true,
           delay: 2000,
           photo: polly,
-          content: 'Your answers show that you always experience the feeling mentioned above, and you feel your daily life always get affected.',
+          content:
+            'Your answers show that you always experience the feeling mentioned above, and you feel your daily life always get affected.',
         })
         .then(high_recommendations);
     }
@@ -1031,7 +1063,7 @@
                 addMessage: false,
                 action: [
                   {
-                    text: 'Immediately contact with PolyU-Line Counsellors',
+                    text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583',
                     value: 5,
                   },
                   { text: 'Make Appointment with SAO Counsellors', value: 3 },
@@ -1091,7 +1123,8 @@
           loading: true,
           delay: 1500,
           photo: polly,
-          content: 'You are being directed to a third-party website.<br/>The responsiblity of its content is subject to ownership of third-party website.',
+          content:
+            'You are being directed to a third-party website.<br/>The responsiblity of its content is subject to ownership of third-party website.',
         })
         .then(function() {
           return botui.message.bot({
@@ -1238,7 +1271,8 @@
         if (myDate.getHours() >= 12 && myDate.getHours() <= 13) {
           pop_msg = "We'll be back in service at 1400(HKT). We look forward to meeting you !";
         } else if (myDate.getHours() == 18) {
-          pop_msg = "We'll be back during service hours: 0900-1200 & 1400 - 1800 (HKT) , Monday through Friday. We look forward to meeting you !";
+          pop_msg =
+            "We'll be back during service hours: 0900-1200 & 1400 - 1800 (HKT) , Monday through Friday. We look forward to meeting you !";
         }
       } else {
         pop_msg = "We'll be back at 0900(HKT) in the following working day. We look forward to meeting you !";
@@ -1394,7 +1428,8 @@
               loading: true,
               delay: 1500,
               photo: polly,
-              content: 'Q1. Have you ever received counselling from SAO counsellor(s) in the last three months and/or at present?',
+              content:
+                'Q1. Have you ever received counselling from SAO counsellor(s) in the last three months and/or at present?',
             })
             .then(function() {
               return botui.action.button({
@@ -1419,7 +1454,8 @@
                         loading: true,
                         delay: 3000,
                         photo: polly,
-                        content: 'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone (852)27666800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.',
+                        content:
+                          'We encourage you to contact your existing Counsellor for counselling service directly. Please make appointment with your counsellor via phone (852)27666800, email or <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>.',
                       })
                       .then(function() {
                         return botui.message.bot({
@@ -1494,7 +1530,8 @@
                               return botui.message.bot({
                                 delay: 1000,
                                 photo: polly,
-                                content: 'Please fill in the following information prior starting a conversation with SAO counsellor',
+                                content:
+                                  'Please fill in the following information prior starting a conversation with SAO counsellor',
                               });
                             })
                             .then(function() {
@@ -1592,7 +1629,9 @@
                                 // request every 5 sec
                                 timer = setInterval(async () => {
                                   const stu = await getStatusByStudentNetId(student_netid);
-                                  currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
+                                  currentStatus = stu.student_chat_status
+                                    ? stu.student_chat_status.toLocaleLowerCase()
+                                    : '';
                                   isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
                                   // send waiting message every 3mins
                                   if (count % 36 === 0) {
@@ -1664,7 +1703,8 @@
                                 loading: true,
                                 delay: 2000,
                                 photo: polly,
-                                content: 'To provide comprehensive support to you, you are highly advised to make a face to face appointment with SAO counsellor.',
+                                content:
+                                  'To provide comprehensive support to you, you are highly advised to make a face to face appointment with SAO counsellor.',
                               });
                             })
                             .then(function() {
@@ -1681,7 +1721,8 @@
                                   loading: true,
                                   delay: 2000,
                                   photo: polly,
-                                  content: '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
+                                  content:
+                                    '1. Email: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. Online Booking: <a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a></br>',
                                 });
                               }
                             })
@@ -1708,7 +1749,8 @@
           loading: true,
           photo: polly,
           delay: 1500,
-          content: '<font color=black>In case of emergency, please call 999 or go to the nearest emergency  / A&E service.</font>',
+          content:
+            '<font color=black>In case of emergency, please call 999 or go to the nearest emergency  / A&E service.</font>',
         })
         .then(async function() {
           const office_hour = await isSAOWorkingHours(new Date());
@@ -1766,7 +1808,8 @@
           loading: true,
           photo: polly,
           delay: 3000,
-          content: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/><br/>All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.',
+          content:
+            'Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/><br/>All phone calls will be answered by Vital Employee Service Consultancy Christian Family Service Centre.',
         })
         .then(further_help());
     }
@@ -1843,7 +1886,8 @@
                         loading: true,
                         photo: polly,
                         delay: 1000,
-                        content: (content = '<font color=black>In case of emergency, please call 999 or go to the nearest emergency  / A&E service.</font>'),
+                        content: (content =
+                          '<font color=black>In case of emergency, please call 999 or go to the nearest emergency  / A&E service.</font>'),
                       });
                     }
                   })
@@ -2122,7 +2166,7 @@
 
     const isSAOWorkingHours = async (now) => {
       // TODO: always return true in dev
-      // return true;
+      return true;
       let isWorkingHr = false;
       await $.ajax({
         url: '/main/api/working_hour/',
@@ -2139,7 +2183,7 @@
 
     const isChattingWorkingHours = async () => {
       // TODO: always return true in dev
-      // return false;
+      return false;
       let isChattingWorkingHr = false;
       await $.ajax({
         url: '/main/api/chatting_working_hour/',
@@ -2179,7 +2223,8 @@
           photo: polly,
           loading: true,
           delay: 3000,
-          content: '你好，我是Polly。我會根據你以下所提供的訊息，為你建議合適的服務。<br/><br/>如欲查詢有關學生事務處的其他服務，請參閱以下<a href="https://www.polyu.edu.hk/sao/" target ="_blank">連結</a> ',
+          content:
+            '你好，我是Polly。我會根據你以下所提供的訊息，為你建議合適的服務。<br/><br/>如欲查詢有關學生事務處的其他服務，請參閱以下<a href="https://www.polyu.edu.hk/sao/" target ="_blank">連結</a> ',
         })
         .then(function() {
           return botui.message.bot({
@@ -2214,7 +2259,10 @@
           loading: true,
           photo: polly,
           delay: 1500,
-          content: '你好﹗' + name + '，請回答以下問題，我會總結所得出的答案，提出切合你所需的服務建議。<br/><br/> 以下提問並不能視之為取代專業臨床的心理評估和診斷',
+          content:
+            '你好﹗' +
+            name +
+            '，請回答以下問題，我會總結所得出的答案，提出切合你所需的服務建議。<br/><br/> 以下提問並不能視之為取代專業臨床的心理評估和診斷',
         })
         .then(function() {
           return botui.message
@@ -2257,7 +2305,8 @@
           } else {
             const q1SurveyData = getQ1SurveyData(res.value);
             surveyData = { ...surveyData, ...q1SurveyData };
-            answers[1] = 'Q1. 你此刻想傾談的內容是？ (可選一或多項)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+            answers[1] =
+              'Q1. 你此刻想傾談的內容是？ (可選一或多項)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
             return botui.message
               .human({
                 photo: client,
@@ -2296,7 +2345,10 @@
             })
             .then(function(res) {
               surveyData['q2'] = res.value === 1;
-              answers[2] = 'Q2. 面對以上的事情，你有沒有感到不愉快、擔心或緊張？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[2] =
+                'Q2. 面對以上的事情，你有沒有感到不愉快、擔心或緊張？<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               if (res.value == 0) {
                 return botui.message
                   .human({
@@ -2359,7 +2411,10 @@
             })
             .then(function(res) {
               surveyData['q3'] = getFrequenceSurveyData(res.value);
-              answers[3] = 'Q3. 你有多經常因為上述的事情而感到不愉快、擔心或緊張？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[3] =
+                'Q3. 你有多經常因為上述的事情而感到不愉快、擔心或緊張？<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               score += res.value;
               console.log(score);
 
@@ -2413,7 +2468,8 @@
             })
             .then(function(res) {
               surveyData['q4'] = getFrequenceSurveyData(res.value);
-              answers[4] = 'Q4. 這些情緒有多經常影響你的日常生活？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[4] =
+                'Q4. 這些情緒有多經常影響你的日常生活？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
               score += res.value;
               console.log(score);
               return botui.message
@@ -2454,7 +2510,10 @@
             })
             .then(function(res) {
               surveyData['q5'] = res.value === 0;
-              answers[5] = 'Q5. 你曾否採用一些積極的應對方法 (例如: 運動、呼吸練習、聽音樂等）去面對/紓緩這些情緒嗎?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[5] =
+                'Q5. 你曾否採用一些積極的應對方法 (例如: 運動、呼吸練習、聽音樂等）去面對/紓緩這些情緒嗎?<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               score += res.value;
               console.log(score);
               return botui.message
@@ -2492,7 +2551,10 @@
                               .then(function(res) {
                                 surveyData['q6_1'] = res.value === 0;
                                 surveyData['q6_2'] = 'null';
-                                answers[6] = 'Q6. 你認為這些應對方法能否有效紓緩你上述的情緒嗎?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                answers[6] =
+                                  'Q6. 你認為這些應對方法能否有效紓緩你上述的情緒嗎?<br/><b><font color="#FF0000">' +
+                                  res.text +
+                                  '</font></b><br/>';
                                 score += res.value;
                                 console.log(score);
                                 return botui.message.human({
@@ -2531,7 +2593,10 @@
                               .then(function(res) {
                                 surveyData['q6_1'] = 'null';
                                 surveyData['q6_2'] = res.value === 0;
-                                answers[6] = 'Q6. 此刻，你認為你有能力有效地紓緩上述情緒嗎？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                answers[6] =
+                                  'Q6. 此刻，你認為你有能力有效地紓緩上述情緒嗎？<br/><b><font color="#FF0000">' +
+                                  res.text +
+                                  '</font></b><br/>';
                                 score += res.value;
                                 console.log(score);
                                 return botui.message.human({
@@ -2632,7 +2697,8 @@
             loading: true,
             delay: 3500,
             photo: polly,
-            content: '做得好﹗請繼續保持心理健康！我建議你可以參閱心理健康教育資訊/資源，獲取更多提升心理健康的小貼士。',
+            content:
+              '做得好﹗請繼續保持心理健康！我建議你可以參閱心理健康教育資訊/資源，獲取更多提升心理健康的小貼士。',
           });
         })
         .then(function() {
@@ -2658,7 +2724,8 @@
           loading: true,
           delay: 1000,
           photo: polly,
-          content: '你所選擇的答案顯示你有時候會經歷上述的情緒，而這些情緒狀況<strong>有時侯會影響到你的日常生活。</strong>',
+          content:
+            '你所選擇的答案顯示你有時候會經歷上述的情緒，而這些情緒狀況<strong>有時侯會影響到你的日常生活。</strong>',
         })
         .then(mid_recommendations_tc);
     }
@@ -2666,7 +2733,9 @@
     async function mid_recommendations_tc() {
       const office_hour = await isSAOWorkingHours(new Date());
       const isChattingHour = await isChattingWorkingHours();
-      let content = `我們建議你與學生事務處(SAO)的輔導員聯絡。<br/><br/>1. 預約輔導服務<br/><br/>除此之外，您還可以選擇以下服務：<br/><br/>2. 心理健康教育資訊/資源<br/>3. ${office_hour ? '立即與學生事務處 (SAO)輔導員聯絡' : '立即與PolyU-Line輔導員聯絡 : (852) 81001583'}`;
+      let content = `我們建議你與學生事務處(SAO)的輔導員聯絡。<br/><br/>1. 預約輔導服務<br/><br/>除此之外，您還可以選擇以下服務：<br/><br/>2. 心理健康教育資訊/資源<br/>3. ${
+        office_hour ? '立即與學生事務處 (SAO)輔導員聯絡' : '立即與PolyU-Line輔導員聯絡 : (852) 81001583'
+      }`;
       if (isChattingHour) {
         content = `${content}<br/>4. 線上聊天<br/>5. 社區支援熱線`;
       } else {
@@ -3049,7 +3118,8 @@
         if (myDate.getHours() >= 12 && myDate.getHours() <= 13) {
           pop_msg = '我們會在下午二時(香港時間)提供服務，期待屆時與你在線上聊天。';
         } else if (myDate.getHours() == 18) {
-          pop_msg = '我們會在星期一至星期五，上午9時至中午12時(香港時間)和下午2時至下午6時(香港時間)提供服務，期待屆時與你在線上聊天。';
+          pop_msg =
+            '我們會在星期一至星期五，上午9時至中午12時(香港時間)和下午2時至下午6時(香港時間)提供服務，期待屆時與你在線上聊天。';
         }
       } else {
         pop_msg = '我們會在下一個工作天的上午9時(香港時間)提供服務，期待屆時與你在線上聊天。';
@@ -3229,7 +3299,8 @@
                         loading: true,
                         delay: 3000,
                         photo: polly,
-                        content: '我們鼓勵你與正跟進你的SAO輔導員直接聯絡。你可以致電(852)27666800、透過電郵或網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>與你的輔導員預約面談時間。',
+                        content:
+                          '我們鼓勵你與正跟進你的SAO輔導員直接聯絡。你可以致電(852)27666800、透過電郵或網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>與你的輔導員預約面談時間。',
                       })
                       .then(function() {
                         return botui.message.bot({
@@ -3404,7 +3475,9 @@
                                 // request every 5 sec
                                 timer = setInterval(async () => {
                                   const stu = await getStatusByStudentNetId(student_netid);
-                                  currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
+                                  currentStatus = stu.student_chat_status
+                                    ? stu.student_chat_status.toLocaleLowerCase()
+                                    : '';
                                   isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
                                   // send waiting message every 3mins
                                   if (count % 36 === 0) {
@@ -3501,7 +3574,8 @@
                                   loading: true,
                                   delay: 2000,
                                   photo: polly,
-                                  content: '1. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
+                                  content:
+                                    '1. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
                                 });
                               }
                             })
@@ -3584,7 +3658,8 @@
           loading: true,
           photo: polly,
           delay: 3000,
-          content: '立即與PolyU-Line輔導員聯絡: (852) 8100 1583<br/><br/>*基督教家庭服務中心（盈力僱員服務顧問）將會接聽所有電話。',
+          content:
+            '立即與PolyU-Line輔導員聯絡: (852) 8100 1583<br/><br/>*基督教家庭服務中心（盈力僱員服務顧問）將會接聽所有電話。',
         })
         .then(further_help_tc());
     }
@@ -3661,7 +3736,8 @@
                         loading: true,
                         photo: polly,
                         delay: 1000,
-                        content: (content = '<font color=black>如果你正身處緊急情況或/及險境，並有感自身及/或他人有即時的生命危險，請即致電999或到鄰近的急症室求助。</font>'),
+                        content: (content =
+                          '<font color=black>如果你正身處緊急情況或/及險境，並有感自身及/或他人有即時的生命危險，請即致電999或到鄰近的急症室求助。</font>'),
                       });
                     }
                   })
@@ -3845,7 +3921,8 @@
           photo: polly,
           loading: true,
           delay: 3000,
-          content: '你好，我是Polly。我会根据你以下所提供的讯息，为你建议合适的服务。<br/><br/>如欲查询有关学生事务处的其他服务，请参阅以下<a href="https://www.polyu.edu.hk/sao/" target ="_blank">连结</a> ',
+          content:
+            '你好，我是Polly。我会根据你以下所提供的讯息，为你建议合适的服务。<br/><br/>如欲查询有关学生事务处的其他服务，请参阅以下<a href="https://www.polyu.edu.hk/sao/" target ="_blank">连结</a> ',
         })
         .then(function() {
           return botui.message.bot({
@@ -3880,7 +3957,10 @@
           loading: true,
           photo: polly,
           delay: 1500,
-          content: '你好﹗' + name + '，请回答以下问题，我会总结所得出的答案，提出切合你所需的服务建议。<br/><br/> 以下提问并不能视之为取代专业临床的心理评估和诊断',
+          content:
+            '你好﹗' +
+            name +
+            '，请回答以下问题，我会总结所得出的答案，提出切合你所需的服务建议。<br/><br/> 以下提问并不能视之为取代专业临床的心理评估和诊断',
         })
         .then(function() {
           return botui.message
@@ -3923,7 +4003,8 @@
           } else {
             const q1SurveyData = getQ1SurveyData(res.value);
             surveyData = { ...surveyData, ...q1SurveyData };
-            answers[1] = 'Q1. 你此刻想倾谈的内容是？ (可选一或多项)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+            answers[1] =
+              'Q1. 你此刻想倾谈的内容是？ (可选一或多项)<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
             return botui.message
               .human({
                 photo: client,
@@ -3962,7 +4043,10 @@
             })
             .then(function(res) {
               surveyData['q2'] = res.value === 1;
-              answers[2] = 'Q2. 面对以上的事情，你有没有感到不愉快、担心或紧张？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[2] =
+                'Q2. 面对以上的事情，你有没有感到不愉快、担心或紧张？<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               if (res.value == 0) {
                 return botui.message
                   .human({
@@ -4025,7 +4109,10 @@
             })
             .then(function(res) {
               surveyData['q3'] = getFrequenceSurveyData(res.value);
-              answers[3] = 'Q3. 你有多经常因为上述的事情而感到不愉快、担心或紧张？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[3] =
+                'Q3. 你有多经常因为上述的事情而感到不愉快、担心或紧张？<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               score += res.value;
               console.log(score);
 
@@ -4079,7 +4166,8 @@
             })
             .then(function(res) {
               surveyData['q4'] = getFrequenceSurveyData(res.value);
-              answers[4] = 'Q4. 这些情绪有多经常影响你的日常生活？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[4] =
+                'Q4. 这些情绪有多经常影响你的日常生活？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
               score += res.value;
               console.log(score);
               return botui.message
@@ -4120,7 +4208,10 @@
             })
             .then(function(res) {
               surveyData['q5'] = res.value === 0;
-              answers[5] = 'Q5. 你曾否采用一些积极的应对方法 (例如: 运动、呼吸练习、听音乐等）去面对/纾缓这些情绪吗?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+              answers[5] =
+                'Q5. 你曾否采用一些积极的应对方法 (例如: 运动、呼吸练习、听音乐等）去面对/纾缓这些情绪吗?<br/><b><font color="#FF0000">' +
+                res.text +
+                '</font></b><br/>';
               score += res.value;
               console.log(score);
               return botui.message
@@ -4158,7 +4249,10 @@
                               .then(function(res) {
                                 surveyData['q6_1'] = res.value === 0;
                                 surveyData['q6_2'] = 'null';
-                                answers[6] = 'Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                answers[6] =
+                                  'Q6. 你认为这些应对方法能否有效纾缓你上述的情绪吗?<br/><b><font color="#FF0000">' +
+                                  res.text +
+                                  '</font></b><br/>';
                                 score += res.value;
                                 console.log(score);
                                 return botui.message.human({
@@ -4197,7 +4291,10 @@
                               .then(function(res) {
                                 surveyData['q6_1'] = 'null';
                                 surveyData['q6_2'] = res.value === 0;
-                                answers[6] = 'Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？<br/><b><font color="#FF0000">' + res.text + '</font></b><br/>';
+                                answers[6] =
+                                  'Q6.  此刻，你认为你有能力有效地纾缓上述情绪吗？<br/><b><font color="#FF0000">' +
+                                  res.text +
+                                  '</font></b><br/>';
                                 score += res.value;
                                 console.log(score);
                                 return botui.message.human({
@@ -4299,7 +4396,8 @@
             loading: true,
             delay: 3500,
             photo: polly,
-            content: '做得好﹗请继续保持心理健康！我建议你可以参阅心理健康教育资讯/资源，获取更多提升心理健康的小贴士。',
+            content:
+              '做得好﹗请继续保持心理健康！我建议你可以参阅心理健康教育资讯/资源，获取更多提升心理健康的小贴士。',
           });
         })
         .then(function() {
@@ -4325,7 +4423,8 @@
           loading: true,
           delay: 1000,
           photo: polly,
-          content: '你所选择的答案显示你有时候会经历上述的情绪，而这些情绪状况<strong>有时侯会影响到你的日常生活。</strong>',
+          content:
+            '你所选择的答案显示你有时候会经历上述的情绪，而这些情绪状况<strong>有时侯会影响到你的日常生活。</strong>',
         })
         .then(mid_recommendations_sc);
     }
@@ -4333,7 +4432,9 @@
     async function mid_recommendations_sc() {
       const office_hour = await isSAOWorkingHours(new Date());
       const isChattingHour = await isChattingWorkingHours();
-      let content = `我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. ${office_hour ? '立即与学生事务处 (SAO)辅导员联络' : '立即与PolyU-Line辅导员联络 : (852) 81001583'}`;
+      let content = `我们建议你与学生事务处(SAO)的辅导员联络。<br/><br/>1. 预约辅导服务<br/><br/>除此之外，您还可以选择以下服务：<br/><br/>2. 心理健康教育资讯/资源<br/>3. ${
+        office_hour ? '立即与学生事务处 (SAO)辅导员联络' : '立即与PolyU-Line辅导员联络 : (852) 81001583'
+      }`;
       if (isChattingHour) {
         content = `${content}<br/>4. 线上聊天<br/>5. 社区支援热线`;
       } else {
@@ -4716,7 +4817,8 @@
         if (myDate.getHours() >= 12 && myDate.getHours() <= 13) {
           pop_msg = '我们会在下午二时(香港时间)提供服务，期待届时与你在线上聊天。';
         } else if (myDate.getHours() == 18) {
-          pop_msg = '我们会在星期一至星期五，上午9时至中午12时(香港时间)和下午2时至下午6时(香港时间)提供服务，期待届时与你在线上聊天。';
+          pop_msg =
+            '我们会在星期一至星期五，上午9时至中午12时(香港时间)和下午2时至下午6时(香港时间)提供服务，期待届时与你在线上聊天。';
         }
       } else {
         pop_msg = '我们会在下一个工作天的上午9时(香港时间)提供服务，期待届时与你在线上聊天。';
@@ -4896,7 +4998,8 @@
                         loading: true,
                         delay: 3000,
                         photo: polly,
-                        content: '我们鼓励你与正跟进你的SAO辅导员直接联络。你可以致电(852)27666800、透过电邮或网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a> 与你的辅导员预约面谈时间。',
+                        content:
+                          '我们鼓励你与正跟进你的SAO辅导员直接联络。你可以致电(852)27666800、透过电邮或网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a> 与你的辅导员预约面谈时间。',
                       })
                       .then(function() {
                         return botui.message.bot({
@@ -5071,7 +5174,9 @@
                                 // request every 5 sec
                                 timer = setInterval(async () => {
                                   const stu = await getStatusByStudentNetId(student_netid);
-                                  currentStatus = stu.student_chat_status ? stu.student_chat_status.toLocaleLowerCase() : '';
+                                  currentStatus = stu.student_chat_status
+                                    ? stu.student_chat_status.toLocaleLowerCase()
+                                    : '';
                                   isWaitingStatus = currentStatus == 'waiting' || currentStatus == 'assigned';
                                   // send waiting message every 3mins
                                   if (count % 36 === 0) {
@@ -5168,7 +5273,8 @@
                                   loading: true,
                                   delay: 2000,
                                   photo: polly,
-                                  content: '1. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
+                                  content:
+                                    '1. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>2. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
                                 });
                               }
                             })
@@ -5251,7 +5357,8 @@
           loading: true,
           photo: polly,
           delay: 3000,
-          content: '立即与PolyU-Line辅导员联络: (852) 8100 1583<br/><br/>*基督教家庭服务中心（盈力雇员服务顾问）将会接听所有电话。',
+          content:
+            '立即与PolyU-Line辅导员联络: (852) 8100 1583<br/><br/>*基督教家庭服务中心（盈力雇员服务顾问）将会接听所有电话。',
         })
         .then(further_help_sc());
     }
@@ -5328,7 +5435,8 @@
                         loading: true,
                         photo: polly,
                         delay: 1000,
-                        content: (content = '<font color=black>如你正身处紧急情况, 请致电999或到邻近的急症室求助。</font>'),
+                        content: (content =
+                          '<font color=black>如你正身处紧急情况, 请致电999或到邻近的急症室求助。</font>'),
                       });
                     }
                   })
