@@ -2166,7 +2166,7 @@
 
     const isSAOWorkingHours = async (now) => {
       // TODO: always return true in dev
-      return true;
+      // return true;
       let isWorkingHr = false;
       await $.ajax({
         url: '/main/api/working_hour/',
@@ -2183,7 +2183,7 @@
 
     const isChattingWorkingHours = async () => {
       // TODO: always return true in dev
-      return false;
+      // return false;
       let isChattingWorkingHr = false;
       await $.ajax({
         url: '/main/api/chatting_working_hour/',
