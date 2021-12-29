@@ -14,13 +14,13 @@ from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models, connection, transaction
+from django.db import models, connection
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from marshmallow import ValidationError
 
 from main.email_service import email_service
-from main.exceptions import UnauthorizedException, BusinessCalendarValidationError, NotFound
+from main.exceptions import UnauthorizedException, NotFound
 from main.utils import hk_time, utc_time, tz_offset, day_start, get_duration
 from main.validation import business_calendar_schema
 
