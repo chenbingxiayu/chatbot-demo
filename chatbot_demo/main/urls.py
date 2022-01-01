@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/supervisorjoin/', views.supervisor_join, name='supervisorjoin'),
     path('api/submitsurvey/', views.submit_survey, name='submitsurvey'),
     path('api/endchatbot/', views.end_chatbot, name='endchatbot'),
+    path('api/student/count', views.count_student_in_queue, name='student_count'),
     path('api/get_statistics/', views.get_statistics, name='get_statistics'),
     path('api/export_statistics/', views.export_statistics, name='export_statistics'),
     path('api/get_red_route/', views.get_red_route, name='get_red_route'),

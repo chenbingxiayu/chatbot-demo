@@ -28,7 +28,11 @@ from main.models import (
     StudentChatStatus,
     StudentChatHistory,
     ChatBotSession,
-    SELECTABLE_STATUS, BusinessCalendar, delete_student_user, write_overall_stat, write_chatbot_stat,
+    SELECTABLE_STATUS,
+    BusinessCalendar,
+    delete_student_user,
+    write_overall_stat,
+    write_chatbot_stat,
     write_online_chat_stat
 )
 from main.signals import update_queue
@@ -569,6 +573,13 @@ def end_chatbot(request):
         status_code = 404
 
     return JsonResponse(response_json, status=status_code)
+
+
+@login_required
+@require_http_methods(['GET'])
+def count_student_in_queue(request):
+    count = StudentChatStatus.objects.count()
+    return JsonResponse({'student_count': count}, status=200)
 
 
 @login_required
