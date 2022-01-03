@@ -4,6 +4,7 @@
       $('.botui-container').animate({ scrollTop: $('.botui-container').prop('scrollHeight') }, 1000);
     });
 
+    const CHAT_QUEUE_LIMIT = 20;
     var finish_assessment = false;
     select_language();
     let surveyData = {};
@@ -1261,6 +1262,11 @@
     }
 
     async function T_and_C_of_OCS() {
+      const exceedQueueLimitChat = await exceedQueueLimit('en');
+      if (exceedQueueLimitChat) {
+        return exceedQueueLimitChat;
+      }
+
       // return Promise.resolve().then(questions_before_OCS);
       //Online Chat Services
       await submitFirstOptionInfo('online_chat_service');
@@ -1628,6 +1634,7 @@
                                 let count = 1;
                                 // request every 5 sec
                                 timer = setInterval(async () => {
+                                  await autoQuitQueue(student_netid, 'en');
                                   const stu = await getStatusByStudentNetId(student_netid);
                                   currentStatus = stu.student_chat_status
                                     ? stu.student_chat_status.toLocaleLowerCase()
@@ -2183,7 +2190,7 @@
 
     const isChattingWorkingHours = async () => {
       // TODO: always return true in dev
-      // return false;
+      // return true;
       let isChattingWorkingHr = false;
       await $.ajax({
         url: '/main/api/chatting_working_hour/',
@@ -2197,25 +2204,6 @@
         .fail((err) => console.log(err.responseJSON));
       return isChattingWorkingHr;
     };
-
-    /*
-    async function isSAOWorkingHours(now) {
-        // TODO: always return true in dev
-      return true;
-
-      const response = await $.ajax({
-        url: "/main/api/working_hour/",
-        headers: {"X-CSRFToken": CSRF_TOKEN},
-        method: "GET"
-      });
-
-      if (response.status == 200) {
-          return res.is_working_hour
-      }
-      console.log(response.message)
-      return false
-    }
-    */
 
     function get_name_tc() {
       return botui.message
@@ -3109,6 +3097,11 @@
     }
 
     async function T_and_C_of_OCS_tc() {
+      const exceedQueueLimitChat = await exceedQueueLimit('zh-hant');
+      if (exceedQueueLimitChat) {
+        return exceedQueueLimitChat;
+      }
+
       //Online Chat Services
       await submitFirstOptionInfo('online_chat_service');
       var myDate = new Date();
@@ -3474,6 +3467,7 @@
                                 let count = 1;
                                 // request every 5 sec
                                 timer = setInterval(async () => {
+                                  await autoQuitQueue(student_netid, 'zh-hant');
                                   const stu = await getStatusByStudentNetId(student_netid);
                                   currentStatus = stu.student_chat_status
                                     ? stu.student_chat_status.toLocaleLowerCase()
@@ -4808,6 +4802,11 @@
     }
 
     async function T_and_C_of_OCS_sc() {
+      const exceedQueueLimitChat = await exceedQueueLimit('zh-hans');
+      if (exceedQueueLimitChat) {
+        return exceedQueueLimitChat;
+      }
+
       //Online Chat Services
       await submitFirstOptionInfo('online_chat_service');
       var myDate = new Date();
@@ -5173,6 +5172,7 @@
                                 let count = 1;
                                 // request every 5 sec
                                 timer = setInterval(async () => {
+                                  await autoQuitQueue(student_netid, 'zh-hans');
                                   const stu = await getStatusByStudentNetId(student_netid);
                                   currentStatus = stu.student_chat_status
                                     ? stu.student_chat_status.toLocaleLowerCase()
@@ -5563,24 +5563,45 @@
       });
     };
 
+    const getStudentCountInQueue = async () => {
+      const res = await $.ajax({
+        url: '/main/api/student/count',
+        headers: { 'X-CSRFToken': CSRF_TOKEN },
+        method: 'GET',
+      });
+      return res.student_count;
+    };
+
     const onlineChatLanguageJson = {
       en: {
         QUIT: 'Quit',
+        AUTO_QUIT_QUEUE_MESSAGE:
+          'I’m sorry that our online chat service hour is ended, please come back later. You may contact us at (852)27666800 if needed.',
         QUIT_QUEUE_MESSAGE: 'Thank you for using our service, you may contact us at (852)27666800 if needed.',
         WAITING_MESSAGE: `Hang on a moment!  While awaiting, you may browse our resourceful library <a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">'Mental Health Educational Material/Resources'</a> to explore more tips for boosting your mental wellness. You may quit anytime by clicking 'Quit' below. For enquiries of other services, please dial (852)27666800.`,
         CHAT_LINK_MESSAGE: `You have been assigned to a counsellor, please click the <a target="_blank" href="/main/chat/student/">link</a> to enter the chat room.`,
+        EXCEED_QUEUE_LIMIT_MESSAGE:
+          'I’m sorry that all counsellors are occupied right now. please come back later or call us at (852)27666800 if needed.',
       },
       'zh-hant': {
         QUIT: '退出',
+        AUTO_QUIT_QUEUE_MESSAGE:
+          '抱歉，我們的網上聊天室服務時間已經完結，請你稍後再選用這個服務，如有需要，請你致電(852)27666800與我們聯絡。',
         QUIT_QUEUE_MESSAGE: '多謝你使用網上聊天室服務，如有需要，請你致電(852)27666800予我們聯絡。',
         WAITING_MESSAGE: `請耐心等候，網上聊天員很快會跟你聯繫。等候期間，歡迎你瀏覽<a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">「心理健康教育資訊/資源」</a>發掘更多提升心靈健康的小貼士。你亦可以隨時按「退出」取消服務。如有查詢，請你致電(852)27666800。`,
         CHAT_LINK_MESSAGE: `你已經分配到一個輔導員，請點擊 <a target="_blank" href="/main/chat/student/">連結</a> 進入聊天室.`,
+        EXCEED_QUEUE_LIMIT_MESSAGE:
+          '抱歉，我們的輔導員現正繁忙，請你稍後再選用這個服務，如有需要，請你致電(852)27666800與我們聯絡。',
       },
       'zh-hans': {
         QUIT: '退出',
+        AUTO_QUIT_QUEUE_MESSAGE:
+          '抱歉，我们的网上聊天室服务时间已经完结，请你稍后再选用这个服务，如有需要，请你致电(852)27666800与我们联络。',
         QUIT_QUEUE_MESSAGE: '多谢你使用网上聊天室服务，如有需要，请你致电(852)27666800予我们联络。',
         WAITING_MESSAGE: `请耐心等候，网上聊天员很快会跟你联繫。等候期间，欢迎你浏览<a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">「心理健康教育资讯/资源」</a>发掘更多提升心灵健康的小贴士。你亦可以随时按「退出」取消服务。</br>如有查询，请你致电(852)27666800。`,
         CHAT_LINK_MESSAGE: `你已经分配到一个辅导员，请点击 <a target="_blank" href="/main/chat/student/">连结</a> 进入聊天室。`,
+        EXCEED_QUEUE_LIMIT_MESSAGE:
+          '抱歉，我们的辅导员现正繁忙，请你稍后再选用这个服务，如有需要，请你致电(852)27666800与我们联络。',
       },
     };
 
@@ -5603,6 +5624,30 @@
             studQuitMsg = onlineChatLanguageJson[langCode]['QUIT_QUEUE_MESSAGE'];
           }
         });
+    };
+
+    const autoQuitQueue = async (student_netid, langCode) => {
+      const isChattingHour = await isChattingWorkingHours();
+      if (!isChattingHour) {
+        await quitQueue(student_netid);
+        studQuitMsg = onlineChatLanguageJson[langCode]['AUTO_QUIT_QUEUE_MESSAGE'];
+      }
+    };
+
+    const exceedQueueLimit = async (langCode) => {
+      const stuCount = await getStudentCountInQueue();
+      if (stuCount >= CHAT_QUEUE_LIMIT) {
+        return botui.message
+          .bot({
+            loading: true,
+            delay: 1500,
+            photo: polly,
+            content: onlineChatLanguageJson[langCode]['EXCEED_QUEUE_LIMIT_MESSAGE'],
+          })
+          .then(end_tc)
+          .then(_close);
+      }
+      return;
     };
 
     const getQ1SurveyData = (result) => {
