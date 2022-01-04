@@ -23,17 +23,8 @@ from main.auth import sso_auth
 from main.exceptions import UnauthorizedException, BusinessCalendarValidationError, NotFound
 from main.forms import StaffLoginForm
 from main.models import (
-    User,
-    StaffStatus,
-    StudentChatStatus,
-    StudentChatHistory,
-    ChatBotSession,
-    SELECTABLE_STATUS,
-    BusinessCalendar,
-    delete_student_user,
-    write_overall_stat,
-    write_chatbot_stat,
-    write_online_chat_stat
+    User, StaffStatus, StudentChatStatus, StudentChatHistory, ChatBotSession, SELECTABLE_STATUS, BusinessCalendar,
+    delete_student_user, write_overall_stat, write_chatbot_stat, write_online_chat_stat
 )
 from main.signals import update_queue
 from main.utils import day_start, uuid2str, str2uuid, write_zip_files
@@ -477,6 +468,7 @@ def addstud(request):
                                     "emergency_contact_number": request.POST.get('emergency_contact_number'),
                                     "student_chat_status": StudentChatStatus.ChatStatus.WAITING,
                                     "chat_request_time": timezone.localtime(),
+                                    "last_state_change": timezone.localtime(),
                                     "last_assign_time": None,
                                     "chat_start_time": None,
                                     "assigned_counsellor": None})

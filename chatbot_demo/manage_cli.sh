@@ -7,8 +7,8 @@ set +a
 #export MYSQL_HOST=localhost
 
 if [[ "$1" == 'createsuperuser' ]]; then
-  python manage.py createsuperuser --netid=admin
+  python3 manage.py createsuperuser --netid=admin
 else
-  python manage.py "$@"
+  python3 manage.py "$@"
 fi
 read -rsp $'\nPress enter to exit...\n'

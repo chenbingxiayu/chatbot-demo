@@ -25,11 +25,13 @@ default_template_data = {
         'chatroom_url': chatroom_url
     },
     'appointment_request': {},
-    'notification_student':{}
+    'notification_student': {}
 }
 
 context = ssl.create_default_context()
 EMAIL_DEBUG = True
+
+
 class EmailTemplate:
     def __init__(self, subject: str, body: str):
         self._subject = subject
@@ -95,7 +97,7 @@ Regards
 {requester_name}"""
                                              ),
         'notification_student': EmailTemplate(subject="Thank you for your interest in using CWS Online Chat Service",
-                                             body="""Dear Student
+                                              body="""Dear Student
 
 Since you have not entered into the chat room, we are not able to provide the Online Chat Service. In case of need, you can contact our student counsellors through the below ways:
 
@@ -114,7 +116,7 @@ Thank you very much for your time.
 All the best 
 Counselling and Wellness Section
 Student Affairs Office"""
-                                             )
+                                              )
     }
 
     def __init__(self, server, port, user, pw):
@@ -129,10 +131,9 @@ Student Affairs Office"""
         msg['From'] = Address(sender_name, self.user, sender_domain)
         if EMAIL_DEBUG:
             msg['To'] = (Address(receiver_user, receiver_user, receiver_domain),
-                     Address('16904228r', '16904228r', 'connect.polyu.hk'))
+                         Address('16904228r', '16904228r', 'connect.polyu.hk'))
         else:
-            msg['To'] = (Address(destination, destination, receiver_domain),
-                     Address('16904228r', '16904228r', 'connect.polyu.hk'))
+            msg['To'] = Address(destination, destination, receiver_domain)
 
         msg.set_content(message)
 
@@ -164,5 +165,5 @@ email_service = EmailService(smtp_server, smtp_port, sender_user, sender_pw)
 
 if __name__ == '__main__':
     template_data = {'student_netid': '12345678A'}
-    #email_service.send('new_assignment', 'staff_id', template_data)
+    # email_service.send('new_assignment', 'staff_id', template_data)
     email_service.send('notification_student', 'student_netid', template_data)

@@ -14,8 +14,7 @@ WAIT_LIMIT = 3  # in minutes
 
 
 def reassign_counsellor():
-    """
-     Re-assign counsellor if the student has waited too long
+    """Re-assign counsellor if the student has waited too long
 
     :return:
     """
@@ -59,8 +58,7 @@ def reassign_counsellor():
 
 
 def assign_staff(student: StudentChatStatus) -> bool:
-    """
-    Check if any available staff.
+    """Check if any available staff.
     If yes, assign the staff to a new coming student or the students in the waiting queue.
 
     :param student:
@@ -87,8 +85,7 @@ def assign_staff(student: StudentChatStatus) -> bool:
 
 
 def dequeue_student():
-    """
-    Get the long-awaited student in the waiting queue and assign them to available staff.
+    """Get the long-awaited student in the waiting queue and assign them to available staff.
 
     :return:
     """

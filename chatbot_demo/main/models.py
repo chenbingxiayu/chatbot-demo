@@ -295,6 +295,7 @@ class StaffStatus(models.Model):
         student.assigned_counsellor = self
         student.student_chat_status = StudentChatStatus.ChatStatus.ASSIGNED
         student.last_assign_time = now
+        student.last_state_change = now
         self.staff_chat_status = StaffStatus.ChatStatus.ASSIGNED
         self.status_change_time = now
         student.save()
@@ -359,6 +360,7 @@ class StudentChatStatus(models.Model):
     emergency_contact_number = models.CharField(max_length=32, null=True)
     last_assign_time = models.DateTimeField(default=None, null=True)
     chat_start_time = models.DateTimeField(default=None, null=True)
+    last_state_change = models.DateTimeField(default=None, null=True)
     assigned_counsellor = models.OneToOneField(StaffStatus, null=True, on_delete=models.DO_NOTHING)
     is_supervisor_join = models.BooleanField(default=False)
 
@@ -377,6 +379,7 @@ class StudentChatStatus(models.Model):
             .first()
         if student:
             student.assigned_counsellor = None
+            student.last_state_change = student.chat_request_time
             student.add_to_queue()
             logger.info(f'Unassigned {student}')
 

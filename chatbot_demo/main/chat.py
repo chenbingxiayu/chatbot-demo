@@ -1,18 +1,21 @@
+import json
 import logging
 import os
-import json
-from .zulip.zulip import ZulipClient
-from django.http import HttpRequest, QueryDict
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.conf import settings
-from main.models import StudentChatStatus
-from main.debug_api import startchat
-from django.contrib.auth.decorators import login_required
+
 import requests
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, QueryDict
+from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
+from main.debug_api import startchat
+from main.models import StudentChatStatus
+from .zulip.zulip import ZulipClient
+
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += 'HIGH:!DH:!aNULL'
 try:
     requests.packages.urllib3.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += 'HIGH:!DH:!aNULL'
@@ -29,6 +32,7 @@ email_suffix = settings.ZULIP['ZULIP_EMAIL_SUBFFIX']
 def _construct_stream_name(staff_netid: str):
     return f"{staff_netid}_chatroom"
 
+
 @login_required
 def student(request):
     try:
@@ -42,7 +46,7 @@ def student(request):
         stream_id = client.get_stream_id(stream_name)
 
         users = client.get_users()
-        
+
         student = next(
             (user for user in users['members'] if user['email'] == student_email), None)
         if student is None:
@@ -63,22 +67,23 @@ def student(request):
     except Exception as e:
         print(e)
 
+
 @login_required
 def counsellor(request):
     try:
         logger.info(f"request: {request}")
         staff_netid = request.user.netid
         logger.info(f"staff_netid: {staff_netid}")
-        student_status = StudentChatStatus.objects.filter(
-            assigned_counsellor__staff_netid=staff_netid,
-            student_chat_status=StudentChatStatus.ChatStatus.CHATTING,
-        ).first()
+        student_status = StudentChatStatus.objects \
+            .filter(assigned_counsellor__staff_netid=staff_netid,
+                    student_chat_status=StudentChatStatus.ChatStatus.CHATTING) \
+            .first()
         logger.info(f"student_statis: {student_status}")
         student_netid = student_status.student_netid.upper()
         logger.info(f"student_netid: {student_netid}")
         student_email = student_netid + email_suffix
         staff_email = staff_netid + email_suffix
-        
+
         with open(config_file, "r") as f:
             lines = f.readlines()
             logger.info(lines)
@@ -122,7 +127,6 @@ def counsellor(request):
         student_relationship = student_status.relationship
         student_emergency_contact_number = student_status.emergency_contact_number
 
-
         page_info = {
             'key': key,
             'staff_email': staff_email,
@@ -142,9 +146,10 @@ def counsellor(request):
     except Exception as e:
         logger.error(e)
 
+
 @login_required
 def counsellor_from_email(request):
-    try:  
+    try:
         student_netid = request.GET.get('student_netid')
         staff_netid = request.user.netid
 
@@ -153,10 +158,11 @@ def counsellor_from_email(request):
         qd = QueryDict(f'student_netid={student_netid}&staff_netid={staff_netid}')
         startchat_request.POST = qd
         startchat(startchat_request)
-        
+
         return redirect('chat_counsellor')
     except Exception as e:
         logger.error(e)
+
 
 @csrf_exempt
 @require_http_methods(['POST'])
@@ -213,7 +219,6 @@ def subscribe_stream(request):
 @csrf_exempt
 @require_http_methods(['POST'])
 def unsubscribe_stream(request):
-    
     request_data = json.loads(request.body)
     staff_netid = request_data['staff_netid']
     # student_netid = request_data['student_netid']
@@ -292,6 +297,7 @@ def delete_stream(request):
     except Exception as e:
         return JsonResponse({'status': "error", "error": str(e)})
 
+
 @login_required
 @require_http_methods(['GET'])
 def stream_room(request):
@@ -300,7 +306,7 @@ def stream_room(request):
         supervisor_netid = request.user.netid
 
         if staff_netid is None or supervisor_netid is None:
-            raise('Please provide both stream name and supervisor email.')
+            raise ('Please provide both stream name and supervisor email.')
 
         staff_email = staff_netid + email_suffix
 

@@ -1,4 +1,5 @@
 import logging
+import threading
 
 from django.core import serializers
 from django.db import IntegrityError, transaction
@@ -9,11 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from main.models import (
-    StaffStatus,
-    StudentChatStatus,
-    StudentChatHistory,
-    User,
-    ROLE_RANKING, delete_student_user,
+    StaffStatus, StudentChatStatus, StudentChatHistory, ROLE_RANKING, delete_student_user
 )
 from tasks.tasks import reassign_counsellor, dequeue_student
 
@@ -292,8 +289,9 @@ def startchat(request):
             staff = StaffStatus.objects.select_for_update().get(staff_netid=staff_netid)
             student = StudentChatStatus.objects.select_for_update().get(student_netid=student_netid)
 
-            student.chat_start_time = now
             student.student_chat_status = StudentChatStatus.ChatStatus.CHATTING
+            student.chat_start_time = now
+            student.last_state_change = now
             staff.staff_chat_status = StaffStatus.ChatStatus.CHATTING
             staff.status_change_time = now
             student.save()
@@ -320,7 +318,8 @@ def endchat(request):
     now = timezone.localtime()
     if is_no_show:
         from main.email_service import email_service
-        email_service.send('notification_student', student_netid)
+        t = threading.Thread(target=email_service.send, args=('notification_student', student_netid,))
+        t.start()
 
     try:
         with transaction.atomic():

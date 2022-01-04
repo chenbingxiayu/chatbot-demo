@@ -22,7 +22,7 @@
             <td data-student-netid="{{student.student_netid}}">{{ student.student_netid }}</td>
             <td>{{ student.chat_request_time|time:'H:i:s' }}</td>
             <td class="chat-status">{{ student.get_student_chat_status_display }}</td>
-            <td>{{ student.chat_request_time|duration:now }}</td>
+            <td>{{ student.last_state_change|duration:now }}</td>
           </tr>
           {% endfor %}
         <thead>
@@ -40,7 +40,7 @@
             <td>{{ history.student_netid }}</td>
             <td>{{ history.chat_request_time|time:'H:i:s' }}</td>
             <td>{{ history.get_student_chat_status_display|default_if_none:"" }}</td>
-            <td>{{ history.chat_request_time|duration:now }}</td>
+            <td>{{ history.chat_end_time|duration:now }}</td>
           </tr>
           {% endfor %}
         </tbody>
