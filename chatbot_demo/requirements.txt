@@ -20,7 +20,7 @@ xlsxwriter~=3.0
 gevent~=21.1
 flower~=1.0
 pyjwt==2.1.0
-celery==5.1.2
+celery==5.2.2
 zulip==0.7.1
 django-webpack-loader==1.4.1
 marshmallow==3.14.1
