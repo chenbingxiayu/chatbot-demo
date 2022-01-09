@@ -15,13 +15,11 @@ docker-compose stop django
 
 ### 2. Create Database/ Database Migration
 
-In local/UAT/prod environment, operator should use django cli to migrate change to database.
+Operator should use django cli to migrate change to database.
 
 Formal migration is described in [django_database_migration.md](./django_database_migration.md)
 
-However, in production database, the migration status is polluted, cannot be done using django cli.
-
-Operator may consider
+If the migration status is polluted, cannot be done using django cli. Operator may consider
 
 1. Delete all tables and migrate the database from the _nothing.
    (❗❗ admin account and user groups will be deleted and need to re-create,
