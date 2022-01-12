@@ -4,7 +4,7 @@
       $('.botui-container').animate({ scrollTop: $('.botui-container').prop('scrollHeight') }, 1000);
     });
 
-    const CHAT_QUEUE_LIMIT = process.env.CHAT_QUEUE_LIMIT || 20;
+    const CHAT_QUEUE_LIMIT = 20;
     var finish_assessment = false;
     select_language();
     let surveyData = {};
