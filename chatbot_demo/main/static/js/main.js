@@ -800,179 +800,6 @@
         });
     }
 
-    // async function mid_recommendations() {
-    //   let office_hour = await isSAOWorkingHours(new Date());
-    //   const isChattingHour = await isChattingWorkingHours();
-    //   if (office_hour) {
-    //     return botui.message
-    //       .bot({
-    //         loading: true,
-    //         delay: 1000,
-    //         photo: polly,
-    //         content:
-    //           'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with Counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health Educational Material/Resources<br/>3. Immediate Contact with SAO Counsellor<br/>4. Online Chat Service<br/>5. Community Helpline',
-    //       })
-    //       .then(function() {
-    //         return botui.action
-    //           .button({
-    //             addMessage: false,
-    //             action: [
-    //               { text: 'Make Appointment with SAO Counsellors', value: 3 },
-    //               {
-    //                 text: 'Mental Health Educational Material/Resources',
-    //                 value: 1,
-    //               },
-    //               { text: 'Immediate Contact with SAO Counsellors', value: 4 },
-    //               ...(isChattingHour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
-    //               { text: 'Community Helpline', value: 6 },
-    //             ],
-    //           })
-    //           .then(function(res) {
-    //             if (res.value == 1) {
-    //               service_list = true;
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(mental_health_101);
-    //             }
-    //             if (res.value == 2) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(T_and_C_of_OCS);
-    //             }
-    //             if (res.value == 3) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(make_appointment_with_counsellors);
-    //             }
-    //             if (res.value == 4) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(contact_with_counsellors);
-    //             }
-    //             if (res.value == 5) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(polyu_line);
-    //             }
-    //             if (res.value == 6) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(community_helpline);
-    //             }
-    //           });
-    //       });
-    //   } else {
-    //     return botui.message
-    //       .bot({
-    //         loading: true,
-    //         delay: 1000,
-    //         photo: polly,
-    //         content:
-    //           'We recommend you to reach out our counsellors.<br/><br/>1. Making Appointment with SAO counsellors<br/><br/>Apart from that, you can choose other services as below:<br/><br/>2. Mental Health 101<br/>3. Immediate Contact with PolyU-Line Counsellors: (852)81001583<br/>4. Community Helpline',
-    //       })
-    //       .then(function() {
-    //         return botui.action
-    //           .button({
-    //             addMessage: false,
-    //             action: [
-    //               { text: 'Make Appointment with SAO Counsellors', value: 3 },
-    //               {
-    //                 text: 'Mental Health Educational Material/Resources',
-    //                 value: 1,
-    //               },
-    //               {
-    //                 text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583',
-    //                 value: 5,
-    //               },
-    //               ...(isChattingHour ? { text: 'Online Chat Service(Live)', value: 2 } : []),
-    //               { text: 'Community Helpline', value: 6 },
-    //             ],
-    //           })
-    //           .then(function(res) {
-    //             if (res.value == 1) {
-    //               service_list = true;
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(mental_health_101);
-    //             }
-    //             if (res.value == 2) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(T_and_C_of_OCS);
-    //             }
-    //             if (res.value == 3) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(make_appointment_with_counsellors);
-    //             }
-    //             if (res.value == 4) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: `${res.text}`,
-    //                 })
-    //                 .then(contact_with_counsellors);
-    //             }
-    //             if (res.value == 5) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(polyu_line);
-    //             }
-    //             if (res.value == 6) {
-    //               return botui.message
-    //                 .human({
-    //                   delay: 500,
-    //                   photo: client,
-    //                   content: res.text,
-    //                 })
-    //                 .then(community_helpline);
-    //             }
-    //           });
-    //       });
-    //   }
-    // }
-
     function high() {
       score = 20;
       return botui.message
@@ -1116,9 +943,9 @@
     // **************************
 
     async function mental_health_101() {
+      const langCode = 'en';
       await submitFirstOptionInfo('mental_health_101');
 
-      let office_hour = await isSAOWorkingHours(new Date());
       return botui.message
         .bot({
           loading: true,
@@ -1133,13 +960,13 @@
             delay: 2500,
             photo: polly,
             content:
-              '1. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/academic/" target ="_blank">Academic</a><br/>' +
-              '2. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/interpersonal-relationship/" target ="_blank">Interpersonal Relationship</a><br/>' +
-              '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">Career</a><br/>' +
-              '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">Family</a><br/>' +
-              '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">Mental Health</a><br/>' +
-              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">Psychological Workshops and Groups (SAO)</a><br>' +
-              '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">Others</a><br/>' +
+              `1. <a href="${MENTAL_HEALTH_EDUCATION_LINK.academic}" target ="_blank">${mentalHealthLanguageJson[langCode].ACADEMIC}</a><br/>` +
+              `2. <a href="${MENTAL_HEALTH_EDUCATION_LINK.interpersonalRelationship}" target ="_blank">${mentalHealthLanguageJson[langCode].INTERPERSONAL_RELATIONSHIP}</a><br/>` +
+              `3. <a href="${MENTAL_HEALTH_EDUCATION_LINK.career}" target ="_blank">${mentalHealthLanguageJson[langCode].CAREER}</a><br/>` +
+              `4. <a href="${MENTAL_HEALTH_EDUCATION_LINK.family}" target ="_blank">${mentalHealthLanguageJson[langCode].FAMILY}</a><br/>` +
+              `5. <a href="${MENTAL_HEALTH_EDUCATION_LINK.mentalHealth}" target ="_blank">${mentalHealthLanguageJson[langCode].MENTAL_HEALTH}</a><br/>` +
+              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
+              `7. <a href="${MENTAL_HEALTH_EDUCATION_LINK.others}" target ="_blank">${mentalHealthLanguageJson[langCode].OTHERS}</a><br/>` +
               '<br><br>*In case of emergency, please call 999 or go to the nearest emergency  / A&E service.',
           });
         })
@@ -1169,93 +996,9 @@
             })
             .then(function() {
               if (res.value == false) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 1000,
-                    photo: polly,
-                    content: 'Please rate your experience',
-                  })
-                  .then(end);
+                return end();
               } else {
-                if (service_list == true || finish_assessment == false) {
-                  return init_choices();
-                }
-                if (office_hour == true) {
-                  return botui.action
-                    .button({
-                      addMessage: false,
-                      action: [
-                        { text: 'Make Appointment with SAO Counsellors', value: 1 },
-                        {
-                          text: 'Immediate Contact with SAO Counsellors',
-                          value: 2,
-                        },
-                      ],
-                    })
-                    .then(function(res) {
-                      if (res.value == 1) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(make_appointment_with_counsellors);
-                      }
-                      if (res.value == 2) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(contact_with_counsellors);
-                      }
-                    });
-                } else {
-                  return botui.action
-                    .button({
-                      addMessage: false,
-                      action: [
-                        { text: 'Make Appointment with SAO Counsellors', value: 1 },
-                        {
-                          text: 'Immediate Contact with PolyU-Line Counsellors: (852)81001583',
-                          value: 3,
-                        },
-                        { text: 'Community Helpline', value: 6 },
-                      ],
-                    })
-                    .then(function(res) {
-                      if (res.value == 1) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(make_appointment_with_counsellors);
-                      }
-                      if (res.value == 3) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(polyu_line);
-                      }
-                      if (res.value == 6) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(community_helpline);
-                      }
-                    });
-                }
+                return init_choices();
               }
             });
         });
@@ -1310,7 +1053,26 @@
               '<p>Please accept the Terms and Conditions of using the Online Chat service:</p><br/>' +
               '<p>(The Terms and Conditions are only available in English.)</p>\n' +
               '<br/>\n' +
-              '<p>Initiated by the SAO Counselling & Wellness Section (CWS), Online Chat Service (the Service) is available to all registered students of The Hong Kong Polytechnic University (PolyU) aged 18 or above.</p>\n',
+              `<p>${T_AND_C.P1}</p>\n`,
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content: '<br/>\n' + `<p>${T_AND_C.P2}</p>\n` + '<br/>\n' + `<p>${T_AND_C.P3}</p>\n`,
+            });
           })
           .then(function() {
             return botui.action.button({
@@ -1330,38 +1092,15 @@
               delay: 2000,
               content:
                 '<br/>\n' +
-                '<p>The Service intends to render remote support through the secured online communication.  However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected.  If possible, staff of CWS may contact the user for the service follow-up whenever necessary.  </p>\n' +
+                `<p>${T_AND_C.P4}</p>\n` +
                 '<br/>\n' +
-                '<p>The staff of CWS will follow its protocol in providing the Service.  By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
-            });
-          })
-          .then(function() {
-            return botui.action.button({
-              addMessage: false,
-              photo: client,
-              action: [
-                {
-                  text: 'Read more',
-                },
-              ],
-            });
-          })
-          .then(function() {
-            return botui.message.bot({
-              loading: true,
-              photo: polly,
-              delay: 2000,
-              content:
+                `<p>${T_AND_C.P5}</p>\n` +
                 '<br/>\n' +
-                '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user of the Service or others from harm including disclosing the personal particulars of the user to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police.   To the extent practicable, counsellor of CWS will discuss with the user prior taking such actions.</p>\n' +
+                `<p>${T_AND_C.P6}</p>\n` +
                 '<br/>\n' +
-                '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                `<p>${T_AND_C.P7} <a href="${T_AND_C.P7_LINK}" target="_blank">${T_AND_C.HERE}</a>. </p>\n` +
                 '<br/>\n' +
-                '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
-                '<br/>\n' +
-                '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
-                '<br/>\n' +
-                '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
+                `<p>${T_AND_C.P8} <a href=${T_AND_C.P8_LINK}" target="_blank">${T_AND_C.HERE}</a>.</p>`,
             });
           })
           //----
@@ -1468,7 +1207,7 @@
                           loading: true,
                           delay: 1500,
                           photo: polly,
-                          content: 'You are always welcome to read our online cls-help materials here.',
+                          content: 'You are always welcome to read our online self-help materials here.',
                         });
                       })
                       .then(function() {
@@ -2055,14 +1794,7 @@
             url: '/main/user/logout/student/',
             method: 'GET',
           });
-          if (navigator.userAgent.indexOf('Firefox') != -1 || navigator.userAgent.indexOf('Chrome') != -1) {
-            window.location.href = 'about:blank';
-            window.close();
-          } else {
-            window.opener = null;
-            window.open('', '_self');
-            window.close();
-          }
+          window.location.reload();
         }
       })
       .on('click', '.icon-home', function() {
@@ -2955,9 +2687,9 @@
     }
 
     async function mental_health_101_tc() {
+      const langCode = 'zh-hant';
       await submitFirstOptionInfo('mental_health_101');
 
-      const office_hour = await isSAOWorkingHours(new Date());
       return botui.message
         .bot({
           loading: true,
@@ -2971,13 +2703,13 @@
             delay: 2500,
             photo: polly,
             content:
-              '1. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/academic/" target ="_blank">學業</a><br/>' +
-              '2. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/interpersonal-relationship/" target ="_blank">人際關係</a><br/>' +
-              '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">工作</a><br/>' +
-              '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">家庭</a><br/>' +
-              '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">精神健康</a><br/>' +
-              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">心理健康小組及工作坊 (SAO)</a><br>' +
-              '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">其他</a><br/>' +
+              `1. <a href="${MENTAL_HEALTH_EDUCATION_LINK.academic}" target ="_blank">${mentalHealthLanguageJson[langCode].ACADEMIC}</a><br/>` +
+              `2. <a href="${MENTAL_HEALTH_EDUCATION_LINK.interpersonalRelationship}" target ="_blank">${mentalHealthLanguageJson[langCode].INTERPERSONAL_RELATIONSHIP}</a><br/>` +
+              `3. <a href="${MENTAL_HEALTH_EDUCATION_LINK.career}" target ="_blank">${mentalHealthLanguageJson[langCode].CAREER}</a><br/>` +
+              `4. <a href="${MENTAL_HEALTH_EDUCATION_LINK.family}" target ="_blank">${mentalHealthLanguageJson[langCode].FAMILY}</a><br/>` +
+              `5. <a href="${MENTAL_HEALTH_EDUCATION_LINK.mentalHealth}" target ="_blank">${mentalHealthLanguageJson[langCode].MENTAL_HEALTH}</a><br/>` +
+              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
+              `7. <a href="${MENTAL_HEALTH_EDUCATION_LINK.others}" target ="_blank">${mentalHealthLanguageJson[langCode].OTHERS}</a><br/>` +
               '<br><br>*如你正身處緊急情況, 請致電999或到鄰近的急症室求助。', //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
           });
         })
@@ -3007,90 +2739,9 @@
             })
             .then(function() {
               if (res.value == false) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 1000,
-                    photo: polly,
-                    content: '請分享你對本服務的體驗',
-                  })
-                  .then(end_tc);
+                return end_tc();
               } else {
-                if (service_list == true || finish_assessment == false) {
-                  return init_choices_tc();
-                }
-                if (office_hour == true) {
-                  return botui.action
-                    .button({
-                      addMessage: false,
-                      action: [
-                        { text: '預約輔導服務', value: 1 },
-                        { text: '立即與學生事務處(SAO)輔導員聯絡', value: 2 },
-                      ],
-                    })
-                    .then(function(res) {
-                      if (res.value == 1) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(make_appointment_with_counsellors_tc);
-                      }
-                      if (res.value == 2) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(contact_with_counsellors_tc);
-                      }
-                    });
-                } else {
-                  return botui.action
-                    .button({
-                      addMessage: false,
-                      action: [
-                        { text: '預約輔導服務', value: 1 },
-                        {
-                          text: '立即與PolyU-Line輔導員聯絡: (852)8100-1583',
-                          value: 3,
-                        },
-                        { text: '社區支援熱線', value: 6 },
-                      ],
-                    })
-                    .then(function(res) {
-                      if (res.value == 1) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(make_appointment_with_counsellors_tc);
-                      }
-                      if (res.value == 3) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(polyu_line_tc);
-                      }
-                      if (res.value == 6) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(community_helpline_tc);
-                      }
-                    });
-                }
+                return init_choices_tc();
               }
             });
         });
@@ -3143,7 +2794,26 @@
               '<br/>\n' +
               '<p>(The Terms and Conditions are only available in English.)</p>\n' +
               '<br/>\n' +
-              '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n',
+              `<p>${T_AND_C.P1}</p>\n`,
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content: '<br/>\n' + `<p>${T_AND_C.P2}</p>\n` + '<br/>\n' + `<p>${T_AND_C.P3}</p>\n`,
+            });
           })
           .then(function() {
             return botui.action.button({
@@ -3163,38 +2833,15 @@
               delay: 2000,
               content:
                 '<br/>\n' +
-                "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+                `<p>${T_AND_C.P4}</p>\n` +
                 '<br/>\n' +
-                '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
-            });
-          })
-          .then(function() {
-            return botui.action.button({
-              addMessage: false,
-              photo: client,
-              action: [
-                {
-                  text: 'Read more',
-                },
-              ],
-            });
-          })
-          .then(function() {
-            return botui.message.bot({
-              loading: true,
-              photo: polly,
-              delay: 2000,
-              content:
+                `<p>${T_AND_C.P5}</p>\n` +
                 '<br/>\n' +
-                '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
+                `<p>${T_AND_C.P6}</p>\n` +
                 '<br/>\n' +
-                '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                `<p>${T_AND_C.P7} <a href="${T_AND_C.P7_LINK}" target="_blank">${T_AND_C.HERE}</a>. </p>\n` +
                 '<br/>\n' +
-                '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
-                '<br/>\n' +
-                '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
-                '<br/>\n' +
-                '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
+                `<p>${T_AND_C.P8} <a href=${T_AND_C.P8_LINK}" target="_blank">${T_AND_C.HERE}</a>.</p>`,
             });
           })
           //----
@@ -4660,9 +4307,9 @@
     }
 
     async function mental_health_101_sc() {
+      const langCode = 'zh-hans';
       await submitFirstOptionInfo('mental_health_101');
 
-      const office_hour = await isSAOWorkingHours(new Date());
       return botui.message
         .bot({
           loading: true,
@@ -4676,13 +4323,13 @@
             delay: 2500,
             photo: polly,
             content:
-              '1. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/academic/" target ="_blank">学业</a><br/>' +
-              '2. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/interpersonal-relationship/" target ="_blank">人际关系</a><br/>' +
-              '3. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/career/" target ="_blank">工作</a><br/>' +
-              '4. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/family/" target ="_blank">家庭</a><br/>' +
-              '5. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/" target ="_blank">精神健康</a><br/>' +
-              '6. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/" target ="_blank">心理健康小组及工作坊 (SAO)</a><br>' +
-              '7. <a href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/others/" target ="_blank">其他</a><br/>' +
+              `1. <a href="${MENTAL_HEALTH_EDUCATION_LINK.academic}" target ="_blank">${mentalHealthLanguageJson[langCode].ACADEMIC}</a><br/>` +
+              `2. <a href="${MENTAL_HEALTH_EDUCATION_LINK.interpersonalRelationship}" target ="_blank">${mentalHealthLanguageJson[langCode].INTERPERSONAL_RELATIONSHIP}</a><br/>` +
+              `3. <a href="${MENTAL_HEALTH_EDUCATION_LINK.career}" target ="_blank">${mentalHealthLanguageJson[langCode].CAREER}</a><br/>` +
+              `4. <a href="${MENTAL_HEALTH_EDUCATION_LINK.family}" target ="_blank">${mentalHealthLanguageJson[langCode].FAMILY}</a><br/>` +
+              `5. <a href="${MENTAL_HEALTH_EDUCATION_LINK.mentalHealth}" target ="_blank">${mentalHealthLanguageJson[langCode].MENTAL_HEALTH}</a><br/>` +
+              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
+              `7. <a href="${MENTAL_HEALTH_EDUCATION_LINK.others}" target ="_blank">${mentalHealthLanguageJson[langCode].OTHERS}</a><br/>` +
               '<br><br>*如你正身处紧急情况, 请致电999或到邻近的急症室求助。', //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
           });
         })
@@ -4712,90 +4359,9 @@
             })
             .then(function() {
               if (res.value == false) {
-                return botui.message
-                  .bot({
-                    loading: true,
-                    delay: 1000,
-                    photo: polly,
-                    content: '请分享你对本服务的体验',
-                  })
-                  .then(end_sc);
+                return end_sc();
               } else {
-                if (service_list == true || finish_assessment == false) {
-                  return init_choices_sc();
-                }
-                if (office_hour == true) {
-                  return botui.action
-                    .button({
-                      addMessage: false,
-                      action: [
-                        { text: '预约辅导服务', value: 1 },
-                        { text: '立即与学生事务处 (SAO)辅导员联络', value: 2 },
-                      ],
-                    })
-                    .then(function(res) {
-                      if (res.value == 1) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(make_appointment_with_counsellors_sc);
-                      }
-                      if (res.value == 2) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(contact_with_counsellors_sc);
-                      }
-                    });
-                } else {
-                  return botui.action
-                    .button({
-                      addMessage: false,
-                      action: [
-                        { text: '预约辅导服务', value: 1 },
-                        {
-                          text: '立即与PolyU-Line辅导员联络 : (852) 81001583 ',
-                          value: 3,
-                        },
-                        { text: '社区支援热线', value: 6 },
-                      ],
-                    })
-                    .then(function(res) {
-                      if (res.value == 1) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(make_appointment_with_counsellors_sc);
-                      }
-                      if (res.value == 3) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(polyu_line_sc);
-                      }
-                      if (res.value == 6) {
-                        return botui.message
-                          .human({
-                            delay: 500,
-                            photo: client,
-                            content: res.text,
-                          })
-                          .then(community_helpline_sc);
-                      }
-                    });
-                }
+                return init_choices_sc();
               }
             });
         });
@@ -4848,7 +4414,26 @@
               '<br/>\n' +
               '<p>(The Terms and Conditions are only available in English.)</p>\n' +
               '<br/>\n' +
-              '<p>Initiated by the SAO Counselling & Wellness Section (CWS), My Polly Counselling Chatbot Service (the “Service”) is available to all registered students of The Hong Kong Polytechnic University (the “University”) aged 18 or above.</p>\n',
+              `<p>${T_AND_C.P1}</p>\n`,
+          })
+          .then(function() {
+            return botui.action.button({
+              addMessage: false,
+              photo: client,
+              action: [
+                {
+                  text: 'Read more',
+                },
+              ],
+            });
+          })
+          .then(function() {
+            return botui.message.bot({
+              loading: true,
+              photo: polly,
+              delay: 2000,
+              content: '<br/>\n' + `<p>${T_AND_C.P2}</p>\n` + '<br/>\n' + `<p>${T_AND_C.P3}</p>\n`,
+            });
           })
           .then(function() {
             return botui.action.button({
@@ -4868,38 +4453,15 @@
               delay: 2000,
               content:
                 '<br/>\n' +
-                "<p>The Service intends to render 'remote' support through the secured online communication. However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected. If possible, staff of CWS may contact with the user for the service follow-up whenever necessary. </p>\n" +
+                `<p>${T_AND_C.P4}</p>\n` +
                 '<br/>\n' +
-                '<p>The staff of CWS will follow its protocol in providing the Service. By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.</p>\n',
-            });
-          })
-          .then(function() {
-            return botui.action.button({
-              addMessage: false,
-              photo: client,
-              action: [
-                {
-                  text: 'Read more',
-                },
-              ],
-            });
-          })
-          .then(function() {
-            return botui.message.bot({
-              loading: true,
-              photo: polly,
-              delay: 2000,
-              content:
+                `<p>${T_AND_C.P5}</p>\n` +
                 '<br/>\n' +
-                '<p>There are situations that the staff of CWS is ethically obligated to take actions to protect the user or others from harm including disclosing the personal particulars of the user of the Service to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police. To the extent practicable, CWS will discuss with the user prior taking such actions.</p>\n' +
+                `<p>${T_AND_C.P6}</p>\n` +
                 '<br/>\n' +
-                '<p>There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user. </p>\n' +
+                `<p>${T_AND_C.P7} <a href="${T_AND_C.P7_LINK}" target="_blank">${T_AND_C.HERE}</a>. </p>\n` +
                 '<br/>\n' +
-                '<p>To protect the confidentiality of the service and service users, please do not make record of service in any form. </p>\n' +
-                '<br/>\n' +
-                '<p>You may look into the Privacy Policy Statement of PolyU <a href="https://www.polyu.edu.hk/privacy-policy-statement/" target="_blank">HERE</a>. </p>\n' +
-                '<br/>\n' +
-                '<p>As for the Personal Information Collection Statement, please click <a href="https://www.polyu.edu.hk/ar/web/en/pics/index.html" target="_blank">HERE</a>.</p>',
+                `<p>${T_AND_C.P8} <a href=${T_AND_C.P8_LINK}" target="_blank">${T_AND_C.HERE}</a>.</p>`,
             });
           })
           //----
@@ -5572,39 +5134,6 @@
       return res.student_count;
     };
 
-    const onlineChatLanguageJson = {
-      en: {
-        QUIT: 'Quit',
-        AUTO_QUIT_QUEUE_MESSAGE:
-          'I’m sorry that our online chat service hour is ended, please come back later. You may contact us at (852)27666800 if needed.',
-        QUIT_QUEUE_MESSAGE: 'Thank you for using our service, you may contact us at (852)27666800 if needed.',
-        WAITING_MESSAGE: `Hang on a moment!  While awaiting, you may browse our resourceful library <a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">'Mental Health Educational Material/Resources'</a> to explore more tips for boosting your mental wellness. You may quit anytime by clicking 'Quit' below. For enquiries of other services, please dial (852)27666800.`,
-        CHAT_LINK_MESSAGE: `You have been assigned to a counsellor, please click the <a target="_blank" href="/main/chat/student/">link</a> to enter the chat room.`,
-        EXCEED_QUEUE_LIMIT_MESSAGE:
-          'I’m sorry that all counsellors are occupied right now. please come back later or call us at (852)27666800 if needed.',
-      },
-      'zh-hant': {
-        QUIT: '退出',
-        AUTO_QUIT_QUEUE_MESSAGE:
-          '抱歉，我們的網上聊天室服務時間已經完結，請你稍後再選用這個服務，如有需要，請你致電(852)27666800與我們聯絡。',
-        QUIT_QUEUE_MESSAGE: '多謝你使用網上聊天室服務，如有需要，請你致電(852)27666800予我們聯絡。',
-        WAITING_MESSAGE: `請耐心等候，網上聊天員很快會跟你聯繫。等候期間，歡迎你瀏覽<a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">「心理健康教育資訊/資源」</a>發掘更多提升心靈健康的小貼士。你亦可以隨時按「退出」取消服務。如有查詢，請你致電(852)27666800。`,
-        CHAT_LINK_MESSAGE: `你已經分配到一個輔導員，請點擊 <a target="_blank" href="/main/chat/student/">連結</a> 進入聊天室.`,
-        EXCEED_QUEUE_LIMIT_MESSAGE:
-          '抱歉，我們的輔導員現正繁忙，請你稍後再選用這個服務，如有需要，請你致電(852)27666800與我們聯絡。',
-      },
-      'zh-hans': {
-        QUIT: '退出',
-        AUTO_QUIT_QUEUE_MESSAGE:
-          '抱歉，我们的网上聊天室服务时间已经完结，请你稍后再选用这个服务，如有需要，请你致电(852)27666800与我们联络。',
-        QUIT_QUEUE_MESSAGE: '多谢你使用网上聊天室服务，如有需要，请你致电(852)27666800予我们联络。',
-        WAITING_MESSAGE: `请耐心等候，网上聊天员很快会跟你联繫。等候期间，欢迎你浏览<a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">「心理健康教育资讯/资源」</a>发掘更多提升心灵健康的小贴士。你亦可以随时按「退出」取消服务。</br>如有查询，请你致电(852)27666800。`,
-        CHAT_LINK_MESSAGE: `你已经分配到一个辅导员，请点击 <a target="_blank" href="/main/chat/student/">连结</a> 进入聊天室。`,
-        EXCEED_QUEUE_LIMIT_MESSAGE:
-          '抱歉，我们的辅导员现正繁忙，请你稍后再选用这个服务，如有需要，请你致电(852)27666800与我们联络。',
-      },
-    };
-
     const waitSubsribe = async (student_netid, langCode) => {
       await botui.message.add({
         delay: 1000,
@@ -5728,3 +5257,103 @@
     };
   }
 })();
+
+const MENTAL_HEALTH_EDUCATION_LINK = {
+  academic:
+    'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/academic/',
+  interpersonalRelationship:
+    'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/interpersonal-relationship/',
+  career:
+    'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/career/',
+  family:
+    'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/family/',
+  mentalHealth:
+    'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/mental-health/',
+  psychologicalWorkshopsAndGroups:
+    'https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/',
+  others:
+    'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/others/',
+};
+
+const T_AND_C = {
+  P1:
+    'Initiated by the SAO Counselling & Wellness Section (CWS), Online Chat Service (the Service) is available to all registered students of The Hong Kong Polytechnic University (PolyU) aged 18 or above.',
+  P2:
+    'The Service intends to render remote support through the secured online communication.  However, limitation in using the Service may exist due to a number of factors, such as technical issues (both hardware and software), instability of internet connections and lack of direct interaction. The overall service quality and user experience may thereby be affected.  If possible, staff of CWS may contact the user for the service follow-up whenever necessary.',
+  P3:
+    'The staff of CWS will follow its protocol in providing the Service.  By accepting the Service, the user of the Service shall comply with the crisis protocol suggested by the staff of CWS including calling 999, notifying police and seeking help from emergency hospital services.',
+  P4:
+    'There are situations that the staff of CWS is ethically obligated to take actions to protect the user of the Service or others from harm including disclosing the personal particulars of the user to the extent necessary. These may include contacting family members, assisting hospitalization, notifying any potential victim(s) or the police.   To the extent practicable, counsellor of CWS will discuss with the user prior taking such actions.',
+  P5:
+    'There will be no guarantee of any expected results or outcome from the Service. Service user shall not hold CWS responsible for the acts of the Service user.',
+  P6:
+    'To protect the confidentiality of the service and service users, please do not make record of service in any form.',
+  P7: 'You may look into the Privacy Policy Statement of PolyU ',
+  P7_LINK: 'https://www.polyu.edu.hk/privacy-policy-statement/',
+  P8: 'As for the Personal Information Collection Statement, please click ',
+  P8_LINK: 'https://www.polyu.edu.hk/ar/web/en/pics/index.html',
+  HERE: 'HERE',
+};
+
+const onlineChatLanguageJson = {
+  en: {
+    QUIT: 'Quit',
+    AUTO_QUIT_QUEUE_MESSAGE:
+      'I’m sorry that our online chat service hour is ended, please come back later. You may contact us at (852)27666800 if needed.',
+    QUIT_QUEUE_MESSAGE: 'Thank you for using our service, you may contact us at (852)27666800 if needed.',
+    WAITING_MESSAGE: `Hang on a moment!  While awaiting, you may browse our resourceful library <a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">'Mental Health Educational Material/Resources'</a> to explore more tips for boosting your mental wellness. You may quit anytime by clicking 'Quit' below. For enquiries of other services, please dial (852)27666800.`,
+    CHAT_LINK_MESSAGE: `You have been assigned to a counsellor, please click the <a target="_blank" href="/main/chat/student/">link</a> to enter the chat room.`,
+    EXCEED_QUEUE_LIMIT_MESSAGE:
+      'I’m sorry that all counsellors are occupied right now. please come back later or call us at (852)27666800 if needed.',
+  },
+  'zh-hant': {
+    QUIT: '退出',
+    AUTO_QUIT_QUEUE_MESSAGE:
+      '抱歉，我們的網上聊天室服務時間已經完結，請你稍後再選用這個服務，如有需要，請你致電(852)27666800與我們聯絡。',
+    QUIT_QUEUE_MESSAGE: '多謝你使用網上聊天室服務，如有需要，請你致電(852)27666800予我們聯絡。',
+    WAITING_MESSAGE: `請耐心等候，網上聊天員很快會跟你聯繫。等候期間，歡迎你瀏覽<a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">「心理健康教育資訊/資源」</a>發掘更多提升心靈健康的小貼士。你亦可以隨時按「退出」取消服務。如有查詢，請你致電(852)27666800。`,
+    CHAT_LINK_MESSAGE: `你已經分配到一個輔導員，請點擊 <a target="_blank" href="/main/chat/student/">連結</a> 進入聊天室.`,
+    EXCEED_QUEUE_LIMIT_MESSAGE:
+      '抱歉，我們的輔導員現正繁忙，請你稍後再選用這個服務，如有需要，請你致電(852)27666800與我們聯絡。',
+  },
+  'zh-hans': {
+    QUIT: '退出',
+    AUTO_QUIT_QUEUE_MESSAGE:
+      '抱歉，我们的网上聊天室服务时间已经完结，请你稍后再选用这个服务，如有需要，请你致电(852)27666800与我们联络。',
+    QUIT_QUEUE_MESSAGE: '多谢你使用网上聊天室服务，如有需要，请你致电(852)27666800予我们联络。',
+    WAITING_MESSAGE: `请耐心等候，网上聊天员很快会跟你联繫。等候期间，欢迎你浏览<a target="_blank" href="https://www.polyu.edu.hk/sao/cws/student-counselling/mental-health-educational-material-resources/mental-health/">「心理健康教育资讯/资源」</a>发掘更多提升心灵健康的小贴士。你亦可以随时按「退出」取消服务。</br>如有查询，请你致电(852)27666800。`,
+    CHAT_LINK_MESSAGE: `你已经分配到一个辅导员，请点击 <a target="_blank" href="/main/chat/student/">连结</a> 进入聊天室。`,
+    EXCEED_QUEUE_LIMIT_MESSAGE:
+      '抱歉，我们的辅导员现正繁忙，请你稍后再选用这个服务，如有需要，请你致电(852)27666800与我们联络。',
+  },
+};
+
+const mentalHealthLanguageJson = {
+  en: {
+    ACADEMIC: 'Academic',
+    INTERPERSONAL_RELATIONSHIP: 'Interpersonal Relationship',
+    CAREER: 'Career',
+    FAMILY: 'Family',
+    MENTAL_HEALTH: 'Mental Health',
+    PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS: 'Phychological Workshops and Groups',
+    OTHERS: 'Others',
+  },
+  'zh-hant': {
+    ACADEMIC: '學業',
+    INTERPERSONAL_RELATIONSHIP: '人際關係',
+    CAREER: '工作',
+    FAMILY: '家庭',
+    MENTAL_HEALTH: '精神健康',
+    PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS: '心理健康小組及工作坊 (SAO)',
+    OTHERS: '其他',
+  },
+  'zh-hans': {
+    ACADEMIC: '学业',
+    INTERPERSONAL_RELATIONSHIP: '人际关系',
+    CAREER: '工作',
+    FAMILY: '家庭',
+    MENTAL_HEALTH: '精神健康',
+    PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS: '心理健康小组及工作坊 (SAO)',
+    OTHERS: '其他',
+  },
+};
