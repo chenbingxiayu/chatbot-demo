@@ -9,3 +9,6 @@ npm run prod
 cd ..
 echo -e "\nDeploy backend\n"
 docker-compose up -d --build django celery celery_beat
+
+echo -e "\nRemove dangling images\n"
+docker image prune -f
