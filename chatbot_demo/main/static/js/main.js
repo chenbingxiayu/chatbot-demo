@@ -1627,7 +1627,7 @@
                     content: res.text,
                   })
                   .then(function() {
-                    if (service_list == true) {
+                    if (service_list == true || score > 10) {
                       botui.message.bot({
                         loading: true,
                         photo: polly,
@@ -3372,7 +3372,7 @@
                     content: res.text,
                   })
                   .then(function() {
-                    if (service_list == true) {
+                    if (service_list == true || score > 10) {
                       return botui.message.bot({
                         loading: true,
                         photo: polly,
@@ -4992,7 +4992,7 @@
                     content: res.text,
                   })
                   .then(function() {
-                    if (service_list == true) {
+                    if (service_list == true || score > 10) {
                       return botui.message.bot({
                         loading: true,
                         photo: polly,
