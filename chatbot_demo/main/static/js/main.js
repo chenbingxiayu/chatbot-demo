@@ -2576,7 +2576,7 @@
             return botui.action.button({
               addMessage: false,
               action: [
-                { text: '立即與SAO 輔導員聯絡', value: 4 },
+                { text: '立即與學生事務處 (SAO)輔導員聯絡', value: 4 },
                 { text: '預約輔導服務', value: 3 },
                 { text: '社區支援熱線', value: 6 },
               ],
@@ -2790,8 +2790,6 @@
             delay: 2000,
             content:
               '<p>請閱讀以下服務條款及私隱政策:</p><br/>' + //? Please accept the Terms and Conditions of using the Online Chat service
-              '<p><b>My Polly Counselling Chatbot Service</b></p>\n' +
-              '<br/>\n' +
               '<p>(The Terms and Conditions are only available in English.)</p>\n' +
               '<br/>\n' +
               `<p>${T_AND_C.P1}</p>\n`,
@@ -4410,8 +4408,6 @@
             delay: 2000,
             content:
               '<p>请阅读以下服务条款及私隐政策：</p><br/>' + //? Please accept the Terms and Conditions of using the Online Chat service
-              '<p><b>My Polly Counselling Chatbot Service</b></p>\n' +
-              '<br/>\n' +
               '<p>(The Terms and Conditions are only available in English.)</p>\n' +
               '<br/>\n' +
               `<p>${T_AND_C.P1}</p>\n`,
@@ -5270,7 +5266,7 @@ const MENTAL_HEALTH_EDUCATION_LINK = {
   mentalHealth:
     'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/mental-health/',
   psychologicalWorkshopsAndGroups:
-    'https://www.polyu.edu.hk/sao/cws/student-counselling/courses-workshops/for-student/',
+    'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/courses-or-workshops/for-student/',
   others:
     'https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/others/',
 };
