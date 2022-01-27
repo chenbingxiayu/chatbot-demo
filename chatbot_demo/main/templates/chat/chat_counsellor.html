@@ -5,17 +5,57 @@
 {% block custom_style %}
   <style type="text/css">
 
-    .top-banner {
-        padding-top: 37%; 
+.top-banner {
+        padding-top: 16.5%; 
         position: relative;
         background-color: #fefae4;
+        /* padding-bottom: 12%; */
     }
     
     .top-sao-logo-img {
         width: 100%;
-        height: 100%;
         position: absolute;
         top: 0px;
+    }
+
+    .top-banner-icon {
+        position: absolute;
+        margin-top: -15%;
+        right: 1%;
+        z-index: 10;
+        display: flex;
+        flex-direction: row;
+        width: 54%;
+        height: 10%;
+    }
+
+    .icon-1 {
+        /* border: 1px solid #000000; */
+        cursor: pointer;
+        flex: 1;
+        margin-bottom: 0;
+        flex-basis: 27%;
+    }
+    .icon-2 {
+        /* border: 1px solid #000000; */
+        cursor: pointer;
+        flex: 1;
+        margin-bottom: 0;
+        flex-basis: 45%;
+    }
+    .icon-3 {
+        /* border: 1px solid #000000; */
+        cursor: pointer;
+        flex: 1;
+        margin-bottom: 0;
+        flex-basis: 14%;
+    }
+    .icon-4 {
+        /* border: 1px solid #000000; */
+        cursor: pointer;
+        flex: 1;
+        margin-bottom: 0;
+        flex-basis: 13%;
     }
 
     .main-content {
@@ -74,7 +114,13 @@
 
 {% block top_banner_content %}
 <section class="top-banner">
-  <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/polly-landing-topbanner.png' %}"></img>
+  <img class="top-sao-logo-img" src="{% static 'Polly-graphics/general/polly-landing-topbanner.jpg' %}"></img>
+  <div class="top-banner-icon">
+    <a class="icon-1" target="_blank" href="https://www.polyu.edu.hk/privacy-policy-statement/"></a>
+    <a class="icon-2" target="_blank" href="https://www.polyu.edu.hk/aradm/eadmission/PICS.pdf"></a>
+    <a class="icon-3" target="_blank" href="https://www.polyu.edu.hk/accessibility/"></a>
+    <a class="icon-4" target="_blank" href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/contact-us/"></a>
+  </div>
 </section>
 {% endblock top_banner_content %}
 

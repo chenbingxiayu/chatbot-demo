@@ -965,7 +965,7 @@
               `3. <a href="${MENTAL_HEALTH_EDUCATION_LINK.career}" target ="_blank">${mentalHealthLanguageJson[langCode].CAREER}</a><br/>` +
               `4. <a href="${MENTAL_HEALTH_EDUCATION_LINK.family}" target ="_blank">${mentalHealthLanguageJson[langCode].FAMILY}</a><br/>` +
               `5. <a href="${MENTAL_HEALTH_EDUCATION_LINK.mentalHealth}" target ="_blank">${mentalHealthLanguageJson[langCode].MENTAL_HEALTH}</a><br/>` +
-              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
+              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PSYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
               `7. <a href="${MENTAL_HEALTH_EDUCATION_LINK.others}" target ="_blank">${mentalHealthLanguageJson[langCode].OTHERS}</a><br/>` +
               '<br><br>*In case of emergency, please call 999 or go to the nearest emergency  / A&E service.',
           });
@@ -2708,7 +2708,7 @@
               `3. <a href="${MENTAL_HEALTH_EDUCATION_LINK.career}" target ="_blank">${mentalHealthLanguageJson[langCode].CAREER}</a><br/>` +
               `4. <a href="${MENTAL_HEALTH_EDUCATION_LINK.family}" target ="_blank">${mentalHealthLanguageJson[langCode].FAMILY}</a><br/>` +
               `5. <a href="${MENTAL_HEALTH_EDUCATION_LINK.mentalHealth}" target ="_blank">${mentalHealthLanguageJson[langCode].MENTAL_HEALTH}</a><br/>` +
-              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
+              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PSYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
               `7. <a href="${MENTAL_HEALTH_EDUCATION_LINK.others}" target ="_blank">${mentalHealthLanguageJson[langCode].OTHERS}</a><br/>` +
               '<br><br>*如你正身處緊急情況, 請致電999或到鄰近的急症室求助。', //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
           });
@@ -3376,7 +3376,7 @@
                         photo: polly,
                         delay: 1000,
                         content: (content =
-                          '<font color=black>如果你正身處緊急情況或/及險境，並有感自身及/或他人有即時的生命危險，請即致電999或到鄰近的急症室求助。</font>'),
+                          '<font color=black>如你正身處緊急情況, 請致電999或到鄰近的急症室求助。</font>'),
                       });
                     }
                   })
@@ -4326,7 +4326,7 @@
               `3. <a href="${MENTAL_HEALTH_EDUCATION_LINK.career}" target ="_blank">${mentalHealthLanguageJson[langCode].CAREER}</a><br/>` +
               `4. <a href="${MENTAL_HEALTH_EDUCATION_LINK.family}" target ="_blank">${mentalHealthLanguageJson[langCode].FAMILY}</a><br/>` +
               `5. <a href="${MENTAL_HEALTH_EDUCATION_LINK.mentalHealth}" target ="_blank">${mentalHealthLanguageJson[langCode].MENTAL_HEALTH}</a><br/>` +
-              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
+              `6. <a href="${MENTAL_HEALTH_EDUCATION_LINK.psychologicalWorkshopsAndGroups}" target ="_blank">${mentalHealthLanguageJson[langCode].PSYCHOLOGICAL_WORKSHOPS_AND_GROUPS}</a><br>` +
               `7. <a href="${MENTAL_HEALTH_EDUCATION_LINK.others}" target ="_blank">${mentalHealthLanguageJson[langCode].OTHERS}</a><br/>` +
               '<br><br>*如你正身处紧急情况, 请致电999或到邻近的急症室求助。', //? In case of emergency, please call 999 or go to the nearest emergency / A&E service.
           });
@@ -5331,7 +5331,7 @@ const mentalHealthLanguageJson = {
     CAREER: 'Career',
     FAMILY: 'Family',
     MENTAL_HEALTH: 'Mental Health',
-    PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS: 'Phychological Workshops and Groups',
+    PSYCHOLOGICAL_WORKSHOPS_AND_GROUPS: 'Psychological Workshops and Groups',
     OTHERS: 'Others',
   },
   'zh-hant': {
@@ -5340,7 +5340,7 @@ const mentalHealthLanguageJson = {
     CAREER: '工作',
     FAMILY: '家庭',
     MENTAL_HEALTH: '精神健康',
-    PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS: '心理健康小組及工作坊 (SAO)',
+    PSYCHOLOGICAL_WORKSHOPS_AND_GROUPS: '心理健康小組及工作坊 (SAO)',
     OTHERS: '其他',
   },
   'zh-hans': {
@@ -5349,7 +5349,7 @@ const mentalHealthLanguageJson = {
     CAREER: '工作',
     FAMILY: '家庭',
     MENTAL_HEALTH: '精神健康',
-    PHYCHOLOGICAL_WORKSHOPS_AND_GROUPS: '心理健康小组及工作坊 (SAO)',
+    PSYCHOLOGICAL_WORKSHOPS_AND_GROUPS: '心理健康小组及工作坊 (SAO)',
     OTHERS: '其他',
   },
 };
