@@ -5331,7 +5331,7 @@ const mentalHealthLanguageJson = {
     CAREER: 'Career',
     FAMILY: 'Family',
     MENTAL_HEALTH: 'Mental Health',
-    PSYCHOLOGICAL_WORKSHOPS_AND_GROUPS: 'Psychological Workshops and Groups',
+    PSYCHOLOGICAL_WORKSHOPS_AND_GROUPS: 'Psychological workshops and groups (SAO)',
     OTHERS: 'Others',
   },
   'zh-hant': {
