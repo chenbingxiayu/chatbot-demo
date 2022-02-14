@@ -116,6 +116,31 @@ Thank you very much for your time.
 All the best 
 Counselling and Wellness Section
 Student Affairs Office"""
+                                              ),
+        'notification_leave_student': EmailTemplate(subject="Please feedback on CWS Online Chat Service",
+                                              body="""Dear Student,
+
+Thank you for using the Online Chat Service provided by the Counselling and Wellness Section (CWS). To provide better services to our students in future, please share with us your opinions on your experience of using our Online Chat Service.  
+
+Please click <a href="https://polyu.hk/YtRQS">HERE</a> to complete a quick survey. It will take around 5 minutes to complete.
+ 
+You can contact our student counsellors through the below ways:
+1.	By phone at 2766 6800 during our office hours (Mon-Fri: 09:00 - 19:00). 
+2.	Email: <a href="mailto:stud.counselling@polyu.edu.hk">stud.counselling@polyu.edu.hk</a>
+3.	PolyU LINE: Non-Office Hours Student Counselling Hotline Service 
+·        Hotline: (852) 8100 1583
+·        00:00 to 09:00 and 19:00 to 00:00 (Monday – Friday) 
+·        00:00 to 09:00 and 12:00 to 00:00 (Saturday) 
+·        24-hour round the clock on Sunday and Public Holidays 
+
+In case of emergency or facing an imminent risk, please call the police at 999 for immediate assistance.
+ 
+Thank you very much for your time.
+
+All the best, 
+Counselling and Wellness Section
+Student Affairs Office
+"""
                                               )
     }
 
