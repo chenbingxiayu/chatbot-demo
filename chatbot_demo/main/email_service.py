@@ -118,28 +118,28 @@ Counselling and Wellness Section
 Student Affairs Office"""
                                               ),
         'notification_leave_student': EmailTemplate(subject="Please feedback on CWS Online Chat Service",
-                                              body="""Dear Student,
-
-Thank you for using the Online Chat Service provided by the Counselling and Wellness Section (CWS). To provide better services to our students in future, please share with us your opinions on your experience of using our Online Chat Service.  
-
-Please click <a href="https://polyu.hk/YtRQS">HERE</a> to complete a quick survey. It will take around 5 minutes to complete.
- 
-You can contact our student counsellors through the below ways:
-1.	By phone at 2766 6800 during our office hours (Mon-Fri: 09:00 - 19:00). 
-2.	Email: <a href="mailto:stud.counselling@polyu.edu.hk">stud.counselling@polyu.edu.hk</a>
-3.	PolyU LINE: Non-Office Hours Student Counselling Hotline Service 
-·        Hotline: (852) 8100 1583
-·        00:00 to 09:00 and 19:00 to 00:00 (Monday – Friday) 
-·        00:00 to 09:00 and 12:00 to 00:00 (Saturday) 
-·        24-hour round the clock on Sunday and Public Holidays 
-
-In case of emergency or facing an imminent risk, please call the police at 999 for immediate assistance.
- 
-Thank you very much for your time.
-
-All the best, 
-Counselling and Wellness Section
-Student Affairs Office
+                                              body="""\
+<!DOCTYPE html>
+<html>
+Dear Student,<br>
+<br>Thank you for using the Online Chat Service provided by the Counselling and Wellness Section (CWS). To provide better services to our students in future, please share with us your opinions on your experience of using our Online Chat Service.<br>  
+<br><b>Please click <a href="https://polyu.hk/YtRQS">HERE</a> to complete a quick survey.</b> It will take around 5 minutes to complete.
+<br><br>
+You can contact our student counsellors through the below ways:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1.	By phone at 2766 6800 during our office hours (Mon-Fri: 09:00 - 19:00).<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;2.	Email: <a href="mailto:stud.counselling@polyu.edu.hk">stud.counselling@polyu.edu.hk</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;3.	PolyU LINE: Non-Office Hours Student Counselling Hotline Service <br>
+&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;Hotline: (852) 8100 1583<br>
+&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;00:00 to 09:00 and 19:00 to 00:00 (Monday – Friday)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;00:00 to 09:00 and 12:00 to 00:00 (Saturday)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;24-hour round the clock on Sunday and Public Holidays<br><br>
+In case of emergency or facing an imminent risk, please call the police at 999 for immediate assistance.<br>
+<br>
+Thank you very much for your time.<br><br>
+All the best,<br>
+Counselling and Wellness Section<br>
+Student Affairs Office<br>
+</html>
 """
                                               )
     }
@@ -159,8 +159,11 @@ Student Affairs Office
                          Address('16904228r', '16904228r', 'connect.polyu.hk'))
         else:
             msg['To'] = Address(destination, destination, receiver_domain)
-
-        msg.set_content(message)
+        
+        if subject.startswith("Please"):
+            msg.add_alternative(message)
+        else:
+            msg.set_content(message)
 
         return msg
 
@@ -191,4 +194,5 @@ email_service = EmailService(smtp_server, smtp_port, sender_user, sender_pw)
 if __name__ == '__main__':
     template_data = {'student_netid': '12345678A'}
     # email_service.send('new_assignment', 'staff_id', template_data)
-    email_service.send('notification_student', 'student_netid', template_data)
+    #email_service.send('notification_student', 'student_netid', template_data)
+    email_service.send('notification_leave_student', 'student_netid', template_data)
