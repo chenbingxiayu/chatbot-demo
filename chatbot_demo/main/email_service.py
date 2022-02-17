@@ -161,6 +161,7 @@ Student Affairs Office<br>
             msg['To'] = Address(destination, destination, receiver_domain)
         
         if subject.startswith("Please"):
+            msg.set_content("")
             msg.add_alternative(message)
         else:
             msg.set_content(message)
