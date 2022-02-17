@@ -160,6 +160,7 @@ Student Affairs Office<br>
         else:
             msg['To'] = Address(destination, destination, receiver_domain)
         
+        logger.info(subject)
         if subject.startswith("Please"):
             msg.set_content("")
             msg.add_alternative(message)
