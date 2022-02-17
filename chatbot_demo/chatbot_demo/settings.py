@@ -134,7 +134,8 @@ DATABASES = {
 # Session settings
 LOGIN_URL = '/main/user/login/'  # redirect url if not logged in
 SESSION_COOKIE_AGE = 8 * 60 * 60
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# use browser-length cookies
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -231,7 +232,7 @@ WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": not DEBUG,
         "BUNDLE_DIR_NAME": "/",
-        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats-prod.json"),
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "TIMEOUT": None,
         "IGNORE": [".*\.hot-update.js", ".+\.map"]
