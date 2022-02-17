@@ -162,8 +162,7 @@ Student Affairs Office<br>
         
         logger.info(subject)
         if subject.startswith("Please"):
-            msg.set_content("")
-            msg.add_alternative(message)
+            msg.add_alternative(message, subtype="html")
         else:
             msg.set_content(message)
 
