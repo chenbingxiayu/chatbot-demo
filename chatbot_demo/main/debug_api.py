@@ -316,10 +316,12 @@ def endchat(request):
     staff_netid = request.POST.get('staff_netid')
     is_no_show = int(request.POST.get('is_no_show'))
     now = timezone.localtime()
-    if is_no_show:
-        from main.email_service import email_service
-        t = threading.Thread(target=email_service.send, args=('notification_student', student_netid,))
-        t.start()
+    
+    email_type = 'notification_student' if is_no_show else 'notification_leave_student'
+
+    from main.email_service import email_service
+    t = threading.Thread(target=email_service.send, args=(email_type, student_netid,))
+    t.start()
 
     try:
         with transaction.atomic():
