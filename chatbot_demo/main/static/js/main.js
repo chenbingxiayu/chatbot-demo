@@ -2768,7 +2768,7 @@
       } else {
         pop_msg = '我們會在下一個工作天的上午9時(香港時間)提供服務，期待屆時與你在線上聊天。';
       }
-
+      pop_msg = '';
       if (pop_msg != '') {
         return botui.message
           .bot({
@@ -4386,7 +4386,7 @@
       } else {
         pop_msg = '我们会在下一个工作天的上午9时(香港时间)提供服务，期待届时与你在线上聊天。';
       }
-
+      pop_msg = '';
       if (pop_msg != '') {
         return botui.message
           .bot({
