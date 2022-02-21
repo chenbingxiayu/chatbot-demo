@@ -2918,8 +2918,8 @@
               return botui.action.button({
                 addMessage: false,
                 action: [
-                  { text: '有', value: true },
-                  { text: '沒有', value: false },
+                  { text: '是', value: true },
+                  { text: '否', value: false },
                 ],
               });
             })
@@ -2996,8 +2996,8 @@
                         return botui.action.button({
                           addMessage: false,
                           action: [
-                            { text: '有', value: true },
-                            { text: '沒有', value: false },
+                            { text: '是', value: true },
+                            { text: '否', value: false },
                           ],
                         });
                       })
@@ -4536,8 +4536,8 @@
               return botui.action.button({
                 addMessage: false,
                 action: [
-                  { text: '有', value: true },
-                  { text: '沒有', value: false },
+                  { text: '是', value: true },
+                  { text: '否', value: false },
                 ],
               });
             })
@@ -4614,8 +4614,8 @@
                         return botui.action.button({
                           addMessage: false,
                           action: [
-                            { text: '有', value: true },
-                            { text: '沒有', value: false },
+                            { text: '是', value: true },
+                            { text: '否', value: false },
                           ],
                         });
                       })
