@@ -110,7 +110,8 @@ def write_online_chat_stat(data: List[StudentChatHistory]) -> io.BytesIO:
         request_time = row.chat_request_time.astimezone(hk_time).strftime('%H:%M') if row.chat_request_time else ''
         chat_duration = None
         if row.chat_request_time and row.chat_start_time:
-            chat_duration = get_duration(row.chat_start_time - row.chat_request_time)
+            wait_duration = get_duration(row.chat_start_time - row.chat_request_time)
+            chat_duration = get_duration(row.chat_end_time - row.chat_start_time)
 
         staff_netid = None
         if row.assigned_counsellor and row.assigned_counsellor.staff_netid:
@@ -121,7 +122,7 @@ def write_online_chat_stat(data: List[StudentChatHistory]) -> io.BytesIO:
         ws.write(row_idx, 2, 'Y' if row.q1 else 'N')
         ws.write(row_idx, 3, 'Y' if row.q2 else 'N')
         ws.write(row_idx, 4, request_time)
-        ws.write(row_idx, 5, chat_duration)
+        ws.write(row_idx, 5, wait_duration)
         ws.write(row_idx, 6, start_time)
         ws.write(row_idx, 7, end_time)
         ws.write(row_idx, 8, chat_duration)
