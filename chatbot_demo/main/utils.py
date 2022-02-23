@@ -35,7 +35,7 @@ def str2uuid(string: str) -> uuid.UUID:
 
 def get_duration(t: timedelta) -> str:
     second_delta = int(t.total_seconds())
-    return f"{second_delta//60 // 60}:{second_delta//60 % 60}:{second_delta % 60}"
+    return f"{second_delta//60 // 60:02d}:{second_delta//60 % 60:02d}:{second_delta % 60:02d}"
     #return f"{t.total_seconds() // 60}:{t.seconds}"
 
 
