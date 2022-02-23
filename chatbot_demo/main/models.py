@@ -109,6 +109,7 @@ def write_online_chat_stat(data: List[StudentChatHistory]) -> io.BytesIO:
         end_time = row.chat_end_time.astimezone(hk_time).strftime('%H:%M') if row.chat_end_time else ''
         request_time = row.chat_request_time.astimezone(hk_time).strftime('%H:%M') if row.chat_request_time else ''
         chat_duration = None
+        wait_duration = None
         if row.chat_request_time and row.chat_start_time:
             wait_duration = get_duration(row.chat_start_time - row.chat_request_time)
             chat_duration = get_duration(row.chat_end_time - row.chat_start_time)
