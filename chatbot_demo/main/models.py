@@ -112,7 +112,11 @@ def write_online_chat_stat(data: List[StudentChatHistory]) -> io.BytesIO:
         wait_duration = None
         if row.chat_request_time and row.chat_start_time:
             wait_duration = get_duration(row.chat_start_time - row.chat_request_time)
+            logger.info("wait_duration")
+            logger.info(wait_duration)
             chat_duration = get_duration(row.chat_end_time - row.chat_start_time)
+            logger.info("chat_duration")
+            logger.info(chat_duration)
 
         staff_netid = None
         if row.assigned_counsellor and row.assigned_counsellor.staff_netid:
