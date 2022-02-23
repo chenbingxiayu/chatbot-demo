@@ -34,7 +34,9 @@ def str2uuid(string: str) -> uuid.UUID:
 
 
 def get_duration(t: timedelta) -> str:
-    return f"{t.total_seconds() // 60}:{t.seconds}"
+    second_delta = int(t.total_seconds())
+    return f"{second_delta//60 // 60}:{second_delta//60 % 60}:{second_delta % 60}"
+    #return f"{t.total_seconds() // 60}:{t.seconds}"
 
 
 def write_zip_files(files: Dict[str, BytesIO]):
