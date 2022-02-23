@@ -114,6 +114,7 @@ def write_online_chat_stat(data: List[StudentChatHistory]) -> io.BytesIO:
             wait_duration = get_duration(row.chat_start_time - row.chat_request_time)
             logger.info("wait_duration")
             logger.info(wait_duration)
+        if row.chat_end_time and row.chat_start_time:
             chat_duration = get_duration(row.chat_end_time - row.chat_start_time)
             logger.info("chat_duration")
             logger.info(chat_duration)
