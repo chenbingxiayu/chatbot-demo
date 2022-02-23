@@ -8,7 +8,7 @@ logger = logging.getLogger("django.request")
 
 # allowed http methods
 class HttpMiddleware:
-  http_method_names = ['get', 'post']
+  http_method_names = ['get', 'post', 'put', 'delete', 'connect']
 
   def __init__(self, get_response):
     self.get_response = get_response
