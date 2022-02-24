@@ -3206,7 +3206,7 @@
                                   delay: 1000,
                                   photo: polly,
                                   content:
-                                    '1. 在辦公時間內致電 (852)27666800 (星期一至五: 09.00 - 19.00, 星期六: 09.00 -12.00)<br/>2. 在辦公時間內前往 QT308 接待處作預約(入口在T棟)<br/>3. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
+                                    '1. 在辦公時間內致電 (852)27666800<br/>2. 在辦公時間內前往 QT308 接待處作預約(入口在T棟)<br/>3. 電郵預約: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到網上系統<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>預約輔導服務</br>',
                                 });
                               } else {
                                 return botui.message.bot({
@@ -4824,7 +4824,7 @@
                                   delay: 1000,
                                   photo: polly,
                                   content:
-                                    '1. 在办公时间内致电 (852)27666800 (星期一至五: 09.00 - 19.00, 星期六: 09.00 -12.00)<br/>2. 在办公时间內前往 QT308 接待处作预约(入口在T栋)<br/>3. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
+                                    '1. 在办公时间内致电 (852)27666800<br/>2. 在办公时间內前往 QT308 接待处作预约(入口在T栋)<br/>3. 电邮预约: <a href=mailto:stud.counselling@polyu.edu.hk>stud.counselling@polyu.edu.hk</a><br/>4. 到网上系统<a href="https://www40.polyu.edu.hk/poss/secure/login/loginhome.do" target ="_blank">POSS</a>预约辅导服务</br>',
                                 });
                               } else {
                                 return botui.message.bot({
