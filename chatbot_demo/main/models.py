@@ -66,9 +66,9 @@ def write_chatbot_stat(data: List[ChatBotSession]) -> io.BytesIO:
         ws.write(0, idx, col_name)
 
     for row_idx, row in enumerate(data, 1):
-        end_time = row.end_time.astimezone(hk_time).strftime('%H:%M') if row.end_time else ''
+        end_time = row.end_time.astimezone(hk_time).strftime('%H:%M:%S') if row.end_time else ''
         ws.write(row_idx, 0, row.start_time.astimezone(hk_time).strftime('%d/%m/%Y'))
-        ws.write(row_idx, 1, row.start_time.astimezone(hk_time).strftime('%H:%M'))
+        ws.write(row_idx, 1, row.start_time.astimezone(hk_time).strftime('%H:%M:%S'))
         ws.write(row_idx, 2, end_time)
         ws.write(row_idx, 3, 'Y' if row.is_ployu_student else 'N')
         ws.write(row_idx, 4, row.student_netid)
@@ -105,9 +105,9 @@ def write_online_chat_stat(data: List[StudentChatHistory]) -> io.BytesIO:
         ws.write(0, idx, col_name)
 
     for row_idx, row in enumerate(data, 1):
-        start_time = row.chat_start_time.astimezone(hk_time).strftime('%H:%M') if row.chat_start_time else ''
-        end_time = row.chat_end_time.astimezone(hk_time).strftime('%H:%M') if row.chat_end_time else ''
-        request_time = row.chat_request_time.astimezone(hk_time).strftime('%H:%M') if row.chat_request_time else ''
+        start_time = row.chat_start_time.astimezone(hk_time).strftime('%H:%M:%S') if row.chat_start_time else ''
+        end_time = row.chat_end_time.astimezone(hk_time).strftime('%H:%M:%S') if row.chat_end_time else ''
+        request_time = row.chat_request_time.astimezone(hk_time).strftime('%H:%M:%S') if row.chat_request_time else ''
         chat_duration = None
         wait_duration = None
         if row.chat_request_time and row.chat_start_time:
