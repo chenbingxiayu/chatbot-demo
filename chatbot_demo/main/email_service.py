@@ -29,7 +29,7 @@ default_template_data = {
 }
 
 context = ssl.create_default_context()
-EMAIL_DEBUG = True
+EMAIL_DEBUG = False #True
 
 
 class EmailTemplate:
