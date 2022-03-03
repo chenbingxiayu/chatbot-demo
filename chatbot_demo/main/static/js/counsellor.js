@@ -101,7 +101,6 @@
       .on('keyup', '#message-text', (event) => {
         if (event.keyCode === 13) {
           event.preventDefault();
-          event.target.blur();
           document.getElementById('send-message-btn').click();
         }
       })
