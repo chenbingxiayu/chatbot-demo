@@ -158,7 +158,10 @@ Student Affairs Office<br>
             msg['To'] = (Address(receiver_user, receiver_user, receiver_domain),
                          Address('16904228r', '16904228r', 'connect.polyu.hk'))
         else:
-            msg['To'] = Address(destination, destination, receiver_domain)
+            if subejct.startswith("Requesting") or subject.startswith("Making")
+                msg['To'] = Address(destination, destination, receiver_domain)
+            else:
+                msg['To'] = Address(destination, destination, 'connect.polyu.hk')
         
         logger.info(subject)
         if subject.startswith("Please"):
