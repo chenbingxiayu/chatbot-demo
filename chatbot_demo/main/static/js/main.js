@@ -292,7 +292,7 @@
           loading: true,
           delay: 1500,
           photo: polly,
-          content: 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?',
+          content: 'Q2. With the issue(s) indicated, are you sad, worried or tensed now?',
         })
         .then(function() {
           return botui.action
@@ -306,7 +306,7 @@
             .then(function(res) {
               surveyData['q2'] = res.value === 1;
               answers[2] =
-                'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' +
+                'Q2. With the issue(s) indicated, are you sad, worried or tensed now?<br/><b><font color="#FF0000">' +
                 res.text +
                 '</font></b><br/>';
               if (res.value == 0) {
