@@ -143,3 +143,17 @@ def end_all_chat_task():
         staff.staff_stream_id = None
         staff.save()
     logger.info("Complete setting all staff to offline.")
+
+@shared_task
+def clear_all_student_accounts():
+    logger.info("Clear up all student accounts.")
+    now = timezone.localtime()
+
+    logger.info("Deleting all student accounts..")
+    users = User.objects.all()
+    for user in users:
+        # student user should have 0 permission
+        all_perm = user.get_all_permissions()
+        if len(all_perm) == 0:
+            user.delete()
+    logger.info("Complete deleting all student accounts.")

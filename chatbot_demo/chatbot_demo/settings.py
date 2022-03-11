@@ -226,6 +226,10 @@ CELERY_BEAT_SCHEDULE = {
     "end_all_chat_task": {
         "task": "tasks.tasks.end_all_chat_task",
         "schedule": crontab(minute=0, hour=0),
+    },
+    "clear_all_student_accounts":{
+        "task": "tasks.tasks.clear_all_student_accounts",
+        "schedule": crontab(minute=0, hour=0),
     }
 }
 
