@@ -143,6 +143,7 @@ def login_sso_callback(request):
             return redirect('login_staff')
 
         ChatBotSession.usage_chatbot_connect()
+        return redirect('login')
 
     except (Exception, UnauthorizedException) as e:
         logger.warning(e)
