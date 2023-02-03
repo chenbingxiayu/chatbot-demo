@@ -489,7 +489,7 @@ class StudentChatHistory(models.Model):
         with connection.cursor() as cursor:
             cursor.execute(query)
             res = dictfetchone(cursor)
-
+        connection.close()
         return res
 
 
@@ -655,7 +655,7 @@ class ChatBotSession(models.Model):
         with connection.cursor() as cursor:
             cursor.execute(query)
             res = dictfetchone(cursor)
-
+        connection.close()
         return res
 
     @classmethod
@@ -680,6 +680,7 @@ class ChatBotSession(models.Model):
         with connection.cursor() as cursor:
             cursor.execute(query)
             res = dictfetchall(cursor)
+        connection.close()
         return res
 
     @classmethod
