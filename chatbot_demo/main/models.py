@@ -477,7 +477,7 @@ class StudentChatHistory(models.Model):
                 FROM
                     `{DB_NAME}`.`{cls._meta.db_table}`
                 WHERE
-                    `{DB_NAME}`.`{cls._meta.db_table}`.`chat_request_time` BETWEEN '{start_time}' AND '{end_time}'
+                    `{DB_NAME}`.`{cls._meta.db_table}`.`chat_request_time` >= '{start_time}' AND `{DB_NAME}`.`{cls._meta.db_table}`.`chat_request_time` <= '{end_time}'
             )
             SELECT
              (SELECT count(*) FROM selected_table) AS online_chat_access_count,
@@ -634,7 +634,7 @@ class ChatBotSession(models.Model):
                 FROM
                     `{DB_NAME}`.`{cls._meta.db_table}`
                 WHERE
-                    `{DB_NAME}`.`{cls._meta.db_table}`.`start_time` BETWEEN '{start_time}' AND '{end_time}'
+                    `{DB_NAME}`.`{cls._meta.db_table}`.`start_time` >= '{start_time}' AND `{DB_NAME}`.`{cls._meta.db_table}`.`start_time` <= '{end_time}'
             )
             SELECT
              (SELECT count(*) FROM session_table) AS total_access_count,
