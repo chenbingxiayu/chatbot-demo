@@ -298,7 +298,11 @@
       ws.onmessage = (event) => {
         let data = JSON.parse(event.data)
         if (data.type === 'update_queue') {
-          window.location.reload()
+          const isStatisPage = $('.statistics-container').length;
+          const isCalendarPage = $('.calendar-container').length;
+          if (!(isStatisPage || isCalendarPage)) {
+            window.location.reload()
+          }
         }
       }
       return ws
