@@ -583,7 +583,7 @@ def get_statistics(request):
     to_date = data.get('toDate')
 
     f = datetime.strptime(from_date, '%Y-%m-%d')
-    t = datetime.strptime(to_date, '%Y-%m-%d')
+    t = datetime.strptime(to_date, '%Y-%m-%d') + timedelta(days=1)
 
     res = {
         **ChatBotSession.statis_overview(f, t),
@@ -601,7 +601,7 @@ def export_statistics(request):
     to_date = data.get('toDate')
 
     f = datetime.strptime(from_date, '%Y-%m-%d')
-    t = datetime.strptime(to_date, '%Y-%m-%d')
+    t = datetime.strptime(to_date, '%Y-%m-%d') + timedelta(days=1)
 
     logger.info('Query from corresponding tables.')
     chatbot_stat_data = ChatBotSession.objects \
